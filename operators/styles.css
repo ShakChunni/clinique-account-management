@@ -1,0 +1,80 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2; /* Light gray background */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    text-align: center;
+}
+
+h1 {
+    color: #333;
+}
+
+.options {
+    display: flex;
+    flex-wrap: wrap; /* Allow options to wrap to the next row if needed */
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.option {
+    background-color: #fff;
+    padding: 40px; /* Increased padding to make boxes larger */
+    margin: 10px; /* Add margin for spacing between options */
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    flex: 1; /* Distribute options evenly on the row */
+}
+
+.option i {
+    font-size: 48px;
+    color: #555;
+}
+
+.option p {
+    color: #333;
+}
+
+.option:hover {
+    background-color: #4b208c; /* Change to a professional color on hover */
+    transform: translateY(-5px); /* Slight upward lift on hover */
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3); /* Slightly larger box shadow */
+}
+
+.option:hover i {
+    color: #fff;
+}
+
+.option:hover p {
+    color: #fff;
+}
+
+.logout {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #007bff; /* Professional blue color */
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.logout i {
+    font-size: 24px;
+    margin-right: 5px;
+}
+
+.logout:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
