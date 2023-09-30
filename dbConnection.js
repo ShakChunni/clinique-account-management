@@ -1,21 +1,26 @@
-const mysql = require("mysql");
+const mysql = require('mysql');
 
-// Create a connection to the MySQL database
-const connection = mysql.createConnection({
-  host: "localhost", // Your MySQL host
-  user: "root", // Your MySQL username
-  password: "", // Your MySQL password
-  database: "clinique-management", // Your MySQL database name
+const dbConnection = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: '',
+  database: 'clinique-management',
 });
 
-// Connect to the database
-connection.connect((err) => {
-  if (err) {
-    console.error("Database connection failed: " + err.message);
-  } else {
-    console.log("Connected to the database");
-  }
-});
+function connectToDatabase() {
+  return new Promise((resolve, reject) => {
+    dbConnection.connect((err) => {
+      if (err) {
+        console.error('Error connecting to the database:', err);
+        reject(err);
+      } else {
+        console.log('Connected to the database');
+        resolve(dbConnection);
+      }
+    });
+  });
+}
 
-// Export the database connection for use in other files
-module.exports = connection;
+module.exports = {
+  connectToDatabase,
+};

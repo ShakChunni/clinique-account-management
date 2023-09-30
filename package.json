@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/ShakChunni/clinique-account-management#readme",
   "dependencies": {
+    "express": "^4.18.2",
     "mysql": "^2.18.1"
   }
 }

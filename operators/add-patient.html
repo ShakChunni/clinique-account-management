@@ -24,7 +24,7 @@
       <h1 style="margin-bottom: 20px">Add Patient</h1>
 
       <div class="add-patient-form">
-        <form>
+        <form id="patient-form" method="POST">
           <div class="form-group">
             <label for="patient-name">Patient Name</label>
             <input type="text" id="patient-name" name="patient-name" required />
@@ -73,6 +73,52 @@
         </form>
       </div>
     </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const patientForm = document.getElementById("patient-form");
+
+        const submitButton = document.getElementById("submit-button");
+        console.log("JavaScript is running.");
+
+        // Add a form submit event listener
+        patientForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          // Collect data from the form fields
+          const patientData = {
+            name: document.getElementById("patient-name").value,
+            age: document.getElementById("patient-age").value,
+            contact: document.getElementById("contact-number").value,
+            date: document.getElementById("admission-date").value,
+          };
+
+          try {
+            // Send a POST request to the server with the patient data
+            const response = await fetch("/add-patient", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(patientData),
+            });
+
+            if (response.ok) {
+              // Handle successful submission (e.g., show a success message)
+              alert("Patient data submitted successfully.");
+              patientForm.reset(); // Clear the form
+            } else {
+              // Handle errors (e.g., show an error message)
+              alert("Error submitting patient data. Please try again.");
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            alert("An error occurred. Please try again later.");
+          }
+          console.log("Form submitted with data:", patientData);
+        });
+      });
+    </script>
+
     <script>
       flatpickr("#admission-date", {
         dateFormat: "Y-m-d", // Change the date format to match Google Sheets
