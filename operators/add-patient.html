@@ -24,7 +24,7 @@
       <h1 style="margin-bottom: 20px">Add Patient</h1>
 
       <div class="add-patient-form">
-        <form id="patient-form" method="POST">
+        <form id="patient-form" method="POST" action="/add-patient">
           <div class="form-group">
             <label for="patient-name">Patient Name</label>
             <input type="text" id="patient-name" name="patient-name" required />
@@ -77,7 +77,7 @@
       document.addEventListener("DOMContentLoaded", () => {
         const patientForm = document.getElementById("patient-form");
 
-        const submitButton = document.getElementById("submit-button");
+        const submitButton = document.querySelector('button[type="submit"]');
         console.log("JavaScript is running.");
 
         // Add a form submit event listener
@@ -94,7 +94,7 @@
 
           try {
             // Send a POST request to the server with the patient data
-            const response = await fetch("/add-patient", {
+            const response = await fetch("/formPost", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -105,7 +105,9 @@
             if (response.ok) {
               // Handle successful submission (e.g., show a success message)
               alert("Patient data submitted successfully.");
-              patientForm.reset(); // Clear the form
+              document.getElementById("patient-name").value = "";
+              document.getElementById("patient-age").value = "";
+              document.getElementById("contact-number").value = ""; // Clear the form
             } else {
               // Handle errors (e.g., show an error message)
               alert("Error submitting patient data. Please try again.");
