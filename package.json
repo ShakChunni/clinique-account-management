@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/ShakChunni/clinique-account-management/issues"
   },
-  "homepage": "https://github.com/ShakChunni/clinique-account-management#readme"
+  "homepage": "https://github.com/ShakChunni/clinique-account-management#readme",
+  "dependencies": {
+    "mysql": "^2.18.1"
+  }
 }

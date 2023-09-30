@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Patient - Clinic Management System</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="logout" onclick="window.location.href='login.html'">
+        <i class="fas fa-sign-out-alt"></i>
+        Logout
+      </div>
+      <h1 style="margin-bottom: 20px">Add Patient</h1>
+
+      <div class="add-patient-form">
+        <form>
+          <div class="form-group">
+            <label for="patient-name">Patient Name</label>
+            <input type="text" id="patient-name" name="patient-name" required />
+          </div>
+          <div class="form-group">
+            <label for="patient-age">Patient Age</label>
+            <input type="number" id="patient-age" name="patient-age" required />
+          </div>
+          <div class="form-group">
+            <label for="contact-number">Contact Number</label>
+            <input
+              type="text"
+              id="contact-number"
+              name="contact-number"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="admission-fee">Admission Fee</label>
+            <div class="admission-fee-input">
+              <input
+                type="text"
+                id="admission-fee"
+                name="admission-fee"
+                value="200"
+                readonly
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="admission-date">Admission Date</label>
+            <div class="date-input">
+              <i class="far fa-calendar-alt"></i>
+              <input
+                type="text"
+                id="admission-date"
+                name="admission-date"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <button type="submit">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script>
+      flatpickr("#admission-date", {
+        dateFormat: "Y-m-d", // Change the date format to match Google Sheets
+        defaultDate: new Date(),
+        enableTime: false, // Disable time selection
+      });
+    </script>
+  </body>
+</html>

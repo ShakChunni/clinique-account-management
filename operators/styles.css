@@ -24,6 +24,14 @@ h1 {
     margin-top: 20px;
 }
 
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
 .option {
     background-color: #fff;
     padding: 40px; /* Increased padding to make boxes larger */
@@ -58,11 +66,22 @@ h1 {
     color: #fff;
 }
 
+/* Add this style to remove the underline on anchor (a) elements */
+.option a {
+    text-decoration: none;
+}
+
+/* Add this style to remove the underline on hover */
+.option a:hover {
+    text-decoration: none;
+}
+
+
 .logout {
     position: absolute;
     top: 10px;
     right: 10px;
-    background-color: #007bff; /* Professional blue color */
+    background-color: darkred; /* Professional blue color */
     color: #fff;
     padding: 10px 20px;
     border-radius: 10px;
@@ -76,5 +95,93 @@ h1 {
 }
 
 .logout:hover {
-    background-color: #0056b3; /* Darker blue on hover */
+    background-color: red; /* Darker blue on hover */
 }
+
+/* Add Patient Page Styles */
+.add-patient-form {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    width: 80%;
+    max-width: 600px; /* Increased width for a larger form */
+    margin: 20px auto;
+}
+
+.add-patient-form h1 {
+    font-size: 24px; /* Larger title font size */
+    margin-bottom: 20px; /* More space below the title */
+}
+
+.add-patient-form .form-group {
+    margin-bottom: 20px; /* More spacing between form groups */
+}
+
+.add-patient-form label {
+    font-size: 18px; /* Larger label font size */
+    color: #333;
+}
+
+.add-patient-form input[type="text"],
+.add-patient-form input[type="number"],
+.add-patient-form input[type="date"] {
+    width: 100%;
+    padding: 12px; /* Larger input padding */
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 18px; /* Larger input font size */
+}
+
+/* Style for the Admission Fee input */
+.add-patient-form .admission-fee-input input[readonly] {
+    background-color: #f2f2f2; /* Greyed-out background color */
+    cursor: not-allowed; /* Not-allowed cursor style */
+}
+
+
+/* Add Patient Page Styles */
+.add-patient-form .date-input {
+    display: flex;
+    align-items: center;
+    background-color: #f2f2f2;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    width: 100%; /* Make it the same width as other inputs */
+}
+
+.add-patient-form .date-input i {
+    font-size: 24px;
+    color: #555;
+    margin-right: 10px;
+}
+
+.add-patient-form input[type="text"],
+.add-patient-form input[type="number"],
+.add-patient-form input[type="date"] {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 18px;
+}
+
+
+.add-patient-form button[type="submit"] {
+    background-color: #007bff;
+    color: #fff;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.add-patient-form button[type="submit"]:hover {
+    background-color: #004bff;
+}
+
