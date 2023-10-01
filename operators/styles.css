@@ -185,3 +185,38 @@ a:hover {
     background-color: #004bff;
 }
 
+/* Add styles for the search bar */
+.search-bar {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+  }
+  
+  #patient-id {
+    width: 200px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-right: 10px;
+  }
+  
+  #search-button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  #search-results {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    display: none; /* Hide search results by default */
+  }
+  
