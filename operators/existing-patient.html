@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Existing Patient - Clinic Management System</title>
+    <link rel="stylesheet" href="styles.css" />
+    <!-- Additional CSS specific to existing-patient.html if needed -->
+  </head>
+  <body>
+    <div class="container">
+      <div class="logout" onclick="window.location.href='login.html'">
+        <i class="fas fa-sign-out-alt"></i>
+        Logout
+      </div>
+      <h1>Existing Patient</h1>
+
+      <!-- Add your search functionality here -->
+      <div class="search-bar">
+        <input type="text" id="patient-id" placeholder="Enter Patient ID" />
+        <button id="search-button">Search</button>
+      </div>
+      <div id="search-results">
+        <!-- Display search results here -->
+      </div>
+    </div>
+    <script>
+      // Add this function to show the search bar
+      function showSearchBar() {
+        const searchBar = document.getElementById("search-bar");
+        searchBar.style.display = "block";
+      }
+
+      // The rest of your JavaScript code...
+      document.addEventListener("DOMContentLoaded", () => {
+        // ... (Your existing JavaScript code)
+      });
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const patientIdInput = document.getElementById("patient-id");
+        const searchButton = document.getElementById("search-button");
+        const searchResults = document.getElementById("search-results");
+
+        searchButton.addEventListener("click", async () => {
+          const patientId = patientIdInput.value;
+
+          // Fetch patient information from the server based on the ID
+          const response = await fetch(`/getPatient/${patientId}`);
+          const data = await response.json();
+
+          if (response.ok) {
+            // Display the search results
+            const patientInfo = `
+              <h2>Patient Information</h2>
+              <p>ID: ${data.id}</p>
+              <p>Name: ${data.name}</p>
+              <p>Age: ${data.age}</p>
+              <p>Contact: ${data.contact}</p>
+              <p>Admission Charge: ${data.admissionFee}</p>
+              <p>Admission Date: ${data.date}</p>
+            `;
+            searchResults.innerHTML = patientInfo;
+            searchResults.style.display = "block";
+          } else {
+            // Display an error message if the patient is not found
+            searchResults.innerHTML = "<p>Patient not found.</p>";
+            searchResults.style.display = "block";
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -23,68 +23,22 @@
           <p>New Patient</p>
         </a>
 
-        <div class="option" id="existing-patient">
+        <!-- Link to the new "existing-patient.html" page -->
+        <a
+          href="existing-patient.html"
+          class="option"
+          id="existing-patient-link"
+        >
           <i class="fas fa-user"></i>
-          <p onclick="showSearchBar()">Existing Patient</p>
-        </div>
+          <p>Existing Patient</p>
+        </a>
         <div class="option" id="expenditure">
           <i class="fas fa-dollar-sign"></i>
           <p>Expenditure</p>
         </div>
       </div>
-      <!-- Add the search bar here (hidden by default) -->
-      <div class="search-bar" id="search-bar" style="display: none">
-        <input type="text" id="patient-id" placeholder="Enter Patient ID" />
-        <button id="search-button">Search</button>
-      </div>
-      <div id="search-results">
-        <!-- Display search results here -->
-      </div>
     </div>
-    <script>
-      // Add this function to show the search bar
-      function showSearchBar() {
-        const searchBar = document.getElementById("search-bar");
-        searchBar.style.display = "block";
-      }
 
-      // The rest of your JavaScript code...
-      document.addEventListener("DOMContentLoaded", () => {
-        // ... (Your existing JavaScript code)
-      });
-    </script>
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const patientIdInput = document.getElementById("patient-id");
-        const searchButton = document.getElementById("search-button");
-        const searchResults = document.getElementById("search-results");
-
-        searchButton.addEventListener("click", async () => {
-          const patientId = patientIdInput.value;
-
-          // Fetch patient information from the server based on the ID
-          const response = await fetch(`/getPatient/${patientId}`);
-          const data = await response.json();
-
-          if (response.ok) {
-            // Display the search results
-            const patientInfo = `
-            <h2>Patient Information</h2>
-            <p>ID: ${data.id}</p>
-            <p>Name: ${data.name}</p>
-            <p>Age: ${data.age}</p>
-            <p>Contact: ${data.contact}</p>
-            <p>Admission Date: ${data.date}</p>
-          `;
-            searchResults.innerHTML = patientInfo;
-            searchResults.style.display = "block";
-          } else {
-            // Display an error message if the patient is not found
-            searchResults.innerHTML = "<p>Patient not found.</p>";
-            searchResults.style.display = "block";
-          }
-        });
-      });
-    </script>
+    <script src="script.js"></script>
   </body>
 </html>

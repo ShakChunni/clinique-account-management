@@ -1,222 +1,245 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f2f2f2; /* Light gray background */
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+  font-family: Arial, sans-serif;
+  background-color: #f2f2f2; /* Light gray background */
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
 
 .container {
-    text-align: center;
+  text-align: center;
 }
 
 h1 {
-    color: #333;
+  color: #333;
 }
 
 .options {
-    display: flex;
-    flex-wrap: wrap; /* Allow options to wrap to the next row if needed */
-    justify-content: space-around;
-    margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap; /* Allow options to wrap to the next row if needed */
+  justify-content: space-around;
+  margin-top: 20px;
 }
 
 a {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 a:hover {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 .option {
-    background-color: #fff;
-    padding: 40px; /* Increased padding to make boxes larger */
-    margin: 10px; /* Add margin for spacing between options */
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-    flex: 1; /* Distribute options evenly on the row */
+  background-color: #fff;
+  padding: 40px; /* Increased padding to make boxes larger */
+  margin: 10px; /* Add margin for spacing between options */
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  flex: 1; /* Distribute options evenly on the row */
 }
 
 .option i {
-    font-size: 48px;
-    color: #555;
+  font-size: 48px;
+  color: #555;
 }
 
 .option p {
-    color: #333;
+  color: #333;
 }
 
 .option:hover {
-    background-color: #4b208c; /* Change to a professional color on hover */
-    transform: translateY(-5px); /* Slight upward lift on hover */
-    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3); /* Slightly larger box shadow */
+  background-color: #4b208c; /* Change to a professional color on hover */
+  transform: translateY(-5px); /* Slight upward lift on hover */
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3); /* Slightly larger box shadow */
 }
 
 .option:hover i {
-    color: #fff;
+  color: #fff;
 }
 
 .option:hover p {
-    color: #fff;
+  color: #fff;
 }
 
 /* Add this style to remove the underline on anchor (a) elements */
 .option a {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 /* Add this style to remove the underline on hover */
 .option a:hover {
-    text-decoration: none;
+  text-decoration: none;
 }
 
-
 .logout {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: darkred; /* Professional blue color */
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: darkred; /* Professional blue color */
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .logout i {
-    font-size: 24px;
-    margin-right: 5px;
+  font-size: 24px;
+  margin-right: 5px;
 }
 
 .logout:hover {
-    background-color: red; /* Darker blue on hover */
+  background-color: red; /* Darker blue on hover */
 }
 
 /* Add Patient Page Styles */
 .add-patient-form {
-    background-color: #fff;
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-    width: 80%;
-    max-width: 600px; /* Increased width for a larger form */
-    margin: 20px auto;
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  width: 80%;
+  max-width: 600px; /* Increased width for a larger form */
+  margin: 20px auto;
 }
 
 .add-patient-form h1 {
-    font-size: 24px; /* Larger title font size */
-    margin-bottom: 20px; /* More space below the title */
+  font-size: 24px; /* Larger title font size */
+  margin-bottom: 20px; /* More space below the title */
 }
 
 .add-patient-form .form-group {
-    margin-bottom: 20px; /* More spacing between form groups */
+  margin-bottom: 20px; /* More spacing between form groups */
 }
 
 .add-patient-form label {
-    font-size: 18px; /* Larger label font size */
-    color: #333;
+  font-size: 18px; /* Larger label font size */
+  color: #333;
 }
 
 .add-patient-form input[type="text"],
 .add-patient-form input[type="number"],
 .add-patient-form input[type="date"] {
-    width: 100%;
-    padding: 12px; /* Larger input padding */
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 18px; /* Larger input font size */
+  width: 100%;
+  padding: 12px; /* Larger input padding */
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 18px; /* Larger input font size */
 }
 
 /* Style for the Admission Fee input */
 .add-patient-form .admission-fee-input input[readonly] {
-    background-color: #f2f2f2; /* Greyed-out background color */
-    cursor: not-allowed; /* Not-allowed cursor style */
+  background-color: #f2f2f2; /* Greyed-out background color */
+  cursor: not-allowed; /* Not-allowed cursor style */
 }
-
 
 /* Add Patient Page Styles */
 .add-patient-form .date-input {
-    display: flex;
-    align-items: center;
-    background-color: #f2f2f2;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 10px;
-    width: 100%; /* Make it the same width as other inputs */
+  display: flex;
+  align-items: center;
+  background-color: #f2f2f2;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  width: 100%; /* Make it the same width as other inputs */
 }
 
 .add-patient-form .date-input i {
-    font-size: 24px;
-    color: #555;
-    margin-right: 10px;
+  font-size: 24px;
+  color: #555;
+  margin-right: 10px;
 }
 
 .add-patient-form input[type="text"],
 .add-patient-form input[type="number"],
 .add-patient-form input[type="date"] {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 18px;
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 18px;
 }
 
-
 .add-patient-form button[type="submit"] {
-    background-color: #007bff;
-    color: #fff;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 10px;
-    font-size: 18px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+  background-color: #007bff;
+  color: #fff;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .add-patient-form button[type="submit"]:hover {
-    background-color: #004bff;
+  background-color: #004bff;
 }
 
-/* Add styles for the search bar */
+/* Search Bar Styles */
 .search-bar {
-    margin-top: 20px;
-    display: flex;
-    align-items: center;
-  }
-  
-  #patient-id {
-    width: 200px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-    margin-right: 10px;
-  }
-  
-  #search-button {
-    background-color: #007bff;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-  }
-  
-  #search-results {
-    margin-top: 20px;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-    display: none; /* Hide search results by default */
-  }
-  
+  margin-top: 20px;
+  display: flex;
+  justify-content: center; /* Center the search bar horizontally */
+  align-items: center;
+}
+
+#patient-id {
+  width: 500px; /* Increased search bar width */
+  padding: 14px; /* Larger padding for search input */
+  border: 2px solid #ccc; /* Thicker border */
+  border-radius: 8px;
+  font-size: 20px; /* Larger font size */
+  margin-right: 10px;
+}
+
+#search-button {
+  background-color: #007bff;
+  color: #fff;
+  padding: 14px 24px; /* Larger padding for the search button */
+  border: none;
+  border-radius: 8px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#search-button:hover {
+  background-color: #004bff;
+}
+
+#search-results {
+  margin-top: 20px;
+  padding: 20px; /* Adjust padding for content within the box */
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  display: none;
+  text-align: left; /* Left-align the content */
+}
+
+/* Style for the patient information in search results */
+#search-results h2 {
+  font-size: 32px; /* Larger font size for the heading */
+  color: #333;
+  margin-bottom: 10px;
+  text-align: center; /* Added space below the heading */
+}
+
+#search-results p {
+  font-size: 24px; /* Larger font size for patient information */
+  color: #555;
+  margin-bottom: 10px;
+  /* Added space below each patient info */
+}
+
+/* Make words before ":" bold */
+#search-results p strong {
+  font-weight: bold;
+}

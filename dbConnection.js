@@ -30,14 +30,17 @@ app.get("/clinique-accounts", (req, res) => {
 // Endpoint to add a new patient to the database
 app.post("/formPost", (req, res) => {
   console.log("Received a POST request to /formPost");
-  const { name, age, contact, date } = req.body;
-  const sql = "INSERT INTO patient (name, age, contact, date) VALUES (?, ?, ?, ?)";
-  const values = [name, age, contact, date];
+  const { name, age, contact, admissionFee, date } = req.body;
+  const sql =
+    "INSERT INTO patient (name, age, contact, admissionFee, date) VALUES (?, ?, ?, ?, ?)" ;
+  const values = [name, age, contact, admissionFee, date];
 
   db.query(sql, values, (err, result) => {
     if (err) {
       console.error("Error inserting data into the database:", err);
-      res.status(500).json({ error: "An error occurred while adding the patient." });
+      res
+        .status(500)
+        .json({ error: "An error occurred while adding the patient." });
     } else {
       console.log("Data inserted into the database.");
       res.status(200).json({ message: "Patient added successfully." });
@@ -49,11 +52,13 @@ app.post("/formPost", (req, res) => {
 app.get("/getPatient/:id", (req, res) => {
   const patientId = req.params.id;
   const sql = "SELECT * FROM patient WHERE id = ?";
-  
+
   db.query(sql, [patientId], (err, result) => {
     if (err) {
       console.error("Error retrieving patient data from the database:", err);
-      res.status(500).json({ error: "An error occurred while fetching patient data." });
+      res
+        .status(500)
+        .json({ error: "An error occurred while fetching patient data." });
     } else {
       if (result.length === 0) {
         // Patient not found
