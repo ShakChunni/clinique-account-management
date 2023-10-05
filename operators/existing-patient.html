@@ -23,6 +23,18 @@
       <div id="search-results">
         <!-- Display search results here -->
       </div>
+      <!-- Add these fields for otCharge and serviceCharge -->
+      <p>OT Charge: <span id="ot-charge-span"></span></p>
+      <input type="number" id="ot-charge-input" placeholder="OT Charge" />
+      <p>Service Charge: <span id="service-charge-span"></span></p>
+      <input
+        type="number"
+        id="service-charge-input"
+        placeholder="Service Charge"
+      />
+
+      <!-- Add a "Save" button to save the changes -->
+      <button id="save-button" style="display: none">Save</button>
     </div>
     <script>
       // Add this function to show the search bar
@@ -41,6 +53,15 @@
         const patientIdInput = document.getElementById("patient-id");
         const searchButton = document.getElementById("search-button");
         const searchResults = document.getElementById("search-results");
+        const otChargeSpan = document.getElementById("ot-charge-span");
+        const serviceChargeSpan = document.getElementById(
+          "service-charge-span"
+        );
+        const otChargeInput = document.getElementById("ot-charge-input");
+        const serviceChargeInput = document.getElementById(
+          "service-charge-input"
+        );
+        const saveButton = document.getElementById("save-button");
 
         searchButton.addEventListener("click", async () => {
           const patientId = patientIdInput.value;
@@ -50,22 +71,56 @@
           const data = await response.json();
 
           if (response.ok) {
-            // Display the search results
+            // Display the patient information
             const patientInfo = `
-              <h2>Patient Information</h2>
-              <p>ID: ${data.id}</p>
-              <p>Name: ${data.name}</p>
-              <p>Age: ${data.age}</p>
-              <p>Contact: ${data.contact}</p>
-              <p>Admission Charge: ${data.admissionFee}</p>
-              <p>Admission Date: ${data.date}</p>
-            `;
+        <h2>Patient Information</h2>
+        <p>ID: ${data.id}</p>
+        <p>Name: ${data.name}</p>
+        <p>Age: ${data.age}</p>
+        <p>Contact: ${data.contact}</p>
+        <p>Admission Charge: ${data.admissionFee}</p>
+        <p>OT Charge: <span id="ot-charge-span">${data.otCharge}</span></p>
+        <p>Service Charge: <span id="service-charge-span">${data.serviceCharge}</span></p>
+      `;
             searchResults.innerHTML = patientInfo;
             searchResults.style.display = "block";
+
+            // Enable editing for otCharge and serviceCharge
+            otChargeSpan.style.display = "none";
+            serviceChargeSpan.style.display = "none";
+            otChargeInput.value = data.otCharge;
+            serviceChargeInput.value = data.serviceCharge;
+            otChargeInput.style.display = "block";
+            serviceChargeInput.style.display = "block";
+            saveButton.style.display = "block";
           } else {
             // Display an error message if the patient is not found
             searchResults.innerHTML = "<p>Patient not found.</p>";
             searchResults.style.display = "block";
+          }
+        });
+
+        // Add an event listener for the "Save" button
+        saveButton.addEventListener("click", async () => {
+          const patientId = patientIdInput.value;
+          const otCharge = otChargeInput.value;
+          const serviceCharge = serviceChargeInput.value;
+
+          // Send a POST request to update otCharge and serviceCharge
+          const response = await fetch(`/update-patient/${patientId}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ otCharge, serviceCharge }),
+          });
+
+          if (response.ok) {
+            // Display a success message
+            alert("Patient data updated successfully.");
+          } else {
+            // Display an error message
+            alert("Error updating patient data. Please try again.");
           }
         });
       });

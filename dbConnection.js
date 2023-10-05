@@ -32,7 +32,7 @@ app.post("/formPost", (req, res) => {
   console.log("Received a POST request to /formPost");
   const { name, age, contact, admissionFee, date } = req.body;
   const sql =
-    "INSERT INTO patient (name, age, contact, admissionFee, date) VALUES (?, ?, ?, ?, ?)" ;
+    "INSERT INTO patient (name, age, contact, admissionFee, date) VALUES (?, ?, ?, ?, ?)";
   const values = [name, age, contact, admissionFee, date];
 
   db.query(sql, values, (err, result) => {
@@ -68,6 +68,32 @@ app.get("/getPatient/:id", (req, res) => {
         const patientData = result[0];
         res.status(200).json(patientData);
       }
+    }
+  });
+});
+
+app.get("/update-patient", (req, res) => {
+  res.sendFile(__dirname + "/operators/existing-patient.html");
+});
+
+// Endpoint to update patient information
+app.post("/update-patient/:id", (req, res) => {
+  const patientId = req.params.id;
+  const { otCharge, serviceCharge } = req.body;
+
+  // Update otCharge and serviceCharge for the patient
+  const sql = "UPDATE patient SET otCharge = ?, serviceCharge = ? WHERE id = ?";
+  const values = [otCharge, serviceCharge, patientId];
+
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      console.error("Error updating patient data:", err);
+      res
+        .status(500)
+        .json({ error: "An error occurred while updating patient data." });
+    } else {
+      console.log("Patient data updated.");
+      res.status(200).json({ message: "Patient data updated successfully." });
     }
   });
 });
