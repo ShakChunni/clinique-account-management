@@ -20,11 +20,16 @@
         <input type="text" id="patient-id" placeholder="Enter Patient ID" />
         <button id="search-button">Search</button>
       </div>
-      <div id="search-results">
+      <div id="search-results" class="patient-info">
         <!-- Display search results here -->
+      </div>
+      <div>
+        <button id="save-button">Save</button>
+        <button id="print-button">Print</button>
       </div>
       <!-- Add these fields for otCharge and serviceCharge -->
     </div>
+
     <script>
       // Add this function to show the search bar
       function showSearchBar() {
@@ -63,13 +68,34 @@
             // Display the patient information
             const patientInfo = `
         <h2>Patient Information</h2>
-        <p>ID: ${data.id}</p>
-        <p>Name: ${data.name}</p>
-        <p>Age: ${data.age}</p>
-        <p>Contact: ${data.contact}</p>
-        <p>Admission Charge: ${data.admissionFee}</p>
-        <p>OT Charge: <span id="ot-charge-span">${data.otCharge}</span></p>
-        <p>Service Charge: <span id="service-charge-span">${data.serviceCharge}</span></p>
+        <div class="patient-field">
+            <label>ID:</label>
+            <span>${data.id}</span>
+        </div>
+        <div class="patient-field">
+            <label>Name:</label>
+            <span>${data.name}</span>
+        </div>
+        <div class="patient-field">
+            <label>Age:</label>
+            <span>${data.age}</span>
+        </div>
+        <div class="patient-field">
+            <label>Contact:</label>
+            <span>${data.contact}</span>
+        </div>
+        <div class="patient-field">
+            <label>Admission Charge:</label>
+            <span>${data.admissionFee}</span>
+        </div>
+        <div class="patient-field">
+            <label>OT Charge:</label>
+            <span id="ot-charge-span" contentEditable="true">${data.otCharge}</span>
+        </div>
+        <div class="patient-field">
+            <label>Service Charge:</label>
+            <span id="service-charge-span" contentEditable="true">${data.serviceCharge}</span>
+        </div>
       `;
             searchResults.innerHTML = patientInfo;
             searchResults.style.display = "block";
@@ -77,8 +103,6 @@
             // Enable editing for otCharge and serviceCharge
             otChargeSpan.style.display = "none";
             serviceChargeSpan.style.display = "none";
-            otChargeInput.value = data.otCharge;
-            serviceChargeInput.value = data.serviceCharge;
             otChargeInput.style.display = "block";
             serviceChargeInput.style.display = "block";
             saveButton.style.display = "block";
@@ -92,8 +116,11 @@
         // Add an event listener for the "Save" button
         saveButton.addEventListener("click", async () => {
           const patientId = patientIdInput.value;
-          const otCharge = otChargeInput.value;
-          const serviceCharge = serviceChargeInput.value;
+          const otCharge =
+            document.getElementById("ot-charge-span").textContent;
+          const serviceCharge = document.getElementById(
+            "service-charge-span"
+          ).textContent;
 
           // Send a POST request to update otCharge and serviceCharge
           const response = await fetch(`/update-patient/${patientId}`, {
