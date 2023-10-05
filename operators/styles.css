@@ -10,7 +10,7 @@ body {
 }
 
 .container {
-  text-align: center;
+  text-align: center; 
 }
 
 h1 {
@@ -183,29 +183,38 @@ a:hover {
 }
 
 /* Search Bar Styles */
+/* Add your existing styles above this comment */
+
+h1 {
+  font-size: 28px; /* Larger title font size */
+  color: #333;
+  margin-bottom: 20px; /* Added space below the title */
+}
+
+/* Style for the search bar */
 .search-bar {
   margin-top: 20px;
   display: flex;
-  justify-content: center; /* Center the search bar horizontally */
+  justify-content: center;
   align-items: center;
 }
 
 #patient-id {
-  width: 500px; /* Increased search bar width */
-  padding: 14px; /* Larger padding for search input */
-  border: 2px solid #ccc; /* Thicker border */
-  border-radius: 8px;
-  font-size: 20px; /* Larger font size */
+  width: 100%; /* Full width for the search input */
+  padding: 12px; /* Adjusted padding for search input */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 18px;
   margin-right: 10px;
 }
 
 #search-button {
   background-color: #007bff;
   color: #fff;
-  padding: 14px 24px; /* Larger padding for the search button */
+  padding: 12px 20px;
   border: none;
   border-radius: 8px;
-  font-size: 20px;
+  font-size: 18px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
@@ -214,32 +223,59 @@ a:hover {
   background-color: #004bff;
 }
 
+/* Style for the search results */
 #search-results {
   margin-top: 20px;
-  padding: 20px; /* Adjust padding for content within the box */
+  padding: 20px;
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
   display: none;
-  text-align: left; /* Left-align the content */
 }
 
 /* Style for the patient information in search results */
 #search-results h2 {
-  font-size: 32px; /* Larger font size for the heading */
+  font-size: 24px; /* Adjusted font size for the heading */
   color: #333;
   margin-bottom: 10px;
-  text-align: center; /* Added space below the heading */
+  text-align: center;
 }
 
 #search-results p {
-  font-size: 24px; /* Larger font size for patient information */
+  font-size: 18px; /* Adjusted font size for patient information */
   color: #555;
   margin-bottom: 10px;
-  /* Added space below each patient info */
 }
 
-/* Make words before ":" bold */
-#search-results p strong {
-  font-weight: bold;
+/* Style for the OT Charge and Service Charge inputs */
+#ot-charge-input,
+#service-charge-input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 18px;
 }
+
+/* Style for the "Save" button */
+#save-button {
+  background-color: #007bff;
+  color: #fff;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: block;
+  margin-top: 20px; /* Added space above the button */
+}
+
+#save-button:hover {
+  background-color: #004bff;
+}
+
+/* Add any additional styles or overrides as needed */
+
+/* Add your existing styles below this comment */
