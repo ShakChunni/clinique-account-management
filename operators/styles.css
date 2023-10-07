@@ -264,7 +264,7 @@ h1 {
 
 /* Style for editable fields */
 .patient-info span[contentEditable="true"] {
-  background-color: #f2f2f2; /* Greyed-out background color for editable fields */
+  background-color: #e5e3e1; /* Greyed-out background color for editable fields */
   cursor: text; /* Text cursor for editable fields */
 }
 

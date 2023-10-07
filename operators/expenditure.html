@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Expenditure - Clinic Management System</title>
+    <link rel="stylesheet" href="styles.css" />
+    <!-- Additional CSS specific to expenditure.html if needed -->
+  </head>
+  <body>
+    <div class="container">
+      <div class="logout" onclick="window.location.href='login.html'">
+        <i class="fas fa-sign-out-alt"></i>
+        Logout
+      </div>
+      <h1 style="margin-bottom: 20px">Add Expenditure</h1>
+
+      <div class="add-expenditure-form">
+        <form
+          id="expenditure-form"
+          method="POST"
+          action="/add-expenditure"
+          enctype="multipart/form-data"
+        >
+          <div class="form-group">
+            <label for="description">Description</label>
+            <input type="text" id="description" name="description" required />
+          </div>
+          <div class="form-group">
+            <label for="cost">Cost</label>
+            <input type="number" id="cost" name="cost" step="0.01" required />
+          </div>
+          <div class="form-group">
+            <label for="image">Image</label>
+            <input
+              type="file"
+              id="image"
+              name="image"
+              accept="image/*"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <button type="submit">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const expenditureForm = document.getElementById("expenditure-form");
+
+        expenditureForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const formData = new FormData(expenditureForm);
+
+          try {
+            const response = await fetch("/add-expenditure", {
+              method: "POST",
+              body: formData,
+            });
+
+            if (response.ok) {
+              alert("Expenditure data submitted successfully.");
+              expenditureForm.reset();
+            } else {
+              alert("Error submitting expenditure data. Please try again.");
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            alert("An error occurred. Please try again later.");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
