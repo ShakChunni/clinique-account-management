@@ -304,3 +304,79 @@ h1 {
 #print-button:hover {
   background-color: #d84315;
 }
+/* Style for the Add Expenditure Page */
+.add-expenditure-form {
+  background-color: #fff; /* White background */
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  width: 80%; /* Adjusted width for the form */
+  max-width: 600px; /* Maximum width for larger screens */
+  margin: 20px auto; /* Center the form horizontally */
+}
+
+.add-expenditure-form h1 {
+  font-size: 24px; /* Larger title font size */
+  margin-bottom: 20px; /* Space below the title */
+}
+
+.add-expenditure-form .form-group {
+  margin-bottom: 20px; /* Space between form groups */
+}
+
+.add-expenditure-form label {
+  font-size: 18px; /* Larger label font size */
+  color: #333;
+}
+
+/* Style for the file input label */
+.add-expenditure-form .file-label {
+  display: inline-block;
+  padding: 12px; /* Larger input padding */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 18px; /* Larger input font size */
+  cursor: pointer; /* Change cursor to a hand on hover */
+}
+
+/* Style for the file input */
+.add-expenditure-form .file-input {
+  display: none; /* Hide the actual input */
+}
+
+/* Style for the file text (initial text) */
+.add-expenditure-form .file-input:not(:placeholder-shown) + .file-text::before {
+  content: "No file chosen, ";
+  color: #555; /* Text color for "No file chosen" */
+}
+
+/* Style for the file text (when a file is chosen) */
+.add-expenditure-form .file-input:not(:placeholder-shown) + .file-text:hover {
+  text-decoration: underline; /* Underline text on hover */
+}
+
+.add-expenditure-form input[type="text"],
+.add-expenditure-form input[type="number"],
+.add-expenditure-form input[type="file"] {
+  width: 100%;
+  padding: 12px; /* Larger input padding */
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 18px; /* Larger input font size */
+}
+
+.add-expenditure-form button[type="submit"] {
+  background-color: #007bff; /* Blue color for "Submit" button */
+  color: #fff;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 18px; /* Larger font size for the button text */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.add-expenditure-form button[type="submit"]:hover {
+  background-color: #004bff; /* Darker blue color on hover */
+}

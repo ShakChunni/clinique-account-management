@@ -141,5 +141,114 @@
         });
       });
     </script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const patientIdInput = document.getElementById("patient-id");
+        const searchButton = document.getElementById("search-button");
+        const searchResults = document.getElementById("search-results");
+        const otChargeSpan = document.getElementById("ot-charge-span");
+        // Add an event listener for the "Print" button
+        const printButton = document.getElementById("print-button");
+        printButton.addEventListener("click", async () => {
+          const patientId = patientIdInput.value;
+
+          // Fetch patient information from the server based on the ID
+          const response = await fetch(`/getPatient/${patientId}`);
+          const data = await response.json();
+
+          if (response.ok) {
+            // Create a new PDF document
+            const { PDFDocument, rgb } = PDFLib;
+            const pdfDoc = await PDFDocument.create();
+            const page = pdfDoc.addPage([500, 700]); // Specify page size (width x height)
+
+            // Create a font
+            const font = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+
+            // Add content to the PDF
+            const contentStream = page
+              .drawText("Patient Voucher", {
+                x: 50,
+                y: 650,
+                size: 30,
+                color: rgb(0, 0, 0), // Text color
+              })
+              .drawText("Patient Information:", {
+                x: 50,
+                y: 600,
+                size: 20,
+                color: rgb(0, 0, 0),
+              })
+              .drawText(`ID: ${data.id}`, {
+                x: 50,
+                y: 570,
+                size: 15,
+                color: rgb(0, 0, 0),
+              })
+              .drawText(`Name: ${data.name}`, {
+                x: 50,
+                y: 550,
+                size: 15,
+                color: rgb(0, 0, 0),
+              })
+              .drawText(`Age: ${data.age}`, {
+                x: 50,
+                y: 530,
+                size: 15,
+                color: rgb(0, 0, 0),
+              })
+              .drawText(`Contact: ${data.contact}`, {
+                x: 50,
+                y: 510,
+                size: 15,
+                color: rgb(0, 0, 0),
+              })
+              .drawText(`Admission Charge: ${data.admissionFee}`, {
+                x: 50,
+                y: 490,
+                size: 15,
+                color: rgb(0, 0, 0),
+              })
+              .drawText(`OT Charge: ${otCharge}`, {
+                x: 50,
+                y: 470,
+                size: 15,
+                color: rgb(0, 0, 0),
+              })
+              .drawText(`Service Charge: ${serviceCharge}`, {
+                x: 50,
+                y: 450,
+                size: 15,
+                color: rgb(0, 0, 0),
+              });
+
+            // Serialize the PDF document to bytes
+            const pdfBytes = await pdfDoc.save();
+
+            // Create a blob from the PDF bytes
+            const pdfBlob = new Blob([pdfBytes], { type: "application/pdf" });
+
+            // Create a URL for the blob
+            const pdfUrl = URL.createObjectURL(pdfBlob);
+
+            // Open the PDF in a new window for printing
+            const printWindow = window.open(pdfUrl, "_blank");
+            if (printWindow) {
+              printWindow.onload = function () {
+                // Call the print method when the window is fully loaded
+                printWindow.print();
+              };
+            } else {
+              alert("Please enable pop-ups to print the PDF.");
+            }
+          } else {
+            // Display an error message if the patient is not found
+            searchResults.innerHTML = "<p>Patient not found.</p>";
+            searchResults.style.display = "block";
+          }
+        });
+      });
+    </script>
   </body>
 </html>
