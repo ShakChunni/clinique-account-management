@@ -25,10 +25,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("operators"));
 
-// Configure multer for handling file uploads
+// multer for handling file uploads
 const storage = multer.diskStorage({
   destination: (req, file, callback) => {
-    callback(null, "uploads/"); // Specify the destination directory for uploaded files
+    callback(null, "uploads/"); // destination directory for uploaded files
   },
   filename: (req, file, callback) => {
     callback(null, Date.now() + "-" + file.originalname);
@@ -36,16 +36,13 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage });
+app.use(upload.single("image"));
 
-// Add multer middleware for handling file uploads
-app.use(upload.single("image")); // 'image' should match the input field name in the form
-
-// Serve the HTML page for adding patients
+// Endpoint to add a new patient to the database
 app.get("/clinique-accounts", (req, res) => {
   res.sendFile(__dirname + "/operators/add-patient.html");
 });
 
-// Endpoint to add a new patient to the database
 app.post("/formPost", (req, res) => {
   console.log("Received a POST request to /formPost");
   const { name, age, contact, admissionFee, date } = req.body;
@@ -79,10 +76,8 @@ app.get("/getPatient/:id", (req, res) => {
         .json({ error: "An error occurred while fetching patient data." });
     } else {
       if (result.length === 0) {
-        // Patient not found
         res.status(404).json({ message: "Patient not found." });
       } else {
-        // Patient found, send the data
         const patientData = result[0];
         res.status(200).json(patientData);
       }
@@ -90,6 +85,7 @@ app.get("/getPatient/:id", (req, res) => {
   });
 });
 
+// Endpoint to update patient information
 app.get("/update-patient", (req, res) => {
   res.sendFile(__dirname + "/operators/existing-patient.html");
 });
@@ -99,7 +95,6 @@ app.post("/update-patient/:id", (req, res) => {
   const patientId = req.params.id;
   const { otCharge, serviceCharge } = req.body;
 
-  // Update otCharge and serviceCharge for the patient
   const sql = "UPDATE patient SET otCharge = ?, serviceCharge = ? WHERE id = ?";
   const values = [otCharge, serviceCharge, patientId];
 
@@ -116,20 +111,16 @@ app.post("/update-patient/:id", (req, res) => {
   });
 });
 
-// Serve the HTML page for adding expenditures
+// Endpoint to add a new expenditure to the database
 app.get("/add-expenditure", (req, res) => {
   res.sendFile(__dirname + "/operators/expenditure.html");
 });
 
-// Endpoint to add a new expenditure to the database
 app.post("/add-expenditure", (req, res) => {
   console.log("Received a POST request to /add-expenditure");
 
-  // Handle form data, including file uploads
   const { description, cost } = req.body;
-  const imageName = req.file.filename; // Assuming you're using multer for file uploads
-
-  // Insert the data into the "expenditure" table
+  const imageName = req.file.filename;
   const sql =
     "INSERT INTO expenditure (description, cost, image_name) VALUES (?, ?, ?)";
   const values = [description, cost, imageName];
@@ -147,7 +138,6 @@ app.post("/add-expenditure", (req, res) => {
   });
 });
 
-// ... Existing code
 // Serve the HTML page for the PDF voucher
 app.get("/voucher.html", (req, res) => {
   res.sendFile(__dirname + "/operators/voucher.html");
@@ -163,16 +153,12 @@ app.get("/generate-pdf", async (req, res) => {
         .status(500)
         .json({ error: "An error occurred while generating the PDF voucher." });
     } else {
-      const patientData = result[0]; // Get the latest patient data
-
-      // Create a new PDF document
+      const patientData = result[0];
       const doc = new PDFDocument();
-
-      // Set response headers for PDF download
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader("Content-Disposition", "attachment; filename=voucher.pdf");
 
-      // Define styling for the PDF content
+      // styling for the PDF
       const titleStyle = {
         fontSize: 24,
         font: "Helvetica-Bold",
@@ -191,13 +177,10 @@ app.get("/generate-pdf", async (req, res) => {
         margin: { top: 50, right: 50, bottom: 100, left: 50 },
       };
 
-      // Pipe the PDF document to the response stream
       doc.pipe(res);
 
-      // Add the hospital name
       doc.text("Firoza Nursing Home", { ...titleStyle, fontSize: 18 });
 
-      // Create a table for patient information
       const tableX = 50;
       const tableY = 150;
       const col1X = tableX;
@@ -226,7 +209,6 @@ app.get("/generate-pdf", async (req, res) => {
           .text(value, col2X, yPos, cellStyle);
       }
 
-      // Add a footer with hospital information
       doc
         .font("Helvetica-Oblique")
         .text(
@@ -234,7 +216,6 @@ app.get("/generate-pdf", async (req, res) => {
           { align: "center", margin: 20 }
         );
 
-      // End and finalize the PDF
       doc.end();
     }
   });

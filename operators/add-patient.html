@@ -77,18 +77,16 @@
       document.addEventListener("DOMContentLoaded", () => {
         const patientForm = document.getElementById("patient-form");
 
-        // Initialize Flatpickr with time enabled
         flatpickr("#admission-date", {
-          dateFormat: "Y-m-d H:i", // Include time in the format
+          dateFormat: "Y-m-d H:i",
           defaultDate: new Date(),
-          enableTime: true, // Enable time selection
+          enableTime: true,
         });
 
-        // Add a form submit event listener
         patientForm.addEventListener("submit", async (e) => {
           e.preventDefault();
 
-          // Collect data from the form fields
+          // Collect data
           const patientData = {
             name: document.getElementById("patient-name").value,
             age: document.getElementById("patient-age").value,
@@ -98,7 +96,6 @@
           };
 
           try {
-            // Send a POST request to the server with the patient data
             const response = await fetch("/formPost", {
               method: "POST",
               headers: {
@@ -108,13 +105,11 @@
             });
 
             if (response.ok) {
-              // Handle successful submission (e.g., show a success message)
               window.location.href = "/voucher.html";
               document.getElementById("patient-name").value = "";
               document.getElementById("patient-age").value = "";
               document.getElementById("contact-number").value = "";
             } else {
-              // Handle errors (e.g., show an error message)
               alert("Error submitting patient data. Please try again.");
             }
           } catch (error) {
