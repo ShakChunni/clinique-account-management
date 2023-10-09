@@ -84,13 +84,22 @@
         patientForm.addEventListener("submit", async (e) => {
           e.preventDefault();
 
+          // Get the current date and time
+          const currentDate = new Date();
+
+          // Format the current date and time
+          const formattedDate = currentDate
+            .toISOString()
+            .slice(0, 19)
+            .replace("T", " ");
+
           // Collect data from the form fields
           const patientData = {
             name: document.getElementById("patient-name").value,
             age: document.getElementById("patient-age").value,
             contact: document.getElementById("contact-number").value,
-            admissionFee: document.getElementById("admission-fee").value, // Updated key
-            date: document.getElementById("admission-date").value,
+            admissionFee: document.getElementById("admission-fee").value,
+            date: formattedDate,
           };
 
           try {
@@ -105,10 +114,10 @@
 
             if (response.ok) {
               // Handle successful submission (e.g., show a success message)
-              alert("Patient data submitted successfully.");
+              window.location.href = "/voucher.html";
               document.getElementById("patient-name").value = "";
               document.getElementById("patient-age").value = "";
-              document.getElementById("contact-number").value = ""; // Clear the form
+              document.getElementById("contact-number").value = "";
             } else {
               // Handle errors (e.g., show an error message)
               alert("Error submitting patient data. Please try again.");
@@ -124,9 +133,9 @@
 
     <script>
       flatpickr("#admission-date", {
-        dateFormat: "Y-m-d", // Change the date format to match Google Sheets
+        dateFormat: "Y-m-d",
         defaultDate: new Date(),
-        enableTime: false, // Disable time selection
+        enableTime: true,
       });
     </script>
   </body>
