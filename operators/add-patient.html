@@ -77,21 +77,16 @@
       document.addEventListener("DOMContentLoaded", () => {
         const patientForm = document.getElementById("patient-form");
 
-        const submitButton = document.querySelector('button[type="submit"]');
-        console.log("JavaScript is running.");
+        // Initialize Flatpickr with time enabled
+        flatpickr("#admission-date", {
+          dateFormat: "Y-m-d H:i", // Include time in the format
+          defaultDate: new Date(),
+          enableTime: true, // Enable time selection
+        });
 
         // Add a form submit event listener
         patientForm.addEventListener("submit", async (e) => {
           e.preventDefault();
-
-          // Get the current date and time
-          const currentDate = new Date();
-
-          // Format the current date and time
-          const formattedDate = currentDate
-            .toISOString()
-            .slice(0, 19)
-            .replace("T", " ");
 
           // Collect data from the form fields
           const patientData = {
@@ -99,7 +94,7 @@
             age: document.getElementById("patient-age").value,
             contact: document.getElementById("contact-number").value,
             admissionFee: document.getElementById("admission-fee").value,
-            date: formattedDate,
+            date: document.getElementById("admission-date").value,
           };
 
           try {
@@ -126,16 +121,7 @@
             console.error("Error:", error);
             alert("An error occurred. Please try again later.");
           }
-          console.log("Form submitted with data:", patientData);
         });
-      });
-    </script>
-
-    <script>
-      flatpickr("#admission-date", {
-        dateFormat: "Y-m-d",
-        defaultDate: new Date(),
-        enableTime: true,
       });
     </script>
   </body>
