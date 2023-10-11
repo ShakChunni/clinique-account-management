@@ -196,7 +196,7 @@ app.get("/generate-pdf", async (req, res) => {
         [patientData.id, patientData.name],
         ["Patient Age", patientData.age],
         ["Contact Number", patientData.contact],
-        ["Admission Fee", `$${patientData.admissionFee}`],
+        ["Admission Fee", `৳${patientData.admissionFee}`],
         ["Admission Date", patientData.date],
       ];
 
@@ -218,6 +218,86 @@ app.get("/generate-pdf", async (req, res) => {
 
       doc.end();
     }
+  });
+});
+
+// Update the endpoint route to use a query parameter
+app.get("/generate-patient-pdf", (req, res) => {
+  const patientId = req.query.patientId; // Retrieve patientId from the query parameter
+  console.log("Received patientId:", patientId);
+
+
+  // Fetch patient data from the database
+  const sql = "SELECT * FROM patient WHERE id = ?";
+  db.query(sql, [patientId], (err, result) => {
+    if (err) {
+      console.error("Error fetching patient data:", err);
+      return res
+        .status(500)
+        .json({ error: "An error occurred while fetching patient data." });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({ message: "Patient not found." });
+    }
+
+    const patientData = result[0];
+
+    const doc = new PDFDocument();
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename=patient_information_${patientId}.pdf`
+    );
+
+    doc.pipe(res);
+
+    // Styling for the PDF
+    const titleStyle = {
+      fontSize: 24,
+      font: "Helvetica-Bold",
+      align: "center",
+      margin: 20,
+    };
+
+    const cellStyle = {
+      font: "Helvetica-Bold",
+      fontSize: 16,
+      padding: 10,
+      margin: 10,
+    };
+
+    doc.text("Patient Information PDF", { ...titleStyle, fontSize: 18 });
+
+    const rowHeight = 30;
+    const rows = [
+      ["Patient ID", patientData.id],
+      ["Patient Name", patientData.name],
+      ["Patient Age", patientData.age],
+      ["Contact Number", patientData.contact],
+      ["Admission Fee", `৳${patientData.admissionFee}`],
+      ["Admission Date", patientData.date],
+      ["OT Charge", `৳${patientData.otCharge}`],
+      ["Service Charge", `৳${patientData.serviceCharge}`],
+    ];
+
+    for (let i = 0; i < rows.length; i++) {
+      const [label, value] = rows[i];
+      const yPos = 150 + (i + 1) * rowHeight;
+      doc
+        .font("Helvetica")
+        .text(label, 50, yPos, cellStyle)
+        .text(value, 300, yPos, cellStyle);
+    }
+
+    doc
+      .font("Helvetica-Oblique")
+      .text(
+        "Thank you for choosing Firoza Nursing Home for your healthcare needs.",
+        { align: "center", margin: 20 }
+      );
+
+    doc.end();
   });
 });
 

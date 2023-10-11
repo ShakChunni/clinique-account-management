@@ -31,13 +31,11 @@
     </div>
 
     <script>
-      
       function showSearchBar() {
         const searchBar = document.getElementById("search-bar");
         searchBar.style.display = "block";
-      } 
-      document.addEventListener("DOMContentLoaded", () => {     
-      });
+      }
+      document.addEventListener("DOMContentLoaded", () => {});
     </script>
     <script>
       document.addEventListener("DOMContentLoaded", () => {
@@ -104,7 +102,6 @@
             serviceChargeInput.style.display = "block";
             saveButton.style.display = "block";
           } else {
-           
             searchResults.innerHTML = "<p>Patient not found.</p>";
             searchResults.style.display = "block";
           }
@@ -126,12 +123,15 @@
           });
 
           if (response.ok) {
-            
             alert("Patient data updated successfully.");
           } else {
-            
             alert("Error updating patient data. Please try again.");
           }
+        });
+        const printButton = document.getElementById("print-button");
+        printButton.addEventListener("click", async () => {
+          const patientId = patientIdInput.value;
+          window.location.href = `/final-voucher.html?patientId=${patientId}`;
         });
       });
     </script>
