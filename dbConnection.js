@@ -23,7 +23,11 @@ db.connect((err) => {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static("operators"));
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/index.html");
+});
+app.use("/operators", express.static(__dirname + "/operators"));
+app.use("/admin", express.static(__dirname + "/admin"));
 
 // multer for handling file uploads
 const storage = multer.diskStorage({
@@ -138,10 +142,6 @@ app.post("/add-expenditure", (req, res) => {
   });
 });
 
-app.get("/voucher.html", (req, res) => {
-  res.sendFile(__dirname + "/operators/voucher.html");
-});
-
 app.get("/generate-pdf", async (req, res) => {
   // Fetch the latest patient data from the database
   const sql = "SELECT * FROM patient ORDER BY id DESC LIMIT 1";
@@ -165,11 +165,14 @@ app.get("/generate-pdf", async (req, res) => {
         margin: 30,
       };
 
+      const tableStyle = {
+        margin: 10,
+      };
+
       const cellStyle = {
         font: __dirname + "/fonts/OpenSans-Regular.ttf",
         fontSize: 40,
         padding: 10,
-        margin: 10,
       };
 
       const takaFont = __dirname + "/fonts/FN Hasan Kolkata Unicode.ttf"; // Taka symbol font
@@ -178,6 +181,19 @@ app.get("/generate-pdf", async (req, res) => {
 
       doc.text("Firoza Nursing Home", { ...titleStyle, fontSize: 50 });
 
+      // Create a table-like structure
+      const table = {
+        "Patient ID": patientData.id,
+        "Patient Name": patientData.name,
+        "Patient Age": patientData.age,
+        "Contact Number": patientData.contact,
+        "Admission Fee": `${String.fromCharCode(0x09f3)}${
+          patientData.admissionFee
+        }`,
+        "Admission Date": patientData.date,
+      };
+
+      // Set up the initial position
       const tableX = 50;
       const tableY = 150;
       const col1X = tableX;
@@ -185,42 +201,30 @@ app.get("/generate-pdf", async (req, res) => {
 
       doc.font(__dirname + "/fonts/OpenSans-Bold.ttf");
       const rowHeight = 40;
-      const rows = [
-        [patientData.id, patientData.name],
-        ["Patient Age", patientData.age],
-        ["Contact Number", patientData.contact],
-        [
-          "Admission Fee",
-          `${String.fromCharCode(0x09f3)}${patientData.admissionFee}`,
-        ], // Insert Taka symbol
-        ["Admission Date", patientData.date],
-      ];
 
-      for (let i = 0; i < rows.length; i++) {
-        const [label, value] = rows[i];
-        const yPos = tableY + (i + 1) * rowHeight;
+      Object.keys(table).forEach((label, index) => {
+        const yPos = tableY + index * rowHeight;
         doc
           .font(__dirname + "/fonts/OpenSans-Regular.ttf")
           .text(label, col1X, yPos, cellStyle)
           .font(takaFont) // Use the Taka symbol font
-          .text(value, col2X, yPos, cellStyle);
-      }
+          .text(table[label], col2X, yPos, cellStyle);
 
-      // Add visible lines for the table
-      for (let i = 0; i < rows.length + 2; i++) {
-        const yPos = tableY + i * rowHeight;
-        doc
-          .moveTo(col1X, yPos)
-          .lineTo(col2X + 300, yPos)
-          .stroke();
-      }
+        if (index < Object.keys(table).length - 1) {
+          const lineYPos = yPos + rowHeight;
+          doc
+            .moveTo(col1X, lineYPos)
+            .lineTo(col2X + 300, lineYPos)
+            .stroke();
+        }
+      });
 
       doc.end();
     }
   });
 });
 
-// Update the endpoint route to use a query parameter
+//final pdf
 app.get("/generate-patient-pdf", (req, res) => {
   const patientId = req.query.patientId; // Retrieve patientId from the query parameter
   console.log("Received patientId:", patientId);
@@ -262,7 +266,7 @@ app.get("/generate-patient-pdf", (req, res) => {
       font: __dirname + "/fonts/OpenSans-Regular.ttf",
       fontSize: 35,
       padding: 10,
-      margin: 10,
+      margin: 0, // Removed extra margin
     };
 
     const takaFont = __dirname + "/fonts/FN Hasan Kolkata Unicode.ttf"; // Taka symbol font
@@ -296,21 +300,20 @@ app.get("/generate-patient-pdf", (req, res) => {
 
     for (let i = 0; i < rows.length; i++) {
       const [label, value] = rows[i];
-      const yPos = tableY + (i + 1) * rowHeight;
+      const yPos = tableY + i * rowHeight; // Removed + 1
       doc
         .font(__dirname + "/fonts/OpenSans-Regular.ttf")
         .text(label, 50, yPos, cellStyle)
         .font(takaFont) // Use the Taka symbol font
         .text(value, 300, yPos, cellStyle);
-    }
 
-    // Add visible lines for the table
-    for (let i = 0; i < rows.length + 2; i++) {
-      const yPos = tableY + i * rowHeight;
-      doc
-        .moveTo(col1X, yPos)
-        .lineTo(col2X + 300, yPos)
-        .stroke();
+      if (i < rows.length - 1) {
+        const lineYPos = yPos + rowHeight;
+        doc
+          .moveTo(col1X, lineYPos)
+          .lineTo(col2X + 300, lineYPos)
+          .stroke();
+      }
     }
 
     doc.end();

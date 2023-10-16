@@ -41,6 +41,9 @@
                 required
               />
             </label>
+            <div class="selected-image-message" style="display: none">
+              Image selected
+            </div>
           </div>
 
           <div class="form-group">
@@ -52,27 +55,103 @@
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const expenditureForm = document.getElementById("expenditure-form");
+        const fileInput = document.getElementById("image");
+        const selectedImageMessage = document.querySelector(
+          ".selected-image-message"
+        );
 
         expenditureForm.addEventListener("submit", async (e) => {
           e.preventDefault();
 
-          const formData = new FormData(expenditureForm);
+          if (fileInput.files.length === 0) {
+            alert("Please select an image.");
+          } else {
+            const formData = new FormData(expenditureForm);
 
-          try {
-            const response = await fetch("/add-expenditure", {
-              method: "POST",
-              body: formData,
-            });
+            // Function to compress the image
+            async function compressImage(file, quality) {
+              return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                  const image = new Image();
+                  image.src = event.target.result;
+                  image.onload = () => {
+                    const canvas = document.createElement("canvas");
+                    const ctx = canvas.getContext("2d");
+                    const maxWidth = 800; // Maximum width for the compressed image
+                    const maxHeight = 800; // Maximum height for the compressed image
 
-            if (response.ok) {
-              alert("Expenditure data submitted successfully.");
-              expenditureForm.reset();
-            } else {
-              alert("Error submitting expenditure data. Please try again.");
+                    let newWidth = image.width;
+                    let newHeight = image.height;
+
+                    if (image.width > maxWidth || image.height > maxHeight) {
+                      const aspectRatio = image.width / image.height;
+
+                      if (newWidth > maxWidth) {
+                        newWidth = maxWidth;
+                        newHeight = newWidth / aspectRatio;
+                      }
+
+                      if (newHeight > maxHeight) {
+                        newHeight = maxHeight;
+                        newWidth = newHeight * aspectRatio;
+                      }
+                    }
+
+                    canvas.width = newWidth;
+                    canvas.height = newHeight;
+                    ctx.drawImage(image, 0, 0, newWidth, newHeight);
+                    canvas.toBlob(
+                      (blob) => {
+                        const compressedFile = new File([blob], file.name, {
+                          type: "image/jpeg", // Change the type if needed
+                          lastModified: Date.now(),
+                        });
+                        resolve(compressedFile);
+                      },
+                      "image/jpeg", // Change the type if needed
+                      quality
+                    );
+                  };
+                };
+                reader.readAsDataURL(file);
+              });
             }
-          } catch (error) {
-            console.error("Error:", error);
-            alert("An error occurred. Please try again later.");
+
+            // Compress the image with 80% quality
+            const compressedImage = await compressImage(
+              fileInput.files[0],
+              0.8
+            );
+
+            // Create a new FormData object and append the compressed image
+            formData.set("image", compressedImage);
+
+            try {
+              const response = await fetch("/add-expenditure", {
+                method: "POST",
+                body: formData,
+              });
+
+              if (response.ok) {
+                alert("Expenditure data submitted successfully.");
+                expenditureForm.reset();
+                selectedImageMessage.style.display = "none";
+              } else {
+                alert("Error submitting expenditure data. Please try again.");
+              }
+            } catch (error) {
+              console.error("Error:", error);
+              alert("An error occurred. Please try again later.");
+            }
+          }
+        });
+
+        fileInput.addEventListener("change", () => {
+          if (fileInput.files.length > 0) {
+            selectedImageMessage.style.display = "block";
+          } else {
+            selectedImageMessage.style.display = "none";
           }
         });
       });
