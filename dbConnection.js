@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 const port = 5000;
 const multer = require("multer");
-const PDFDocument = require("pdfkit");
+const PDFKit = require("pdfkit");
 const fs = require("fs");
 
 const db = mysql.createConnection({
@@ -138,7 +138,6 @@ app.post("/add-expenditure", (req, res) => {
   });
 });
 
-// Serve the HTML page for the PDF voucher
 app.get("/voucher.html", (req, res) => {
   res.sendFile(__dirname + "/operators/voucher.html");
 });
@@ -154,49 +153,46 @@ app.get("/generate-pdf", async (req, res) => {
         .json({ error: "An error occurred while generating the PDF voucher." });
     } else {
       const patientData = result[0];
-      const doc = new PDFDocument();
+      const doc = new PDFKit();
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader("Content-Disposition", "attachment; filename=voucher.pdf");
 
-      // styling for the PDF
+      // Styling for the PDF
       const titleStyle = {
-        fontSize: 24,
-        font: "Helvetica-Bold",
+        fontSize: 40,
+        font: __dirname + "/fonts/OpenSans-Bold.ttf",
         align: "center",
-        margin: 20,
+        margin: 30,
       };
 
       const cellStyle = {
-        font: "Helvetica-Bold",
-        fontSize: 16,
+        font: __dirname + "/fonts/OpenSans-Regular.ttf",
+        fontSize: 40,
         padding: 10,
         margin: 10,
       };
 
-      const tableStyle = {
-        margin: { top: 50, right: 50, bottom: 100, left: 50 },
-      };
+      const takaFont = __dirname + "/fonts/FN Hasan Kolkata Unicode.ttf"; // Taka symbol font
 
       doc.pipe(res);
 
-      doc.text("Firoza Nursing Home", { ...titleStyle, fontSize: 18 });
+      doc.text("Firoza Nursing Home", { ...titleStyle, fontSize: 50 });
 
       const tableX = 50;
       const tableY = 150;
       const col1X = tableX;
-      const col2X = tableX + 250;
+      const col2X = tableX + 300;
 
-      doc
-        .font("Helvetica-Bold")
-        .text("Patient ID", col1X, tableY, { continued: true })
-        .text("Patient Name", col2X, tableY, cellStyle);
-
-      const rowHeight = 30;
+      doc.font(__dirname + "/fonts/OpenSans-Bold.ttf");
+      const rowHeight = 40;
       const rows = [
         [patientData.id, patientData.name],
         ["Patient Age", patientData.age],
         ["Contact Number", patientData.contact],
-        ["Admission Fee", `৳${patientData.admissionFee}`],
+        [
+          "Admission Fee",
+          `${String.fromCharCode(0x09f3)}${patientData.admissionFee}`,
+        ], // Insert Taka symbol
         ["Admission Date", patientData.date],
       ];
 
@@ -204,17 +200,20 @@ app.get("/generate-pdf", async (req, res) => {
         const [label, value] = rows[i];
         const yPos = tableY + (i + 1) * rowHeight;
         doc
-          .font("Helvetica")
+          .font(__dirname + "/fonts/OpenSans-Regular.ttf")
           .text(label, col1X, yPos, cellStyle)
+          .font(takaFont) // Use the Taka symbol font
           .text(value, col2X, yPos, cellStyle);
       }
 
-      doc
-        .font("Helvetica-Oblique")
-        .text(
-          "Thank you for choosing Firoza Nursing Home for your healthcare needs.",
-          { align: "center", margin: 20 }
-        );
+      // Add visible lines for the table
+      for (let i = 0; i < rows.length + 2; i++) {
+        const yPos = tableY + i * rowHeight;
+        doc
+          .moveTo(col1X, yPos)
+          .lineTo(col2X + 300, yPos)
+          .stroke();
+      }
 
       doc.end();
     }
@@ -225,7 +224,6 @@ app.get("/generate-pdf", async (req, res) => {
 app.get("/generate-patient-pdf", (req, res) => {
   const patientId = req.query.patientId; // Retrieve patientId from the query parameter
   console.log("Received patientId:", patientId);
-
 
   // Fetch patient data from the database
   const sql = "SELECT * FROM patient WHERE id = ?";
@@ -243,7 +241,7 @@ app.get("/generate-patient-pdf", (req, res) => {
 
     const patientData = result[0];
 
-    const doc = new PDFDocument();
+    const doc = new PDFKit();
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader(
       "Content-Disposition",
@@ -254,48 +252,66 @@ app.get("/generate-patient-pdf", (req, res) => {
 
     // Styling for the PDF
     const titleStyle = {
-      fontSize: 24,
-      font: "Helvetica-Bold",
+      fontSize: 35,
+      font: __dirname + "/fonts/OpenSans-Bold.ttf",
       align: "center",
-      margin: 20,
+      margin: 30,
     };
 
     const cellStyle = {
-      font: "Helvetica-Bold",
-      fontSize: 16,
+      font: __dirname + "/fonts/OpenSans-Regular.ttf",
+      fontSize: 35,
       padding: 10,
       margin: 10,
     };
 
-    doc.text("Patient Information PDF", { ...titleStyle, fontSize: 18 });
+    const takaFont = __dirname + "/fonts/FN Hasan Kolkata Unicode.ttf"; // Taka symbol font
 
-    const rowHeight = 30;
+    doc.text("Patient Admission Form", { ...titleStyle, fontSize: 35 });
+
+    const tableX = 50;
+    const tableY = 150;
+    const col1X = tableX;
+    const col2X = tableX + 300;
+
+    doc.font(__dirname + "/fonts/OpenSans-Bold.ttf");
+
+    const rowHeight = 40;
     const rows = [
       ["Patient ID", patientData.id],
       ["Patient Name", patientData.name],
       ["Patient Age", patientData.age],
       ["Contact Number", patientData.contact],
-      ["Admission Fee", `৳${patientData.admissionFee}`],
+      [
+        "Admission Fee",
+        `${String.fromCharCode(0x09f3)}${patientData.admissionFee}`,
+      ], // Insert Taka symbol
       ["Admission Date", patientData.date],
-      ["OT Charge", `৳${patientData.otCharge}`],
-      ["Service Charge", `৳${patientData.serviceCharge}`],
+      ["OT Charge", `${String.fromCharCode(0x09f3)}${patientData.otCharge}`], // Insert Taka symbol
+      [
+        "Service Charge",
+        `${String.fromCharCode(0x09f3)}${patientData.serviceCharge}`,
+      ], // Insert Taka symbol
     ];
 
     for (let i = 0; i < rows.length; i++) {
       const [label, value] = rows[i];
-      const yPos = 150 + (i + 1) * rowHeight;
+      const yPos = tableY + (i + 1) * rowHeight;
       doc
-        .font("Helvetica")
+        .font(__dirname + "/fonts/OpenSans-Regular.ttf")
         .text(label, 50, yPos, cellStyle)
+        .font(takaFont) // Use the Taka symbol font
         .text(value, 300, yPos, cellStyle);
     }
 
-    doc
-      .font("Helvetica-Oblique")
-      .text(
-        "Thank you for choosing Firoza Nursing Home for your healthcare needs.",
-        { align: "center", margin: 20 }
-      );
+    // Add visible lines for the table
+    for (let i = 0; i < rows.length + 2; i++) {
+      const yPos = tableY + i * rowHeight;
+      doc
+        .moveTo(col1X, yPos)
+        .lineTo(col2X + 300, yPos)
+        .stroke();
+    }
 
     doc.end();
   });
