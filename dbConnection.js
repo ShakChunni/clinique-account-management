@@ -320,6 +320,47 @@ app.get("/generate-patient-pdf", (req, res) => {
   });
 });
 
+//admin part
+// Create a new endpoint to calculate and retrieve income and expenditure
+app.get("/getIncomeExpenditure", (req, res) => {
+  const sqlIncome =
+    "SELECT SUM(otCharge + serviceCharge + admissionFee) AS totalIncome FROM patient";
+  const sqlExpenditure =
+    "SELECT SUM(cost) AS totalExpenditure FROM expenditure";
+
+  db.query(sqlIncome, (err, resultIncome) => {
+    if (err) {
+      console.error("Error calculating total income:", err);
+      return res
+        .status(500)
+        .json({ error: "An error occurred while calculating total income." });
+    }
+
+    db.query(sqlExpenditure, (err, resultExpenditure) => {
+      if (err) {
+        console.error("Error calculating total expenditure:", err);
+        return res
+          .status(500)
+          .json({
+            error: "An error occurred while calculating total expenditure.",
+          });
+      }
+
+      const totalIncome = resultIncome[0].totalIncome || 0;
+      const totalExpenditure = resultExpenditure[0].totalExpenditure || 0;
+      const difference = totalIncome - totalExpenditure;
+
+      res.status(200).json({
+        totalIncome,
+        totalExpenditure,
+        difference,
+      });
+    });
+  });
+});
+
+// ...
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

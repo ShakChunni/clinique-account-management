@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="styles.css" />
+
+    <!-- Include jQuery for AJAX requests -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </head>
+  <body>
+    <div class="dashboard">
+      <div class="header">
+        <div class="logout" onclick="window.location.href = '../index.html'">
+          <i class="fas fa-sign-out-alt"></i>
+        </div>
+        <h1>Admin Dashboard</h1>
+      </div>
+
+      <div class="stats-container">
+        <div class="stat income">
+          <div class="info">
+            <p class="title">
+              <a href="income.html"> Total Income </a>
+            </p>
+            <p class="amount" id="totalIncome"> Calculating...</p>
+          </div>
+        </div>
+
+        <div class="stat expenditure">
+          <div class="info">
+            <p class="title">
+              <a href="expenditure.html"> Total Expenditure </a>
+            </p>
+            <p class="amount" id="totalExpenditure">&#2547; Calculating...</p>
+          </div>
+        </div>
+
+        <div class="stat difference">
+          <div class="info">
+            <p class="title">Difference</p>
+            <p class="amount" id="difference">&#2547; Calculating...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add JavaScript to fetch data from the server and update the UI -->
+    <script>
+      $(document).ready(function () {
+        // Fetch income and expenditure data from the server
+        $.get("/getIncomeExpenditure", function (data) {
+          $("#totalIncome").text(
+            "&#2547; " + data.totalIncome.toFixed(2).toLocaleString()
+          );
+          $("#totalExpenditure").text(
+            "&#2547; " + data.totalExpenditure.toFixed(2).toLocaleString()
+          );
+          $("#difference").text(
+            "&#2547; " + data.difference.toFixed(2).toLocaleString()
+          );
+        });
+      });
+    </script>
+  </body>
+</html>
