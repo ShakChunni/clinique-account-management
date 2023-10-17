@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Expenditure List</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Expenditure List</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Description</th>
+            <th>Image</th>
+            <th>Cost</th>
+          </tr>
+        </thead>
+        <tbody id="expenditureTable">
+          <!-- Data will be dynamically inserted here -->
+        </tbody>
+      </table>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        // Fetch expenditure data from the server
+        $.get("/getExpenditure", function (data) {
+          const expenditureTable = $("#expenditureTable");
+
+          if (data.length === 0) {
+            expenditureTable.append(
+              "<tr><td colspan='4'>No data available.</td></tr>"
+            );
+          } else {
+            data.forEach(function (row) {
+              expenditureTable.append(`
+                <tr>
+                  <td>${row.id}</td>
+                  <td>${row.description}</td>
+                    <td><img src="../uploads/${
+                      row.image_name
+                    }" alt="${row.image_name}" width="100"></td>
+                  <td>&#2547;${row.cost.toFixed(2)}</td>
+                </tr>
+              `);
+            });
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

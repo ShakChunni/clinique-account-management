@@ -339,11 +339,9 @@ app.get("/getIncomeExpenditure", (req, res) => {
     db.query(sqlExpenditure, (err, resultExpenditure) => {
       if (err) {
         console.error("Error calculating total expenditure:", err);
-        return res
-          .status(500)
-          .json({
-            error: "An error occurred while calculating total expenditure.",
-          });
+        return res.status(500).json({
+          error: "An error occurred while calculating total expenditure.",
+        });
       }
 
       const totalIncome = resultIncome[0].totalIncome || 0;
@@ -360,6 +358,35 @@ app.get("/getIncomeExpenditure", (req, res) => {
 });
 
 // ...
+// Endpoint to retrieve all income data
+app.get("/getIncome", (req, res) => {
+  const sql = "SELECT * FROM patient ORDER BY id";
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.error("Error fetching income data from the database:", err);
+      res
+        .status(500)
+        .json({ error: "An error occurred while fetching income data." });
+    } else {
+      res.status(200).json(result);
+    }
+  });
+});
+
+// Endpoint to retrieve all expenditure data
+app.get("/getExpenditure", (req, res) => {
+  const sql = "SELECT * FROM expenditure";
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.error("Error fetching expenditure data from the database:", err);
+      res
+        .status(500)
+        .json({ error: "An error occurred while fetching expenditure data." });
+    } else {
+      res.status(200).json(result);
+    }
+  });
+});
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

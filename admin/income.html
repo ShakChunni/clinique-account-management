@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Income List</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Income List</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Contact</th>
+            <th>Date</th>
+            <th>Admission Fee</th>
+            <th>otCharge</th>
+            <th>ServiceCharge</th>
+            <th>Total Income</th>
+          </tr>
+        </thead>
+        <tbody id="incomeTable">
+          <!-- Data will be dynamically inserted here -->
+        </tbody>
+      </table>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        // Fetch income data from the server
+        $.get("/getIncome", function (data) {
+          const incomeTable = $("#incomeTable");
+
+          if (data.length === 0) {
+            incomeTable.append(
+              "<tr><td colspan='6'>No data available.</td></tr>"
+            );
+          } else {
+            data.forEach(function (row) {
+              const totalIncome =
+                row.admissionFee + row.otCharge + row.serviceCharge;
+              incomeTable.append(`
+                            <tr>
+                                <td>${row.id}</td>
+                                <td>${row.name}</td>
+                                <td>${row.age}</td>
+                                <td>${row.contact}</td>
+                                <td>${row.date}</td>
+                                <td>&#2547;${row.admissionFee.toFixed(2)}</td>
+                                <td>&#2547;${row.otCharge.toFixed(2)}</td>
+                                <td>&#2547;${row.serviceCharge.toFixed(2)}</td>
+                                <td>&#2547;${totalIncome.toFixed(2)}</td>
+                            </tr>
+                        `);
+            });
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

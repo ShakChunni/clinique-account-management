@@ -19,30 +19,34 @@
       </div>
 
       <div class="stats-container">
-        <div class="stat income">
-          <div class="info">
-            <p class="title">
-              <a href="income.html"> Total Income </a>
-            </p>
-            <p class="amount" id="totalIncome"> Calculating...</p>
+        <a href="income.html" class="stat-link">
+          <div class="stat">
+            <i class="fas fa-coins icon"></i>
+            <div class="info">
+              <p class="title">Total Income</p>
+              <p class="amount" id="totalIncome">Calculating...</p>
+            </div>
           </div>
-        </div>
+        </a>
+        <a href="expenditure.html" class="stat-link">
+          <div class="stat">
+            <i class="fas fa-shopping-cart icon"></i>
+            <div class="info">
+              <p class="title">Total Expenditure</p>
+              <p class="amount" id="totalExpenditure">Calculating...</p>
+            </div>
+          </div>
+        </a>
 
-        <div class="stat expenditure">
-          <div class="info">
-            <p class="title">
-              <a href="expenditure.html"> Total Expenditure </a>
-            </p>
-            <p class="amount" id="totalExpenditure">&#2547; Calculating...</p>
+        <a href="#" class="stat-link">
+          <div class="stat">
+            <i class="fas fa-chart-line icon"></i>
+            <div class="info">
+              <p class="title">Difference</p>
+              <p class="amount" id="difference">Calculating...</p>
+            </div>
           </div>
-        </div>
-
-        <div class="stat difference">
-          <div class="info">
-            <p class="title">Difference</p>
-            <p class="amount" id="difference">&#2547; Calculating...</p>
-          </div>
-        </div>
+        </a>
       </div>
     </div>
 
@@ -52,13 +56,13 @@
         // Fetch income and expenditure data from the server
         $.get("/getIncomeExpenditure", function (data) {
           $("#totalIncome").text(
-            "&#2547; " + data.totalIncome.toFixed(2).toLocaleString()
+            "৳ " + data.totalIncome.toFixed(2).toLocaleString()
           );
           $("#totalExpenditure").text(
-            "&#2547; " + data.totalExpenditure.toFixed(2).toLocaleString()
+            "৳ " + data.totalExpenditure.toFixed(2).toLocaleString()
           );
           $("#difference").text(
-            "&#2547; " + data.difference.toFixed(2).toLocaleString()
+            "৳ " + data.difference.toFixed(2).toLocaleString()
           );
         });
       });
