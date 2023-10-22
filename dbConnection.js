@@ -49,12 +49,39 @@ app.get("/clinique-accounts", (req, res) => {
   res.sendFile(__dirname + "/operators/add-patient.html");
 });
 
+//addmitting new patient
 app.post("/formPost", (req, res) => {
   console.log("Received a POST request to /formPost");
   const { name, age, contact, admissionFee, date } = req.body;
   const sql =
     "INSERT INTO patient (name, age, contact, admissionFee, date) VALUES (?, ?, ?, ?, ?)";
   const values = [name, age, contact, admissionFee, date];
+
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      console.error("Error inserting data into the database:", err);
+      res
+        .status(500)
+        .json({ error: "An error occurred while adding the patient." });
+    } else {
+      console.log("Data inserted into the database.");
+      res.status(200).json({ message: "Patient added successfully." });
+    }
+  });
+});
+
+// Pathology
+
+app.get("/clinique-accounts", (req, res) => {
+  res.sendFile(__dirname + "/operators/pathology.html");
+});
+app.post("/addPathology", (req, res) => {
+  console.log("Received a POST request to /addPathology");
+  const { name, age, contact, totalCost, totalPaid, dueAmount, date } =
+    req.body;
+  const sql =
+    "INSERT INTO patient (name, age, contact, pathologyCost, totalPaid, dueAmount, date) VALUES (?, ?, ?, ?, ?, ?, ?)";
+  const values = [name, age, contact, totalCost, totalPaid, dueAmount, date];
 
   db.query(sql, values, (err, result) => {
     if (err) {
@@ -101,7 +128,7 @@ app.post("/update-patient/:id", (req, res) => {
   const patientId = req.params.id;
   const { otCharge, serviceCharge } = req.body;
 
-  const sql = "UPDATE patient SET otCharge = ?, serviceCharge = ? WHERE id = ?";
+  const sql = "UPDATE patient SET otCharge = ?, serviceCharge = ?,  WHERE id = ?";
   const values = [otCharge, serviceCharge, patientId];
 
   db.query(sql, values, (err, result) => {

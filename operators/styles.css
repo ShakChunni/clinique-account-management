@@ -21,7 +21,7 @@ h1 {
   display: flex;
   flex-wrap: wrap; /* Allow options to wrap to the next row if needed */
   justify-content: space-around;
-  margin-top: 20px;
+  margin-top: 40px;
 }
 
 a {
@@ -74,6 +74,25 @@ a:hover {
 /* Add this style to remove the underline on hover */
 .option a:hover {
   text-decoration: none;
+}
+
+/* Add this CSS to make the icons smaller and center them vertically */
+.option label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Add this CSS to make the overall box smaller */
+.small-box {
+  width: 100px; /* Adjust the width as needed */
+  padding: 10px;
+  /* Other styling for the small box */
+}
+
+.icon {
+  font-size: 24px; /* Adjust the icon size as needed */
+  color: #555;
 }
 
 .logout {
