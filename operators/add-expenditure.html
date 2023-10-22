@@ -31,7 +31,6 @@
           </div>
           <div class="form-group">
             <label for="image" class="file-label">
-              <span class="file-text">Choose a file</span>
               <input
                 type="file"
                 id="image"
@@ -40,9 +39,17 @@
                 class="file-input"
                 required
               />
+              <span class="file-text">Choose a file</span>
+              <button
+                class="clear-image-button"
+                type="button"
+                style="display: none"
+              >
+                <i class="fas fa-times"></i> Clear Image
+              </button>
             </label>
             <div class="selected-image-message" style="display: none">
-              Image selected
+              <span id="selected-image-name">Image selected</span>
             </div>
           </div>
 
@@ -52,6 +59,7 @@
         </form>
       </div>
     </div>
+
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const expenditureForm = document.getElementById("expenditure-form");

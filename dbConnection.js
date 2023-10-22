@@ -32,12 +32,14 @@ app.use("/admin", express.static(__dirname + "/admin"));
 // multer for handling file uploads
 const storage = multer.diskStorage({
   destination: (req, file, callback) => {
-    callback(null, "uploads/"); // destination directory for uploaded files
+    callback(null, "images/"); // destination directory for uploaded files {doesnt work outside of admin folder, why?}
   },
   filename: (req, file, callback) => {
     callback(null, Date.now() + "-" + file.originalname);
   },
 });
+
+app.use("/images", express.static(__dirname + "/images"));
 
 const upload = multer({ storage });
 app.use(upload.single("image"));

@@ -306,13 +306,14 @@ h1 {
 }
 /* Style for the Add Expenditure Page */
 .add-expenditure-form {
-  background-color: #fff; /* White background */
-  padding: 40px;
+  background-color: #f7f7f7; /* Light gray background */
+  padding: 50px;
   border-radius: 10px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
   width: 80%; /* Adjusted width for the form */
   max-width: 600px; /* Maximum width for larger screens */
   margin: 20px auto; /* Center the form horizontally */
+  text-align: center; /* Center content */
 }
 
 .add-expenditure-form h1 {
@@ -332,11 +333,17 @@ h1 {
 /* Style for the file input label */
 .add-expenditure-form .file-label {
   display: inline-block;
-  padding: 12px; /* Larger input padding */
-  border: 1px solid #ccc;
+  padding: 14px; /* Larger input padding */
+  border: 4px dashed #007bff; /* Blue dashed border */
   border-radius: 5px;
   font-size: 18px; /* Larger input font size */
   cursor: pointer; /* Change cursor to a hand on hover */
+  transition: border 0.3s ease; /* Smooth border transition */
+}
+
+/* Style for the file label when hovering over the input */
+.add-expenditure-form .file-input:hover + .file-label {
+  border-color: #004bff; /* Darker blue border on hover */
 }
 
 /* Style for the file input */
@@ -351,8 +358,10 @@ h1 {
 }
 
 /* Style for the file text (when a file is chosen) */
-.add-expenditure-form .file-input:not(:placeholder-shown) + .file-text:hover {
-  text-decoration: underline; /* Underline text on hover */
+.add-expenditure-form .file-input:not(:placeholder-shown) + .file-text::before {
+  content: "File chosen: ";
+  color: #007bff; /* Blue text color for chosen file */
+  font-weight: bold; /* Bold text for chosen file */
 }
 
 .add-expenditure-form input[type="text"],
@@ -364,6 +373,13 @@ h1 {
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 18px; /* Larger input font size */
+}
+
+/* Style for the validation message */
+.add-expenditure-form .validation-message {
+  color: #ff0000; /* Red text color for error message */
+  font-size: 16px; /* Smaller font size for the message */
+  display: none; /* Initially hidden */
 }
 
 .add-expenditure-form button[type="submit"] {
