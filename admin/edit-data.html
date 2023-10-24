@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Patient Data</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="edit-data-container">
+      <h1 class="edit-data-title">Edit Patient Data</h1>
+      <form id="editForm">
+        <input type="hidden" id="patientId" name="patientId" value="" />
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" disabled />
+        </div>
+        <div class="form-group">
+          <label for="age">Age</label>
+          <input type="number" id="age" name="age" required />
+        </div>
+        <div class="form-group">
+          <label for="contact">Contact</label>
+          <input type="text" id="contact" name="contact" required />
+        </div>
+        <div class="form-group">
+          <label for="otCharge">OT Charge</label>
+          <input type="number" id="otCharge" name="otCharge" required />
+        </div>
+        <div class="form-group">
+          <label for="serviceCharge">Service Charge</label>
+          <input
+            type="number"
+            id="serviceCharge"
+            name="serviceCharge"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="admissionFee">Admission Fee</label>
+          <input type="number" id="admissionFee" name="admissionFee" required />
+        </div>
+        <div class="form-group">
+          <label for="pathologyCost">Pathology Cost</label>
+          <input
+            type="number"
+            id="pathologyCost"
+            name="pathologyCost"
+            required
+          />
+        </div>
+        <button type="submit">Save Changes</button>
+      </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        const queryParams = new URLSearchParams(window.location.search);
+        const patientId = queryParams.get("id");
+
+        if (patientId) {
+          // Fetch patient data from the server based on patientId
+          $.get(`/getPatientAdmin?id=${patientId}`, function (data) {
+            if (data) {
+              $("#patientId").val(data.id);
+              $("#name").val(data.name);
+              $("#age").val(data.age);
+              $("#contact").val(data.contact);
+              $("#otCharge").val(data.otCharge);
+              $("#serviceCharge").val(data.serviceCharge);
+              $("#admissionFee").val(data.admissionFee);
+              $("#pathologyCost").val(data.pathologyCost);
+            } else {
+              alert("Patient not found.");
+              // Redirect to the income list page or handle this case as needed
+            }
+          });
+        } else {
+          alert("Invalid patient ID.");
+          // Redirect to the income list page or handle this case as needed
+        }
+
+        $("#editForm").submit(function (event) {
+          event.preventDefault();
+
+          // Gather the updated data
+          const updatedData = {
+            id: $("#patientId").val(),
+            age: $("#age").val(),
+            contact: $("#contact").val(),
+            otCharge: $("#otCharge").val(),
+            serviceCharge: $("#serviceCharge").val(),
+            admissionFee: $("#admissionFee").val(),
+            pathologyCost: $("#pathologyCost").val(),
+          };
+
+          // Send the updated data to the server
+          $.post("/updatePatientAdmin", updatedData, function (response) {
+            if (response.success) {
+              // Redirect to the income list page or handle success as needed
+              window.location.href = "income.html";
+            } else {
+              alert("Failed to update patient data.");
+              // Handle the error as needed
+            }
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

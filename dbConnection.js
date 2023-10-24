@@ -128,7 +128,8 @@ app.post("/update-patient/:id", (req, res) => {
   const patientId = req.params.id;
   const { otCharge, serviceCharge } = req.body;
 
-  const sql = "UPDATE patient SET otCharge = ?, serviceCharge = ?,  WHERE id = ?";
+  const sql =
+    "UPDATE patient SET otCharge = ?, serviceCharge = ?,  WHERE id = ?";
   const values = [otCharge, serviceCharge, patientId];
 
   db.query(sql, values, (err, result) => {
@@ -413,6 +414,48 @@ app.get("/getExpenditure", (req, res) => {
         .json({ error: "An error occurred while fetching expenditure data." });
     } else {
       res.status(200).json(result);
+    }
+  });
+});
+
+// Route to get patient data for editing
+app.get("/getPatientAdmin", (req, res) => {
+  const patientId = req.query.id;
+  const query = "SELECT * FROM patient WHERE id = ?";
+
+  db.query(query, [patientId], (err, result) => {
+    if (err) {
+      console.log(err);
+      res.json(null);
+    } else {
+      if (result.length > 0) {
+        res.json(result[0]);
+      } else {
+        res.json(null); // Patient not found
+      }
+    }
+  });
+});
+
+// Route to update patient data
+app.post("/updatePatientAdmin", (req, res) => {
+  const patientId = req.body.id;
+  const updatedData = {
+    age: req.body.age,
+    contact: req.body.contact,
+    otCharge: req.body.otCharge,
+    serviceCharge: req.body.serviceCharge,
+    admissionFee: req.body.admissionFee,
+    pathologyCost: req.body.pathologyCost,
+  };
+  const query = "UPDATE patient SET ? WHERE id = ?";
+
+  db.query(query, [updatedData, patientId], (err, result) => {
+    if (err) {
+      console.log(err);
+      res.json({ success: false });
+    } else {
+      res.json({ success: true });
     }
   });
 });

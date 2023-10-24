@@ -12,15 +12,17 @@
       <table>
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Name</th>
+            <th class="bold-text">ID</th>
+            <th class="bold-text">Name</th>
             <th>Age</th>
             <th>Contact</th>
             <th>Date</th>
             <th>Admission Fee</th>
-            <th>otCharge</th>
-            <th>ServiceCharge</th>
+            <th>OT Charge</th>
+            <th>Service Charge</th>
+            <th>Pathology Charge</th>
             <th>Total Income</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody id="incomeTable">
@@ -42,20 +44,27 @@
           } else {
             data.forEach(function (row) {
               const totalIncome =
-                row.admissionFee + row.otCharge + row.serviceCharge;
+                row.admissionFee +
+                row.otCharge +
+                row.serviceCharge +
+                row.pathologyCost;
               incomeTable.append(`
-                            <tr>
-                                <td>${row.id}</td>
-                                <td>${row.name}</td>
-                                <td>${row.age}</td>
-                                <td>${row.contact}</td>
-                                <td>${row.date}</td>
-                                <td>&#2547;${row.admissionFee.toFixed(2)}</td>
-                                <td>&#2547;${row.otCharge.toFixed(2)}</td>
-                                <td>&#2547;${row.serviceCharge.toFixed(2)}</td>
-                                <td>&#2547;${totalIncome.toFixed(2)}</td>
-                            </tr>
-                        `);
+              <tr>
+                <td class="bold-text">${row.id}</td>
+                <td class="bold-text">${row.name}</td>
+                <td>${row.age}</td>
+                <td>${row.contact}</td>
+                <td>${row.date}</td>
+                <td>&#2547;${row.admissionFee.toFixed(2)}</td>
+                <td>&#2547;${row.otCharge.toFixed(2)}</td>
+                <td>&#2547;${row.serviceCharge.toFixed(2)}</td>
+                <td>&#2547;${row.pathologyCost.toFixed(2)}</td>
+                <td>&#2547;${totalIncome.toFixed(2)}</td>
+                <td><a class="edit-button" href="edit-data.html?id=${
+                  row.id
+                }">Edit</a></td>
+              </tr>
+            `);
             });
           }
         });
