@@ -308,3 +308,36 @@ button[type="submit"] {
 button[type="submit"]:hover {
   background-color: #297dbb; /* Slightly darker blue on hover */
 }
+
+/* Style for the search container */
+.search-container {
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* Style for the search input */
+#searchIdInput {
+  padding: 10px;
+  width: 200px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+/* Style for the search button */
+#searchButton {
+  background-color: #3498db;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/* Hover effect for the search button */
+#searchButton:hover {
+  background-color: #297dbb;
+}

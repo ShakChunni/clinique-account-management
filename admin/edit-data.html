@@ -25,7 +25,13 @@
         </div>
         <div class="form-group">
           <label for="otCharge">OT Charge</label>
-          <input type="number" id="otCharge" name="otCharge" required />
+          <input
+            type="number"
+            id="otCharge"
+            name="otCharge"
+            required
+            step="0.01"
+          />
         </div>
         <div class="form-group">
           <label for="serviceCharge">Service Charge</label>
@@ -34,6 +40,7 @@
             id="serviceCharge"
             name="serviceCharge"
             required
+            step="0.01"
           />
         </div>
         <div class="form-group">
@@ -47,6 +54,7 @@
             id="pathologyCost"
             name="pathologyCost"
             required
+            step="0.01"
           />
         </div>
         <button type="submit">Save Changes</button>

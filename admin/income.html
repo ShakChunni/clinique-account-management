@@ -9,6 +9,11 @@
   <body>
     <div class="container">
       <h1>Income List</h1>
+      <div class="search-container">
+        <input type="text" id="searchIdInput" placeholder="Search by ID" />
+        <button id="searchButton">Search</button>
+      </div>
+
       <table>
         <thead>
           <tr>
@@ -31,11 +36,15 @@
       </table>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <script>
       $(document).ready(function () {
-        // Fetch income data from the server
-        $.get("/getIncome", function (data) {
+        let allData = [];
+
+        // Function to render the income data table
+        function renderTable(data) {
           const incomeTable = $("#incomeTable");
+          incomeTable.empty(); // Clear the table content
 
           if (data.length === 0) {
             incomeTable.append(
@@ -49,24 +58,40 @@
                 row.serviceCharge +
                 row.pathologyCost;
               incomeTable.append(`
-              <tr>
-                <td class="bold-text">${row.id}</td>
-                <td class="bold-text">${row.name}</td>
-                <td>${row.age}</td>
-                <td>${row.contact}</td>
-                <td>${row.date}</td>
-                <td>&#2547;${row.admissionFee.toFixed(2)}</td>
-                <td>&#2547;${row.otCharge.toFixed(2)}</td>
-                <td>&#2547;${row.serviceCharge.toFixed(2)}</td>
-                <td>&#2547;${row.pathologyCost.toFixed(2)}</td>
-                <td>&#2547;${totalIncome.toFixed(2)}</td>
-                <td><a class="edit-button" href="edit-data.html?id=${
-                  row.id
-                }">Edit</a></td>
-              </tr>
-            `);
+                <tr>
+                  <td class="bold-text">${row.id}</td>
+                  <td class="bold-text">${row.name}</td>
+                  <td>${row.age}</td>
+                  <td>${row.contact}</td>
+                  <td>${row.date}</td>
+                  <td>&#2547;${row.admissionFee.toFixed(2)}</td>
+                  <td>&#2547;${row.otCharge.toFixed(2)}</td>
+                  <td>&#2547;${row.serviceCharge.toFixed(2)}</td>
+                  <td>&#2547;${row.pathologyCost.toFixed(2)}</td>
+                  <td>&#2547;${totalIncome.toFixed(2)}</td>
+                  <td><a class="edit-button" href="edit-data.html?id=${
+                    row.id
+                  }">Edit</a></td>
+                </tr>
+              `);
             });
           }
+        }
+
+        // Fetch income data from the server
+        $.get("/getIncome", function (data) {
+          // Store the data in the 'allData' array
+          allData = data;
+
+          // Render the initial income table
+          renderTable(data);
+        });
+
+        // Search button click event
+        $("#searchButton").click(function () {
+          const searchId = Number($("#searchIdInput").val()); // Convert input to a number
+          const searchData = allData.filter((item) => item.id === searchId);
+          renderTable(searchData);
         });
       });
     </script>
