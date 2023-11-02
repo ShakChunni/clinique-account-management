@@ -5,6 +5,7 @@ const port = 5000;
 const multer = require("multer");
 const PDFKit = require("pdfkit");
 const fs = require("fs");
+const path = require("path");
 
 const db = mysql.createConnection({
   host: "localhost",
@@ -129,7 +130,7 @@ app.post("/update-patient/:id", (req, res) => {
   const { otCharge, serviceCharge } = req.body;
 
   const sql =
-    "UPDATE patient SET otCharge = ?, serviceCharge = ?,  WHERE id = ?";
+    "UPDATE patient SET otCharge = ?, serviceCharge = ?  WHERE id = ?";
   const values = [otCharge, serviceCharge, patientId];
 
   db.query(sql, values, (err, result) => {
@@ -170,6 +171,14 @@ app.post("/add-expenditure", (req, res) => {
       res.status(200).json({ message: "Expenditure added successfully." });
     }
   });
+});
+
+app.get("/voucher.html", (req, res) => {
+  // Use path.join to create the correct path to the HTML file
+  const filePath = path.join(__dirname, "operators", "voucher.html");
+
+  // Send the file to the client
+  res.sendFile(filePath);
 });
 
 app.get("/generate-pdf", async (req, res) => {
@@ -255,6 +264,13 @@ app.get("/generate-pdf", async (req, res) => {
 });
 
 //final pdf
+app.get("/final-voucher.html", (req, res) => {
+  // Use path.join to create the correct path to the HTML file
+  const filePath = path.join(__dirname, "operators", "final-voucher.html");
+
+  // Send the file to the client
+  res.sendFile(filePath);
+});
 app.get("/generate-patient-pdf", (req, res) => {
   const patientId = req.query.patientId; // Retrieve patientId from the query parameter
   console.log("Received patientId:", patientId);

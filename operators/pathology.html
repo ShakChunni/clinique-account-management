@@ -42,74 +42,288 @@
               required
             />
           </div>
+
+          
+          
           <div class="form-group">
             <label for="blood-tests">Select Blood Tests</label>
             <div class="options" id="blood-tests">
               <div class="option small-box">
-                <label for="CBC">
+                <label for="TC,DC,HB%,ESR (Blood CP)">
                   <input
                     type="checkbox"
-                    id="CBC"
+                    id="TC,DC,HB%,ESR (Blood CP)"
                     name="blood-test"
-                    value="CBC"
+                    value="TC,DC,HB%,ESR (Blood CP)"
+                    data-cost="200"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>TC,DC,HB%,ESR (Blood CP)</p>
+                </label>
+              </div>
+              <div class="option small-box">
+                <label for="Platelet Count">
+                  <input
+                    type="checkbox"
+                    id="Platelet Count"
+                    name="blood-test"
+                    value="Platelet Count"
+                    data-cost="200"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>Platelet Count</p>
+                </label>
+              </div>
+              <div class="option small-box">
+                <label for="RBS (Random Blood Sugar)">
+                  <input
+                    type="checkbox"
+                    id="RBS (Random Blood Sugar)"
+                    name="blood-test"
+                    value="RBS (Random Blood Sugar)"
                     data-cost="100"
                   />
                   <i class="fas fa-vial icon"></i>
-                  <p>CBC</p>
+                  <p>RBS (Random Blood Sugar)</p>
                 </label>
               </div>
               <div class="option small-box">
-                <label for="S GPD">
+                <label for="RBS (Random Blood Sugar) with CUS">
                   <input
                     type="checkbox"
-                    id="S GPD"
+                    id="RBS (Random Blood Sugar) with CUS"
                     name="blood-test"
-                    value="S GPD"
-                    data-cost="75"
+                    value="RBS (Random Blood Sugar) with CUS"
+                    data-cost="200"
                   />
                   <i class="fas fa-vial icon"></i>
-                  <p>S GPD</p>
+                  <p>RBS (Random Blood Sugar) with CUS</p>
                 </label>
               </div>
               <div class="option small-box">
-                <label for="S CREATENENIN">
+                <label for="2 Hours After Breakfast (2HABF)">
                   <input
                     type="checkbox"
-                    id="S CREATENENIN"
+                    id="2 Hours After Breakfast (2HABF)"
                     name="blood-test"
-                    value="S CREATENENIN"
-                    data-cost="275"
+                    value="2 Hours After Breakfast (2HABF)"
+                    data-cost="100"
                   />
                   <i class="fas fa-vial icon"></i>
-                  <p>S CREATENENIN</p>
+                  <p>2 Hours After Breakfast (2HABF)</p>
                 </label>
               </div>
+
               <div class="option small-box">
-                <label for="ALP">
+                <label for="2 Hours After Breakfast (2HABF) with CUS">
                   <input
                     type="checkbox"
-                    id="ALP"
+                    id="2 Hours After Breakfast (2HABF) with CUS"
                     name="blood-test"
-                    value="ALP"
-                    data-cost="275"
+                    value="2 Hours After Breakfast (2HABF) with CUS"
+                    data-cost="200"
                   />
                   <i class="fas fa-vial icon"></i>
-                  <p>ALP</p>
+                  <p>2 Hours After Breakfast (2HABF) with CUS</p>
                 </label>
               </div>
+
               <div class="option small-box">
-                <label for="SGOT">
+                <label for="2 Hours After 75gm Glucose Drink">
                   <input
                     type="checkbox"
-                    id="SGOT"
+                    id="2 Hours After 75gm Glucose Drink"
                     name="blood-test"
-                    value="SGOT"
-                    data-cost="275"
+                    value="2 Hours After 75gm Glucose Drink"
+                    data-cost="100"
                   />
                   <i class="fas fa-vial icon"></i>
-                  <p>SGOT</p>
+                  <p>2 Hours After 75gm Glucose Drink</p>
                 </label>
               </div>
+
+              <div class="option small-box">
+                <label for="2 Hours After 75gm Glucose Drink with CUS">
+                  <input
+                    type="checkbox"
+                    id="2 Hours After 75gm Glucose Drink with CUS"
+                    name="blood-test"
+                    value="2 Hours After 75gm Glucose Drink with CUS"
+                    data-cost="200"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>2 Hours After 75gm Glucose Drink with CUS</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="OGTT">
+                  <input
+                    type="checkbox"
+                    id="OGTT"
+                    name="blood-test"
+                    value="OGTT"
+                    data-cost="300"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>OGTT</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="Widal Test">
+                  <input
+                    type="checkbox"
+                    id="Widal Test"
+                    name="blood-test"
+                    value="Widal Test"
+                    data-cost="500"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>Widal Test</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="Electrolyte">
+                  <input
+                    type="checkbox"
+                    id="Electrolyte"
+                    name="blood-test"
+                    value="Electrolyte"
+                    data-cost="1000"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>Electrolyte</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="Free Trilodothyorine (FT3)">
+                  <input
+                    type="checkbox"
+                    id="Free Trilodothyorine (FT3)"
+                    name="blood-test"
+                    value="Free Trilodothyorine (FT3)"
+                    data-cost="1000"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>Free Trilodothyorine (FT3)</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="Free Thyroxine (FT4)">
+                  <input
+                    type="checkbox"
+                    id="Free Thyroxine (FT4)"
+                    name="blood-test"
+                    value="Free Thyroxine (FT4)"
+                    data-cost="1000"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>Free Thyroxine (FT4)</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="T3, T4 & TSH">
+                  <input
+                    type="checkbox"
+                    id="T3, T4 & TSH"
+                    name="blood-test"
+                    value="T3, T4 & TSH"
+                    data-cost="2400"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>T3, T4 & TSH</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="LH">
+                  <input
+                    type="checkbox"
+                    id="LH"
+                    name="blood-test"
+                    value="LH"
+                    data-cost="1200"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>LH</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="FSH">
+                  <input
+                    type="checkbox"
+                    id="FSH"
+                    name="blood-test"
+                    value="FSH"
+                    data-cost="1200"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>FSH</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="Prolactin">
+                  <input
+                    type="checkbox"
+                    id="Prolactin"
+                    name="blood-test"
+                    value="Prolactin"
+                    data-cost="1200"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>Prolactin</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="Testosterone">
+                  <input
+                    type="checkbox"
+                    id="Testosterone"
+                    name="blood-test"
+                    value="Testosterone"
+                    data-cost="1200"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>Testosterone</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="CA-125">
+                  <input
+                    type="checkbox"
+                    id="CA-125"
+                    name="blood-test"
+                    value="CA-125"
+                    data-cost="1200"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>CA-125</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="Beta HCG">
+                  <input
+                    type="checkbox"
+                    id="Beta HCG"
+                    name="blood-test"
+                    value="Beta HCG"
+                    data-cost="1200"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>Beta HCG</p>
+                </label>
+              </div>
+
               <!-- Add more blood test options as needed -->
             </div>
           </div>
