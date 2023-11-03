@@ -46,10 +46,20 @@
         const serviceChargeSpan = document.getElementById(
           "service-charge-span"
         );
+        const pathologyPaidSpan = document.getElementById(
+          "pathology-paid-span"
+        );
+        const dueAmountSpan = document.getElementById("due-amount-span");
+
+        // Input fields
         const otChargeInput = document.getElementById("ot-charge-input");
         const serviceChargeInput = document.getElementById(
           "service-charge-input"
         );
+        const pathologyPaidInput = document.getElementById(
+          "pathology-paid-input"
+        );
+
         const saveButton = document.getElementById("save-button");
 
         searchButton.addEventListener("click", async () => {
@@ -62,50 +72,68 @@
           if (response.ok) {
             // Display the patient information
             const patientInfo = `
-        <h2>Patient Information</h2>
-        <div class="patient-field">
-            <label>ID:</label>
-            <span>${data.id}</span>
-        </div>
-        <div class="patient-field">
-            <label>Name:</label>
-            <span>${data.name}</span>
-        </div>
-        <div class="patient-field">
-            <label>Age:</label>
-            <span>${data.age}</span>
-        </div>
-        <div class="patient-field">
-            <label>Contact:</label>
-            <span>${data.contact}</span>
-        </div>
-        <div class="patient-field">
-            <label>Admission Charge:</label>
-            <span>${data.admissionFee}</span>
-        </div>
-        <div class="patient-field">
-            <label>OT Charge:</label>
-            <span id="ot-charge-span" contentEditable="true">${data.otCharge}</span>
-        </div>
-        <div class="patient-field">
-            <label>Service Charge:</label>
-            <span id="service-charge-span" contentEditable="true">${data.serviceCharge}</span>
-        </div>
-      `;
+          <h2>Patient Information</h2>
+          <div class="patient-field">
+              <label>ID:</label>
+              <span>${data.id}</span>
+          </div>
+          <div class="patient-field">
+              <label>Name:</label>
+              <span>${data.name}</span>
+          </div>
+          <div class="patient-field">
+              <label>Age:</label>
+              <span>${data.age}</span>
+          </div>
+          <div class="patient-field">
+              <label>Contact:</label>
+              <span>${data.contact}</span>
+          </div>
+          <div class="patient-field">
+              <label>Admission Charge:</label>
+              <span>${data.admissionFee}</span>
+          </div>
+          <div class="patient-field">
+              <label>OT Charge:</label>
+              <span id="ot-charge-span" contentEditable="true">${data.otCharge}</span>
+          </div>
+          <div class="patient-field">
+              <label>Service Charge:</label>
+              <span id="service-charge-span" contentEditable="true">${data.serviceCharge}</span>
+          </div>
+          <div class="patient-field">
+              <label>Pathology Cost:</label>
+              <span id="pathology-cost-span">${data.pathologyCost}</span>
+          </div>
+          <div class="patient-field">
+              <label>Pathology Paid:</label>
+              <span id="pathology-paid-span" contentEditable="true">${data.pathologyPaid}</span>
+          </div>
+          <div class="patient-field">
+                <label>Due Amount:</label>
+                  <span id="due-amount-span">${data.dueAmount}</span>
+          </div>
+
+        `;
+
             searchResults.innerHTML = patientInfo;
             searchResults.style.display = "block";
 
-            // Enable editing for otCharge and serviceCharge
             otChargeSpan.style.display = "none";
             serviceChargeSpan.style.display = "none";
+            pathologyPaidSpan.style.display = "none";
+
             otChargeInput.style.display = "block";
             serviceChargeInput.style.display = "block";
+            pathologyPaidInput.style.display = "block";
+            dueAmountSpan.style.display = "block";
             saveButton.style.display = "block";
           } else {
             searchResults.innerHTML = "<p>Patient not found.</p>";
             searchResults.style.display = "block";
           }
         });
+
         saveButton.addEventListener("click", async () => {
           const patientId = patientIdInput.value;
           const otCharge =
@@ -113,13 +141,26 @@
           const serviceCharge = document.getElementById(
             "service-charge-span"
           ).textContent;
+          const pathologyPaid = document.getElementById(
+            "pathology-paid-span"
+          ).textContent;
+          const pathologyCost = document.getElementById(
+            "pathology-cost-span"
+          ).textContent;
+
+          const dueAmount = pathologyCost - pathologyPaid;
 
           const response = await fetch(`/update-patient/${patientId}`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ otCharge, serviceCharge }),
+            body: JSON.stringify({
+              otCharge,
+              serviceCharge,
+              pathologyPaid,
+              dueAmount,
+            }),
           });
 
           if (response.ok) {
@@ -128,6 +169,7 @@
             alert("Error updating patient data. Please try again.");
           }
         });
+
         const printButton = document.getElementById("print-button");
         printButton.addEventListener("click", async () => {
           const patientId = patientIdInput.value;

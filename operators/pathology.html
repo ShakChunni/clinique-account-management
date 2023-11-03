@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Add Patient - Clinic Management System</title>
-    <link rel="stylesheet" href="styles.css" />
+
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
@@ -13,6 +13,184 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
     />
+    <style>
+      /* Reset default browser styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+      }
+
+      .logout {
+        text-align: right;
+        cursor: pointer;
+        color: #007bff;
+        margin-bottom: 20px;
+      }
+
+      h1 {
+        font-size: 24px;
+        margin-bottom: 20px;
+      }
+
+      .add-patient-form {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 5px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 8px;
+      }
+
+      input[type="text"],
+      input[type="number"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 16px;
+      }
+
+      .options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 10px 0;
+      }
+
+      .option {
+        flex-basis: calc(33.33% - 10px);
+        background-color: #fff;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        transition: box-shadow 0.3s, background-color 0.3s;
+      }
+
+      .option:hover {
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+      }
+
+      .option input[type="checkbox"] {
+        margin-right: 10px;
+      }
+
+      .option input[type="checkbox"]:checked {
+        background-color: #5bc0de; /* Change this to your desired selected color */
+      }
+
+      .option input[type="checkbox"] + label {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+      }
+
+      .option input[type="checkbox"]:checked + label {
+        color: #fff; /* Change this to your desired text color for selected items */
+      }
+
+      .option p {
+        margin: 0;
+      }
+
+      .icon {
+        font-size: 24px;
+      }
+
+      .date-input {
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+      }
+
+      .date-input i {
+        margin-right: 10px;
+      }
+
+      input[type="submit"] {
+        background-color: #8a2be2; /* Purple-ish color */
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      input[type="text"]:read-only {
+        background-color: #f0f0f0;
+        color: #777;
+      }
+
+      /* Style the checkboxes */
+      input[type="checkbox"] {
+        background-color: #8a2be2; /* Purple-ish color */
+      }
+
+      /* Style the expanded blood test options */
+      .small-box {
+        display: none;
+        transition: box-shadow 0.3s;
+      }
+
+      /* Show expanded blood test options when the blood tests div is clicked */
+      #blood-tests:focus-within .small-box,
+      #blood-tests:hover .small-box {
+        display: flex;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+      }
+
+      /* Style the expanded blood test options when visible */
+
+      /* Style the expanded blood test options */
+      .small-box {
+        display: flex;
+        align-items: center;
+      }
+
+      /* Show expanded blood test options when the blood tests div is clicked */
+      #blood-tests:focus-within .small-box {
+        display: flex;
+      }
+
+      /* Submit button styles */
+      button[type="submit"] {
+        background-color: #8a2be2; /* Purple-ish color */
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      /* Add a hover effect for the button */
+      button[type="submit"]:hover {
+        background-color: #7739a7; /* Change this to your desired hover color */
+      }
+    </style>
+
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   </head>
   <body>
@@ -33,7 +211,7 @@
             <label for="patient-age">Patient Age</label>
             <input type="number" id="patient-age" name="patient-age" required />
           </div>
-          <div class "form-group">
+          <div class="form-group">
             <label for="contact-number">Contact Number</label>
             <input
               type="text"
@@ -43,8 +221,6 @@
             />
           </div>
 
-          
-          
           <div class="form-group">
             <label for="blood-tests">Select Blood Tests</label>
             <div class="options" id="blood-tests">
@@ -346,7 +522,8 @@
           <div class="form-group">
             <label for="admission-date">Admission Date</label>
             <div class="date-input">
-              <i class="far fa-calendar-alt"></i>
+              <i class="far fa-calendar-alt" style="margin-right: 10px"></i
+              ><!-- Added margin here -->
               <input
                 type="text"
                 id="admission-date"

@@ -81,7 +81,7 @@ app.post("/addPathology", (req, res) => {
   const { name, age, contact, totalCost, totalPaid, dueAmount, date } =
     req.body;
   const sql =
-    "INSERT INTO patient (name, age, contact, pathologyCost, totalPaid, dueAmount, date) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    "INSERT INTO patient (name, age, contact, pathologyCost, pathologyPaid, dueAmount, date) VALUES (?, ?, ?, ?, ?, ?, ?)";
   const values = [name, age, contact, totalCost, totalPaid, dueAmount, date];
 
   db.query(sql, values, (err, result) => {
@@ -127,11 +127,11 @@ app.get("/update-patient", (req, res) => {
 // Endpoint to update patient information
 app.post("/update-patient/:id", (req, res) => {
   const patientId = req.params.id;
-  const { otCharge, serviceCharge } = req.body;
+  const { otCharge, serviceCharge, pathologyPaid, dueAmount } = req.body;
 
   const sql =
-    "UPDATE patient SET otCharge = ?, serviceCharge = ?  WHERE id = ?";
-  const values = [otCharge, serviceCharge, patientId];
+    "UPDATE patient SET otCharge = ?, serviceCharge = ?, pathologyPaid = ? , dueAmount = ?  WHERE id = ?";
+  const values = [otCharge, serviceCharge, pathologyPaid, dueAmount, patientId];
 
   db.query(sql, values, (err, result) => {
     if (err) {
@@ -341,7 +341,114 @@ app.get("/generate-patient-pdf", (req, res) => {
       [
         "Service Charge",
         `${String.fromCharCode(0x09f3)}${patientData.serviceCharge}`,
-      ], // Insert Taka symbol
+      ],
+      [
+        "Pathology Charge",
+        `${String.fromCharCode(0x09f3)}${patientData.pathologyCost}`,
+      ],
+      // Insert Taka symbol
+    ];
+
+    for (let i = 0; i < rows.length; i++) {
+      const [label, value] = rows[i];
+      const yPos = tableY + i * rowHeight; // Removed + 1
+      doc
+        .font(__dirname + "/fonts/OpenSans-Regular.ttf")
+        .text(label, 50, yPos, cellStyle)
+        .font(takaFont) // Use the Taka symbol font
+        .text(value, 300, yPos, cellStyle);
+
+      if (i < rows.length - 1) {
+        const lineYPos = yPos + rowHeight;
+        doc
+          .moveTo(col1X, lineYPos)
+          .lineTo(col2X + 300, lineYPos)
+          .stroke();
+      }
+    }
+
+    doc.end();
+  });
+});
+
+//pathology pdf
+app.get("/pathology-voucher.html", (req, res) => {
+  // Use path.join to create the correct path to the HTML file
+  const filePath = path.join(__dirname, "operators", "pathology-voucher.html");
+
+  // Send the file to the client
+  res.sendFile(filePath);
+});
+app.get("/generate-patient-pathology-pdf", (req, res) => {
+  const patientId = req.query.patientId; // Retrieve patientId from the query parameter
+  console.log("Received patientId:", patientId);
+
+  // Fetch patient data from the database
+  const sql = "SELECT * FROM patient WHERE id = ?";
+  db.query(sql, [patientId], (err, result) => {
+    if (err) {
+      console.error("Error fetching patient data:", err);
+      return res
+        .status(500)
+        .json({ error: "An error occurred while fetching patient data." });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({ message: "Patient not found." });
+    }
+
+    const patientData = result[0];
+
+    const doc = new PDFKit();
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename=patient_information_${patientId}.pdf`
+    );
+
+    doc.pipe(res);
+
+    // Styling for the PDF
+    const titleStyle = {
+      fontSize: 35,
+      font: __dirname + "/fonts/OpenSans-Bold.ttf",
+      align: "center",
+      margin: 30,
+    };
+
+    const cellStyle = {
+      font: __dirname + "/fonts/OpenSans-Regular.ttf",
+      fontSize: 35,
+      padding: 10,
+      margin: 0, // Removed extra margin
+    };
+
+    const takaFont = __dirname + "/fonts/FN Hasan Kolkata Unicode.ttf"; // Taka symbol font
+
+    doc.text("Patient Admission Form", { ...titleStyle, fontSize: 35 });
+
+    const tableX = 50;
+    const tableY = 150;
+    const col1X = tableX;
+    const col2X = tableX + 300;
+
+    doc.font(__dirname + "/fonts/OpenSans-Bold.ttf");
+
+    const rowHeight = 40;
+    const rows = [
+      ["Patient ID", patientData.id],
+      ["Patient Name", patientData.name],
+      ["Patient Age", patientData.age],
+      ["Contact Number", patientData.contact],
+      ["Date", patientData.date],
+      [
+        "Pathology Charge",
+        `${String.fromCharCode(0x09f3)}${patientData.pathologyCost}`,
+      ],
+
+      ["Paid Amount", `${String.fromCharCode(0x09f3)}${patientData.totalCost}`],
+      ["Due Amount", `${String.fromCharCode(0x09f3)}${patientData.dueAmount}`],
+      // Insert Taka symbol
     ];
 
     for (let i = 0; i < rows.length; i++) {

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PDF Voucher</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="voucher-container">
+      <h1>Pathology PDF</h1>
+      <a id="downloadLink" class="download-button" href="">
+        <span>Download PDF</span>
+        <i class="fas fa-download"></i>
+      </a>
+    </div>
+    <script>
+      // JavaScript to populate the patient ID from the query parameter
+      const urlParams = new URLSearchParams(window.location.search);
+      const patientId = urlParams.get("patientId");
+      document.getElementById(
+        "downloadLink"
+      ).href = `/generate-patient-pathology-pdf?patientId=${patientId}`;
+    </script>
+  </body>
+</html>
