@@ -53,10 +53,10 @@ app.get("/clinique-accounts", (req, res) => {
 //addmitting new patient
 app.post("/formPost", (req, res) => {
   console.log("Received a POST request to /formPost");
-  const { name, age, contact, admissionFee, date } = req.body;
+  const { name, age, contact, doctor, admissionFee, date } = req.body;
   const sql =
-    "INSERT INTO patient (name, age, contact, admissionFee, date) VALUES (?, ?, ?, ?, ?)";
-  const values = [name, age, contact, admissionFee, date];
+    "INSERT INTO patient (name, age, contact, doctor, admissionFee, date) VALUES (?, ?, ?, ?, ?, ?)";
+  const values = [name, age, contact, doctor, admissionFee, date];
 
   db.query(sql, values, (err, result) => {
     if (err) {
@@ -78,11 +78,20 @@ app.get("/clinique-accounts", (req, res) => {
 });
 app.post("/addPathology", (req, res) => {
   console.log("Received a POST request to /addPathology");
-  const { name, age, contact, totalCost, totalPaid, dueAmount, date } =
+  const { name, age, contact, doctor, totalCost, totalPaid, dueAmount, date } =
     req.body;
   const sql =
-    "INSERT INTO patient (name, age, contact, pathologyCost, pathologyPaid, dueAmount, date) VALUES (?, ?, ?, ?, ?, ?, ?)";
-  const values = [name, age, contact, totalCost, totalPaid, dueAmount, date];
+    "INSERT INTO patient (name, age, contact, doctor, pathologyCost, pathologyPaid, dueAmount, date) VALUES (?, ?, ?, ?, ?, ?, ?)";
+  const values = [
+    name,
+    age,
+    contact,
+    doctor,
+    totalCost,
+    totalPaid,
+    dueAmount,
+    date,
+  ];
 
   db.query(sql, values, (err, result) => {
     if (err) {
@@ -198,10 +207,19 @@ app.get("/generate-pdf", async (req, res) => {
 
       // Styling for the PDF
       const titleStyle = {
-        fontSize: 40,
-        font: __dirname + "/fonts/OpenSans-Bold.ttf",
+        fontSize: 80, // Increased font size
+        font: __dirname + "/fonts/FN Hasan Kolkata Unicode.ttf",
         align: "center",
-        margin: 30,
+        margin: 35,
+        color: "blue",
+      };
+
+      const locationStyle = {
+        fontSize: 20, // Font size for location
+        font: __dirname + "/fonts/FN Hasan Kolkata Unicode.ttf",
+        align: "center",
+        margin: 10,
+        color: "blue",
       };
 
       const tableStyle = {
@@ -218,7 +236,15 @@ app.get("/generate-pdf", async (req, res) => {
 
       doc.pipe(res);
 
-      doc.text("Firoza Nursing Home", { ...titleStyle, fontSize: 50 });
+      // Add your logo at the top left
+      const logoPath = __dirname + "/logo.png";
+      doc.image(logoPath, 50, 50, { width: 100 });
+
+      // Title
+      doc.text("FEROZA NURSING HOME", { ...titleStyle });
+
+      // Location
+      doc.text("Kharampatty, Kishoreganj", { ...locationStyle });
 
       // Create a table-like structure
       const table = {
@@ -226,6 +252,7 @@ app.get("/generate-pdf", async (req, res) => {
         "Patient Name": patientData.name,
         "Patient Age": patientData.age,
         "Contact Number": patientData.contact,
+        "Admitted Under": patientData.doctor,
         "Admission Fee": `${String.fromCharCode(0x09f3)}${
           patientData.admissionFee
         }`,
@@ -234,7 +261,7 @@ app.get("/generate-pdf", async (req, res) => {
 
       // Set up the initial position
       const tableX = 50;
-      const tableY = 150;
+      const tableY = 250; // Adjusted the starting Y position for the table
       const col1X = tableX;
       const col2X = tableX + 300;
 

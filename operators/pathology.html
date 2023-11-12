@@ -27,7 +27,7 @@
       }
 
       .container {
-        max-width: 800px;
+        max-width: 1200px;
         margin: 0 auto;
         padding: 20px;
         background-color: #fff;
@@ -164,6 +164,66 @@
 
       /* Style the expanded blood test options when visible */
 
+      #admission-date {
+        background-color: white; /* Set the background color to white */
+        border: 1px solid #ccc; /* Set a border style if needed */
+        opacity: 1; /* Set opacity to 1 to make it fully visible */
+      }
+
+      /* ... Your existing styles ... */
+
+      .doctor-dropdown {
+        display: inline-block;
+        position: relative;
+        width: 100%; /* Adjust the width to take up the available space */
+      }
+
+      .doctor-selector {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        border: 1px solid #ccc;
+        padding: 10px; /* Increase padding for better appearance */
+        border-radius: 4px;
+      }
+
+      .selected-doctor {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .doctor-options {
+        display: none;
+        position: absolute;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        z-index: 1;
+        width: 100%; /* Make the options span the full width */
+      }
+
+      .doctor-options li {
+        padding: 10px; /* Increase padding for better appearance */
+        cursor: pointer;
+        border-top: 1px solid #ccc; /* Add a separator line between options */
+      }
+
+      .doctor-options li:hover {
+        background-color: #f0f0f0;
+        border-top: 1px solid #ccc; /* Add a separator line between options on hover */
+      }
+
+      .doctor-options li::before {
+        content: "•"; /* Use a bullet point (•) as a separator */
+        margin-right: 5px;
+      }
+
+      /* ... Your existing styles ... */
+
       /* Style the expanded blood test options */
       .small-box {
         display: flex;
@@ -195,12 +255,7 @@
   </head>
   <body>
     <div class="container">
-      <div class="logout" onclick="window.location.href='login.html'">
-        <i class="fas fa-sign-out-alt"></i>
-        Logout
-      </div>
       <h1 style="margin-bottom: 20px">Add Patient</h1>
-
       <div class="add-patient-form">
         <form id="patient-form" method="POST" action="/addPathology">
           <div class="form-group">
@@ -219,6 +274,39 @@
               name="contact-number"
               required
             />
+          </div>
+
+          <div class="form-group">
+            <label for="doctor">Doctor</label>
+            <div class="doctor-dropdown">
+              <div class="doctor-selector">
+                <div class="selected-doctor">Select a doctor</div>
+                <i class="fas fa-caret-down"></i>
+              </div>
+              <ul class="doctor-options">
+                <li data-doctor="Doctor 1">Prof. Dr. Sufia Khatun</li>
+                <li data-doctor="Doctor 2">Prof. Dr.A.N.M. Naushad Khan</li>
+                <li data-doctor="Doctor 3">Asst Prof. Dr. Sultana Rajia</li>
+                <li data-doctor="Doctor 4">Asst Director Dr. Hosna Begum</li>
+                <li data-doctor="Doctor 5">Prof. Dr. Molla Nazrul Islam</li>
+                <li data-doctor="Doctor 6">Asst Prof. Dr. Aminur Rahman</li>
+                <li data-doctor="Doctor 7">Dr. Md. Mahabubur Rahman Shahin</li>
+                <li data-doctor="Doctor 8">Dr. Tahsin Firoza Khan (Amina)</li>
+                <li data-doctor="Doctor 9">Asst Prof. Dr. Sujit Das</li>
+                <li data-doctor="Doctor 10">Dr. Ananna Debnath</li>
+                <li data-doctor="Doctor 11">
+                  Asst Prof. Dr. Gulam Mustafa Manik
+                </li>
+                <li data-doctor="Doctor 12">
+                  Associate Prof. Dr. Kazi Shah Alam
+                </li>
+                <li data-doctor="Doctor 13">
+                  Asst Prof. Dr. Muhammad Rafiqul Islam
+                </li>
+                <li data-doctor="Doctor 14">Prof. Dr. Muhammad Mohsin</li>
+                <li data-doctor="Doctor 15">Dr. Morium Akter</li>
+              </ul>
+            </div>
           </div>
 
           <div class="form-group">
@@ -540,6 +628,32 @@
     </div>
 
     <script>
+      const selector = document.querySelector(".doctor-selector");
+      const options = document.querySelector(".doctor-options");
+
+      selector.addEventListener("click", function () {
+        options.style.display =
+          options.style.display === "block" ? "none" : "block";
+      });
+
+      options.addEventListener("click", function (e) {
+        if (e.target.tagName === "LI") {
+          const selectedDoctor = e.target.textContent; // Use the text content
+          document.querySelector(".selected-doctor").textContent =
+            selectedDoctor;
+          options.style.display = "none";
+
+          // Deselect all other options
+          const doctorOptions = document.querySelectorAll(".doctor-options li");
+          doctorOptions.forEach((option) =>
+            option.classList.remove("selected")
+          );
+          e.target.classList.add("selected");
+        }
+      });
+    </script>
+
+    <script>
       // Get all the blood test checkboxes
       const checkboxes = document.querySelectorAll('input[type="checkbox"]');
 
@@ -600,6 +714,7 @@
             name: document.getElementById("patient-name").value,
             age: document.getElementById("patient-age").value,
             contact: document.getElementById("contact-number").value,
+            doctor: document.getElementById("doctor").value,
             totalCost: document.getElementById("total-cost").value,
             totalPaid: document.getElementById("total-paid").value,
             dueAmount: document.getElementById("due-amount").value,
