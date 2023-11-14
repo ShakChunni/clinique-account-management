@@ -27,30 +27,21 @@
       }
 
       .container {
-        max-width: 1200px;
+        max-width: 2000px;
+        min-height: 100vh;
         margin: 0 auto;
-        padding: 20px;
+        padding: 25px;
         background-color: #fff;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        border-radius: 5px;
-      }
-
-      .logout {
-        text-align: right;
-        cursor: pointer;
-        color: #007bff;
-        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
       }
 
       h1 {
-        font-size: 24px;
+        font-size: 40px;
         margin-bottom: 20px;
-      }
-
-      .add-patient-form {
-        background-color: #f9f9f9;
-        padding: 20px;
-        border-radius: 5px;
+        font-weight: bold;
+        color: #189ab4;
+        text-align: center;
       }
 
       .form-group {
@@ -60,7 +51,9 @@
       label {
         display: block;
         font-weight: bold;
+        font-size: 18px;
         margin-bottom: 8px;
+        color: #05445e;
       }
 
       input[type="text"],
@@ -87,7 +80,7 @@
         border-radius: 4px;
         display: flex;
         align-items: center;
-        transition: box-shadow 0.3s, background-color 0.3s;
+        transition: transform 0.2s ease-in-out;
       }
 
       .option:hover {
@@ -155,11 +148,21 @@
         transition: box-shadow 0.3s;
       }
 
-      /* Show expanded blood test options when the blood tests div is clicked */
+      input[type="checkbox"] {
+        background-color: #17a2b8; /* Change this to your desired checkbox color */
+        border: 1px solid #17a2b8; /* Match the checkbox border color */
+      }
+
+      input[type="checkbox"]:checked {
+        background-color: #138496; /* Change this to your desired selected checkbox color */
+      }
+
+      /* Style the expanded blood test options when visible */
       #blood-tests:focus-within .small-box,
       #blood-tests:hover .small-box {
         display: flex;
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        background-color: #f5f5f5; /* Background color for the expanded options */
       }
 
       /* Style the expanded blood test options when visible */
@@ -237,17 +240,23 @@
 
       /* Submit button styles */
       button[type="submit"] {
-        background-color: #8a2be2; /* Purple-ish color */
+        background-color: #28a745;
         color: #fff;
-        padding: 10px 20px;
+        padding: 12px 24px;
         border: none;
-        border-radius: 5px;
+        border-radius: 8px;
         cursor: pointer;
+        font-size: 18px;
       }
 
-      /* Add a hover effect for the button */
       button[type="submit"]:hover {
-        background-color: #7739a7; /* Change this to your desired hover color */
+        background-color: #218838;
+      }
+      .option p {
+        color: #0c2d48; /* Change this to your desired text color for options */
+      }
+      .option i {
+        color: #333; /* Change this to your desired text color for options */
       }
     </style>
 
@@ -255,7 +264,7 @@
   </head>
   <body>
     <div class="container">
-      <h1 style="margin-bottom: 20px">Add Patient</h1>
+      <h1 style="margin-bottom: 20px">Blood Tests</h1>
       <div class="add-patient-form">
         <form id="patient-form" method="POST" action="/addPathology">
           <div class="form-group">
@@ -593,13 +602,18 @@
           </div>
 
           <div class="form-group">
-            <label for="total-cost">Total Cost (Taka)</label>
+            <label for="total-cost">Total Cost</label>
             <input type="text" id="total-cost" name="total-cost" readonly />
           </div>
 
           <div class="form-group">
-            <label for="total-paid">Total Paid Amount (Taka)</label>
+            <label for="total-paid">Total Paid Amount</label>
             <input type="text" id="total-paid" name="total-paid" />
+          </div>
+
+          <div class="form-group">
+            <label for="discount">Discount Amount</label>
+            <input type="text" id="discount" name="discount" />
           </div>
 
           <div class="form-group">
@@ -660,10 +674,12 @@
       // Get the "Total Cost," "Total Paid Amount," and "Due Amount" input fields
       const totalCostInput = document.getElementById("total-cost");
       const totalPaidInput = document.getElementById("total-paid");
+      const discountInput = document.getElementById("discount");
       const dueAmountInput = document.getElementById("due-amount");
 
       totalCostInput.addEventListener("input", updateDueAmount);
       totalPaidInput.addEventListener("input", updateDueAmount);
+      discountInput.addEventListener("input", updateDueAmount);
 
       // Add an event listener to each checkbox
       checkboxes.forEach((checkbox) => {
@@ -689,8 +705,9 @@
 
       function updateDueAmount() {
         const totalCost = parseFloat(totalCostInput.value) || 0;
+        const discount = parseFloat(discountInput.value) || 0;
         const totalPaid = parseFloat(totalPaidInput.value) || 0;
-        const dueAmount = totalCost - totalPaid;
+        const dueAmount = totalCost - (totalPaid + discount);
 
         dueAmountInput.value = dueAmount.toFixed(2); // Format with two decimal places
       }
@@ -714,9 +731,10 @@
             name: document.getElementById("patient-name").value,
             age: document.getElementById("patient-age").value,
             contact: document.getElementById("contact-number").value,
-            doctor: document.getElementById("doctor").value,
+            doctor: document.querySelector(".selected-doctor").textContent,
             totalCost: document.getElementById("total-cost").value,
             totalPaid: document.getElementById("total-paid").value,
+            discountAmount: document.getElementById("discount").value,
             dueAmount: document.getElementById("due-amount").value,
             date: document.getElementById("admission-date").value,
           };
@@ -732,9 +750,17 @@
 
             if (response.ok) {
               alert("Patient data submitted successfully.");
+              window.location.href = "/pathology-voucher.html";
               document.getElementById("patient-name").value = "";
               document.getElementById("patient-age").value = "";
               document.getElementById("contact-number").value = "";
+              document.querySelector(".selected-doctor").textContent = ""; //etar jonne error ashtesilo!
+              document.getElementById("total-cost").value = "";
+              document.getElementById("total-paid").value = "";
+              document.getElementById("discount").value = "";
+              document.getElementById("due-amount").value = "";
+              document.getElementById("admission-date").value = "";
+
               // Clear other input fields if needed
             } else {
               alert("Error submitting patient data. Please try again.");

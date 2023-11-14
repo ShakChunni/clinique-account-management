@@ -333,38 +333,4 @@ h1 {
   background-color: #004bff; /* Darker blue color on hover */
 }
 
-/* Style for the voucher1 */
-
-.voucher-container {
-  text-align: center;
-  background-color: #fff;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-h1 {
-  font-size: 36px;
-  color: #333;
-  margin-bottom: 20px;
-}
-
-.download-button {
-  display: inline-block;
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: #fff;
-  font-size: 20px;
-  text-decoration: none;
-  border-radius: 5px;
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
-}
-
-.download-button:hover {
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
-  transform: translateY(-2px);
-}
-
-.download-button i {
-  margin-left: 10px;
-}
+/* Style for the form of pages */

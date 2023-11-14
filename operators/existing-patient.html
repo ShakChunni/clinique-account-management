@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Existing Patient - Clinic Management System</title>
-    <link rel="stylesheet" href="styles.css" />
     <!-- Additional CSS specific to existing-patient.html if needed -->
     <style>
       * {
@@ -12,6 +11,155 @@
         padding: 0;
         box-sizing: border-box;
       }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #fff;
+        color: #28282b;
+      }
+
+      .search-bar {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 80%; /* Increase the width of the search bar */
+        max-width: 800px; /* Set a maximum width for larger screens */
+        margin: 20px auto; /* Center the search bar horizontally */
+      }
+
+      #patient-id {
+        flex-grow: 1; /* Allow the input to grow to fill available space */
+        padding: 12px; /* Adjusted padding for search input */
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 18px;
+        margin-right: 10px;
+      }
+
+      #search-button {
+        background-color: #007bff;
+        color: #fff;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        font-size: 18px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      #search-button:hover {
+        background-color: #004bff;
+      }
+
+      .patient-info span {
+        background-color: #e5e3e1; /* Greyed-out background color for editable fields */
+        cursor: text; /* Text cursor for editable fields */
+      }
+      .patient-info span[contentEditable="true"] {
+        background-color: #fff; /* Greyed-out background color for editable fields */
+        cursor: text; /* Text cursor for editable fields */
+      }
+      /* Style for the container */
+      .container {
+        max-width: 1800px; /* Adjust the width as needed */
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        text-align: center;
+      }
+
+      /* Style the h1 */
+      h1 {
+        font-size: 32px;
+        color: #3498db;
+        margin: 20px 0;
+        font-weight: bold; /* Make the text bold */
+      }
+
+      h2 {
+        font-size: 26px;
+        color: #3498db;
+        margin-top: 10px;
+        margin-bottom: 20px;
+        font-weight: bold; /* Make the text bold */
+      }
+      /* Style the search bar */
+      .search-bar {
+        margin-bottom: 20px;
+      }
+
+      .search-bar input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      .search-bar button {
+        background-color: #3498db;
+        color: #fff;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        font-weight: bold;
+      }
+
+      /* Hover effect for the search button */
+      .search-bar button:hover {
+        background-color: #297dbb;
+      }
+
+      /* Style the search results */
+      .patient-info {
+        display: none;
+        text-align: left;
+      }
+
+      .patient-field {
+        margin-top: auto;
+        margin-bottom: auto;
+      }
+
+      .patient-field label {
+        display: block;
+        font-weight: bold;
+        margin-top: 10px;
+        margin-bottom: 5px;
+        font-size: 20px;
+        color: #145da0;
+      }
+
+      .patient-field span {
+        display: inline-block;
+        width: 100%;
+        padding: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      /* Style the save and print buttons */
+      button {
+        background-color: #3498db;
+        color: #fff;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        font-weight: bold;
+        margin-right: 10px;
+        margin-top: 15px;
+      }
+
+      /* Hover effect for the buttons */
+      button:hover {
+        background-color: #297dbb;
+      }
+
     </style>
   </head>
   <body>
@@ -77,43 +225,54 @@
             const patientInfo = `
           <h2>Patient Information</h2>
           <div class="patient-field">
-              <label>ID:</label>
+              <label>ID</label>
               <span>${data.id}</span>
           </div>
           <div class="patient-field">
-              <label>Name:</label>
+              <label>Name</label>
               <span>${data.name}</span>
           </div>
           <div class="patient-field">
-              <label>Age:</label>
+              <label>Age</label>
               <span>${data.age}</span>
           </div>
           <div class="patient-field">
-              <label>Contact:</label>
+              <label>Contact</label>
               <span>${data.contact}</span>
           </div>
+
           <div class="patient-field">
-              <label>Admission Charge:</label>
+              <label>Doctor</label>
+              <span>${data.doctor}</span>
+          </div>
+
+
+          <div class="patient-field">
+              <label>Admission Charge</label>
               <span>${data.admissionFee}</span>
           </div>
           <div class="patient-field">
-              <label>OT Charge:</label>
+              <label>OT Charge</label>
               <span id="ot-charge-span" contentEditable="true">${data.otCharge}</span>
           </div>
           <div class="patient-field">
-              <label>Service Charge:</label>
+              <label>Service Charge</label>
               <span id="service-charge-span" contentEditable="true">${data.serviceCharge}</span>
           </div>
           <div class="patient-field">
-              <label>Pathology Cost:</label>
+              <label>Pathology Cost</label>
               <span id="pathology-cost-span">${data.pathologyCost}</span>
           </div>
           <div class="patient-field">
-              <label>Pathology Paid:</label>
+                <label>Discount Amount</label>
+                  <span id="due-amount-span" contentEditable="true">${data.discount}</span>
+          </div>
+          <div class="patient-field">
+              <label>Pathology Paid</label>
               <span id="pathology-paid-span" contentEditable="true">${data.pathologyPaid}</span>
           </div>
           <div class="patient-field">
-                <label>Due Amount:</label>
+                <label>Due Amount</label>
                   <span id="due-amount-span">${data.dueAmount}</span>
           </div>
 
@@ -121,16 +280,15 @@
 
             searchResults.innerHTML = patientInfo;
             searchResults.style.display = "block";
-
             otChargeSpan.style.display = "none";
             serviceChargeSpan.style.display = "none";
             pathologyPaidSpan.style.display = "none";
-
             otChargeInput.style.display = "block";
             serviceChargeInput.style.display = "block";
             pathologyPaidInput.style.display = "block";
             dueAmountSpan.style.display = "block";
             saveButton.style.display = "block";
+
           } else {
             searchResults.innerHTML = "<p>Patient not found.</p>";
             searchResults.style.display = "block";

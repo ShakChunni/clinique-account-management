@@ -4,11 +4,53 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PDF Voucher</title>
-    <link rel="stylesheet" href="styles.css" />
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: #f0f0f0;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+      }
+
+      .voucher-container {
+        text-align: center;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+      }
+
+      h1 {
+        color: #4caf50;
+        font-size: 36px;
+        margin-bottom: 20px;
+      }
+
+      .download-button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #4caf50;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+      }
+
+      .download-button:hover {
+        background-color: #45a049;
+      }
+
+      .download-button i {
+        margin-left: 5px;
+      }
+    </style>
   </head>
   <body>
     <div class="voucher-container">
-      <h1>Patient Information PDF</h1>
+      <h1>Patient Information</h1>
       <a id="downloadLink" class="download-button" href="">
         <span>Download PDF</span>
         <i class="fas fa-download"></i>

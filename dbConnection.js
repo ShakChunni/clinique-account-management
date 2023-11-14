@@ -33,7 +33,7 @@ app.use("/admin", express.static(__dirname + "/admin"));
 // multer for handling file uploads
 const storage = multer.diskStorage({
   destination: (req, file, callback) => {
-    callback(null, "images/"); // destination directory for uploaded files {doesnt work outside of admin folder, why?}
+    callback(null, "images/"); // destination directory for uploaded files
   },
   filename: (req, file, callback) => {
     callback(null, Date.now() + "-" + file.originalname);
@@ -78,10 +78,19 @@ app.get("/clinique-accounts", (req, res) => {
 });
 app.post("/addPathology", (req, res) => {
   console.log("Received a POST request to /addPathology");
-  const { name, age, contact, doctor, totalCost, totalPaid, dueAmount, date } =
-    req.body;
+  const {
+    name,
+    age,
+    contact,
+    doctor,
+    totalCost,
+    totalPaid,
+    discountAmount,
+    dueAmount,
+    date,
+  } = req.body;
   const sql =
-    "INSERT INTO patient (name, age, contact, doctor, pathologyCost, pathologyPaid, dueAmount, date) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    "INSERT INTO patient (name, age, contact, doctor, pathologyCost, pathologyPaid, discount, dueAmount, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
   const values = [
     name,
     age,
@@ -89,6 +98,7 @@ app.post("/addPathology", (req, res) => {
     doctor,
     totalCost,
     totalPaid,
+    discountAmount,
     dueAmount,
     date,
   ];
@@ -207,22 +217,17 @@ app.get("/generate-pdf", async (req, res) => {
 
       // Styling for the PDF
       const titleStyle = {
-        fontSize: 80, // Increased font size
-        font: __dirname + "/fonts/FN Hasan Kolkata Unicode.ttf",
+        fontSize: 1000, // Increased font size
+        font: __dirname + "/fonts/OpenSans-Bold.ttf",
         align: "center",
-        margin: 35,
-        color: "blue",
+        margin: 800,
+        // Changed color to blue
       };
 
       const locationStyle = {
         fontSize: 20, // Font size for location
-        font: __dirname + "/fonts/FN Hasan Kolkata Unicode.ttf",
+        font: __dirname + "/fonts/OpenSans-Regular.ttf",
         align: "center",
-        margin: 10,
-        color: "blue",
-      };
-
-      const tableStyle = {
         margin: 10,
       };
 
@@ -238,13 +243,12 @@ app.get("/generate-pdf", async (req, res) => {
 
       // Add your logo at the top left
       const logoPath = __dirname + "/logo.png";
-      doc.image(logoPath, 50, 50, { width: 100 });
+      doc.image(logoPath, 50, 50, { width: 50 });
 
-      // Title
-      doc.text("FEROZA NURSING HOME", { ...titleStyle });
-
-      // Location
-      doc.text("Kharampatty, Kishoreganj", { ...locationStyle });
+      doc.fillColor("#0000ff").text("FEROZA NURSING HOME", { ...titleStyle });
+      doc
+        .fillColor("#0000ff")
+        .text("Kharampatty, Kishoreganj", { ...locationStyle });
 
       // Create a table-like structure
       const table = {
@@ -406,97 +410,110 @@ app.get("/pathology-voucher.html", (req, res) => {
   // Send the file to the client
   res.sendFile(filePath);
 });
+
+//pathology pdf
+
 app.get("/generate-patient-pathology-pdf", (req, res) => {
   const patientId = req.query.patientId; // Retrieve patientId from the query parameter
   console.log("Received patientId:", patientId);
-
-  // Fetch patient data from the database
-  const sql = "SELECT * FROM patient WHERE id = ?";
-  db.query(sql, [patientId], (err, result) => {
+  const sql = "SELECT * FROM patient ORDER BY id DESC LIMIT 1";
+  db.query(sql, (err, result) => {
     if (err) {
-      console.error("Error fetching patient data:", err);
-      return res
+      console.error("Error fetching latest patient data:", err);
+      res
         .status(500)
-        .json({ error: "An error occurred while fetching patient data." });
-    }
+        .json({ error: "An error occurred while generating the PDF voucher." });
+    } else {
+      const patientData = result[0];
+      const doc = new PDFKit();
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader("Content-Disposition", "attachment; filename=voucher.pdf");
 
-    if (result.length === 0) {
-      return res.status(404).json({ message: "Patient not found." });
-    }
+      // Styling for the PDF
+      const titleStyle = {
+        fontSize: 1000, // Increased font size
+        font: __dirname + "/fonts/OpenSans-Bold.ttf",
+        align: "center",
+        margin: 800,
+        // Changed color to blue
+      };
 
-    const patientData = result[0];
+      const locationStyle = {
+        fontSize: 20, // Font size for location
+        font: __dirname + "/fonts/OpenSans-Regular.ttf",
+        align: "center",
+        margin: 10,
+      };
 
-    const doc = new PDFKit();
-    res.setHeader("Content-Type", "application/pdf");
-    res.setHeader(
-      "Content-Disposition",
-      `attachment; filename=patient_information_${patientId}.pdf`
-    );
+      const cellStyle = {
+        font: __dirname + "/fonts/OpenSans-Regular.ttf",
+        fontSize: 40,
+        padding: 10,
+      };
 
-    doc.pipe(res);
+      const takaFont = __dirname + "/fonts/FN Hasan Kolkata Unicode.ttf"; // Taka symbol font
 
-    // Styling for the PDF
-    const titleStyle = {
-      fontSize: 35,
-      font: __dirname + "/fonts/OpenSans-Bold.ttf",
-      align: "center",
-      margin: 30,
-    };
+      doc.pipe(res);
 
-    const cellStyle = {
-      font: __dirname + "/fonts/OpenSans-Regular.ttf",
-      fontSize: 35,
-      padding: 10,
-      margin: 0, // Removed extra margin
-    };
+      // Add your logo at the top left
+      const logoPath = __dirname + "/logo.png";
+      doc.image(logoPath, 50, 50, { width: 50 });
 
-    const takaFont = __dirname + "/fonts/FN Hasan Kolkata Unicode.ttf"; // Taka symbol font
-
-    doc.text("Patient Admission Form", { ...titleStyle, fontSize: 35 });
-
-    const tableX = 50;
-    const tableY = 150;
-    const col1X = tableX;
-    const col2X = tableX + 300;
-
-    doc.font(__dirname + "/fonts/OpenSans-Bold.ttf");
-
-    const rowHeight = 40;
-    const rows = [
-      ["Patient ID", patientData.id],
-      ["Patient Name", patientData.name],
-      ["Patient Age", patientData.age],
-      ["Contact Number", patientData.contact],
-      ["Date", patientData.date],
-      [
-        "Pathology Charge",
-        `${String.fromCharCode(0x09f3)}${patientData.pathologyCost}`,
-      ],
-
-      ["Paid Amount", `${String.fromCharCode(0x09f3)}${patientData.totalCost}`],
-      ["Due Amount", `${String.fromCharCode(0x09f3)}${patientData.dueAmount}`],
-      // Insert Taka symbol
-    ];
-
-    for (let i = 0; i < rows.length; i++) {
-      const [label, value] = rows[i];
-      const yPos = tableY + i * rowHeight; // Removed + 1
+      doc.fillColor("#0000ff").text("FEROZA NURSING HOME", { ...titleStyle });
       doc
-        .font(__dirname + "/fonts/OpenSans-Regular.ttf")
-        .text(label, 50, yPos, cellStyle)
-        .font(takaFont) // Use the Taka symbol font
-        .text(value, 300, yPos, cellStyle);
+        .fillColor("#0000ff")
+        .text("Kharampatty, Kishoreganj", { ...locationStyle });
 
-      if (i < rows.length - 1) {
-        const lineYPos = yPos + rowHeight;
+      // Create a table-like structure
+      const table = {
+        "Patient ID": patientData.id,
+        "Patient Name": patientData.name,
+        "Patient Age": patientData.age,
+        "Contact Number": patientData.contact,
+        "Blood test Under": patientData.doctor,
+        "Total Cost": `${String.fromCharCode(0x09f3)}${
+          patientData.pathologyCost
+        }`,
+        "Discount Amount": `${String.fromCharCode(0x09f3)}${
+          patientData.discount
+        }`,
+        "Total Paid": `${String.fromCharCode(0x09f3)}${
+          patientData.pathologyPaid
+        }`,
+        "Due Amount": `${String.fromCharCode(0x09f3)}${
+          patientData.dueAmount
+        }`,
+        "Admission Date": patientData.date,
+      };
+
+      // Set up the initial position
+      const tableX = 50;
+      const tableY = 250; // Adjusted the starting Y position for the table
+      const col1X = tableX;
+      const col2X = tableX + 300;
+
+      doc.font(__dirname + "/fonts/OpenSans-Bold.ttf");
+      const rowHeight = 40;
+
+      Object.keys(table).forEach((label, index) => {
+        const yPos = tableY + index * rowHeight;
         doc
-          .moveTo(col1X, lineYPos)
-          .lineTo(col2X + 300, lineYPos)
-          .stroke();
-      }
-    }
+          .font(__dirname + "/fonts/OpenSans-Regular.ttf")
+          .text(label, col1X, yPos, cellStyle)
+          .font(takaFont) // Use the Taka symbol font
+          .text(table[label], col2X, yPos, cellStyle);
 
-    doc.end();
+        if (index < Object.keys(table).length - 1) {
+          const lineYPos = yPos + rowHeight;
+          doc
+            .moveTo(col1X, lineYPos)
+            .lineTo(col2X + 300, lineYPos)
+            .stroke();
+        }
+      });
+
+      doc.end();
+    }
   });
 });
 
