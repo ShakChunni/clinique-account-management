@@ -165,6 +165,60 @@ app.post("/update-patient/:id", (req, res) => {
   });
 });
 
+// Endpoint to otPathology
+app.use(express.static(path.join(__dirname, "operators")));
+
+app.get("/otPathology.html", (req, res) => {
+  // Use path.join to create the correct path to the HTML file
+  const filePath = path.join(__dirname, "operators", "otPathology.html");
+
+  // Send the file to the client
+  res.sendFile(filePath);
+});
+
+app.post("/addOtPathology/:id", (req, res) => {
+  console.log("Received a POST request to /addOtPathology");
+  const patientId = req.params.id;
+  const {
+    name,
+    age,
+    contact,
+    doctor,
+    totalCost,
+    totalPaid,
+    discountAmount,
+    dueAmount,
+    date,
+  } = req.body;
+
+  const sql =
+    "UPDATE patient SET name=?, age=?, contact=?, doctor=?, pathologyCost=?, pathologyPaid=?, discount=?, dueAmount=?, date=? WHERE id=?";
+  const values = [
+    name,
+    age,
+    contact,
+    doctor,
+    totalCost,
+    totalPaid,
+    discountAmount,
+    dueAmount,
+    date,
+    patientId,
+  ];
+
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      console.error("Error updating data in the database:", err);
+      res
+        .status(500)
+        .json({ error: "An error occurred while updating the patient." });
+    } else {
+      console.log("Data updated in the database.");
+      res.status(200).json({ message: "Patient updated successfully." });
+    }
+  });
+});
+
 // Endpoint to add a new expenditure to the database
 app.get("/add-expenditure", (req, res) => {
   res.sendFile(__dirname + "/operators/expenditure.html");
@@ -480,9 +534,7 @@ app.get("/generate-patient-pathology-pdf", (req, res) => {
         "Total Paid": `${String.fromCharCode(0x09f3)}${
           patientData.pathologyPaid
         }`,
-        "Due Amount": `${String.fromCharCode(0x09f3)}${
-          patientData.dueAmount
-        }`,
+        "Due Amount": `${String.fromCharCode(0x09f3)}${patientData.dueAmount}`,
         "Admission Date": patientData.date,
       };
 

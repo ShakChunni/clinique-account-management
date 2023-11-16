@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Patient - Clinic Management System</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+    />
+    <style>
+      /* Reset default browser styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+      }
+
+      .container {
+        max-width: 2000px;
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: 25px;
+        background-color: #fff;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+      }
+
+      h1 {
+        font-size: 40px;
+        margin-bottom: 20px;
+        font-weight: bold;
+        color: #189ab4;
+        text-align: center;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        font-weight: bold;
+        font-size: 18px;
+        margin-bottom: 8px;
+        color: #05445e;
+      }
+
+      input[type="text"],
+      input[type="number"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 16px;
+      }
+
+      .options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        padding: 5px 0;
+      }
+
+      .option {
+        flex-basis: calc(
+          15% - 50px
+        ); /* Adjust the percentage to make the options smaller */
+        background-color: #fff;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        transition: transform 0.2s ease-in-out;
+      }
+
+      .option input[type="checkbox"] {
+        margin-right: 10px;
+      }
+
+      .option input[type="checkbox"]:checked {
+        background-color: #5bc0de; /* Change this to your desired selected color */
+      }
+
+      .option input[type="checkbox"] + label {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+      }
+
+      .option input[type="checkbox"]:checked + label {
+        color: #fff; /* Change this to your desired text color for selected items */
+      }
+
+      .option p {
+        margin: 0;
+      }
+
+      .icon {
+        font-size: 24px;
+      }
+
+      .date-input {
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+      }
+
+      .date-input i {
+        margin-right: 10px;
+      }
+
+      input[type="submit"] {
+        background-color: #8a2be2; /* Purple-ish color */
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      input[type="text"]:read-only {
+        background-color: #f0f0f0;
+        color: #777;
+      }
+
+      /* Style the checkboxes */
+      input[type="checkbox"] {
+        background-color: #8a2be2; /* Purple-ish color */
+      }
+
+      /* Style the expanded blood test options */
+      .small-box {
+        display: none;
+        transition: box-shadow 0.3s;
+      }
+
+      input[type="checkbox"] {
+        background-color: #17a2b8; /* Change this to your desired checkbox color */
+        border: 1px solid #17a2b8; /* Match the checkbox border color */
+      }
+
+      input[type="checkbox"]:checked {
+        background-color: #138496; /* Change this to your desired selected checkbox color */
+      }
+
+      /* Style the expanded blood test options when visible */
+      #blood-tests:focus-within .small-box,
+      #blood-tests:hover .small-box {
+        display: flex;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        background-color: #f5f5f5; /* Background color for the expanded options */
+      }
+
+      /* Style the expanded blood test options when visible */
+
+      #admission-date {
+        background-color: white; /* Set the background color to white */
+        border: 1px solid #ccc; /* Set a border style if needed */
+        opacity: 1; /* Set opacity to 1 to make it fully visible */
+      }
+
+      /* Add this to your existing styles */
+
+      .grey-out {
+        background-color: #f0f0f0; /* Grey background color */
+        color: #777; /* Grey text color */
+      }
+
+      /* ... Your existing styles ... */
+
+      /* ... Your existing styles ... */
+
+      /* Style the expanded blood test options */
+      .small-box {
+        display: flex;
+        align-items: center;
+      }
+
+      /* Show expanded blood test options when the blood tests div is clicked */
+      #blood-tests:focus-within .small-box {
+        display: flex;
+      }
+
+      /* Submit button styles */
+      button[type="submit"] {
+        background-color: #28a745;
+        color: #fff;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 18px;
+      }
+
+      button[type="submit"]:hover {
+        background-color: #218838;
+      }
+      .option p {
+        color: #0c2d48; /* Change this to your desired text color for options */
+      }
+      .option i {
+        color: #333; /* Change this to your desired text color for options */
+      }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1 style="margin-bottom: 20px">Blood Tests</h1>
+      <div class="add-patient-form">
+        <form id="patient-form" method="POST" action="/addOtPathology">
+          <div class="form-group">
+            <label for="patient-name">Patient Name</label>
+            <input
+              type="text"
+              id="patient-name"
+              name="patient-name"
+              class="grey-out"
+              readonly
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="patient-age">Patient Age</label>
+            <input
+              type="number"
+              id="patient-age"
+              name="patient-age"
+              class="grey-out"
+              readonly
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="contact-number">Contact Number</label>
+            <input
+              type="text"
+              id="contact-number"
+              name="contact-number"
+              class="grey-out"
+              readonly
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="doctor">Doctor</label>
+            <input
+              type="text"
+              id="doctor"
+              name="doctor"
+              class="grey-out"
+              readonly
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="blood-tests">Select Blood Tests</label>
+            <div class="options" id="blood-tests">
+              <div class="option small-box">
+                <label for="TC,DC,HB%,ESR (Blood CP)">
+                  <input
+                    type="checkbox"
+                    id="TC,DC,HB%,ESR (Blood CP)"
+                    name="blood-test"
+                    value="TC,DC,HB%,ESR (Blood CP)"
+                    data-cost="200"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>TC,DC,HB%,ESR (Blood CP)</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="Platelet Count">
+                  <input
+                    type="checkbox"
+                    id="Platelet Count"
+                    name="blood-test"
+                    value="Platelet Count"
+                    data-cost="200"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>Platelet Count</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="RBS (Random Blood Sugar)">
+                  <input
+                    type="checkbox"
+                    id="RBS (Random Blood Sugar)"
+                    name="blood-test"
+                    value="RBS (Random Blood Sugar)"
+                    data-cost="100"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>RBS (Random Blood Sugar)</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="RBS (Random Blood Sugar) with CUS">
+                  <input
+                    type="checkbox"
+                    id="RBS (Random Blood Sugar) with CUS"
+                    name="blood-test"
+                    value="RBS (Random Blood Sugar) with CUS"
+                    data-cost="200"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>RBS (Random Blood Sugar) with CUS</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="2 Hours After Breakfast (2HABF)">
+                  <input
+                    type="checkbox"
+                    id="2 Hours After Breakfast (2HABF)"
+                    name="blood-test"
+                    value="2 Hours After Breakfast (2HABF)"
+                    data-cost="100"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>2 Hours After Breakfast (2HABF)</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="2 Hours After Breakfast (2HABF) with CUS">
+                  <input
+                    type="checkbox"
+                    id="2 Hours After Breakfast (2HABF) with CUS"
+                    name="blood-test"
+                    value="2 Hours After Breakfast (2HABF) with CUS"
+                    data-cost="200"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>2 Hours After Breakfast (2HABF) with CUS</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="2 Hours After 75gm Glucose Drink">
+                  <input
+                    type="checkbox"
+                    id="2 Hours After 75gm Glucose Drink"
+                    name="blood-test"
+                    value="2 Hours After 75gm Glucose Drink"
+                    data-cost="100"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>2 Hours After 75gm Glucose Drink</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="2 Hours After 75gm Glucose Drink with CUS">
+                  <input
+                    type="checkbox"
+                    id="2 Hours After 75gm Glucose Drink with CUS"
+                    name="blood-test"
+                    value="2 Hours After 75gm Glucose Drink with CUS"
+                    data-cost="200"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>2 Hours After 75gm Glucose Drink with CUS</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="OGTT">
+                  <input
+                    type="checkbox"
+                    id="OGTT"
+                    name="blood-test"
+                    value="OGTT"
+                    data-cost="300"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>OGTT</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="Widal Test">
+                  <input
+                    type="checkbox"
+                    id="Widal Test"
+                    name="blood-test"
+                    value="Widal Test"
+                    data-cost="500"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>Widal Test</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="Electrolyte">
+                  <input
+                    type="checkbox"
+                    id="Electrolyte"
+                    name="blood-test"
+                    value="Electrolyte"
+                    data-cost="1000"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>Electrolyte</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="Free Trilodothyorine (FT3)">
+                  <input
+                    type="checkbox"
+                    id="Free Trilodothyorine (FT3)"
+                    name="blood-test"
+                    value="Free Trilodothyorine (FT3)"
+                    data-cost="1000"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>Free Trilodothyorine (FT3)</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="Free Thyroxine (FT4)">
+                  <input
+                    type="checkbox"
+                    id="Free Thyroxine (FT4)"
+                    name="blood-test"
+                    value="Free Thyroxine (FT4)"
+                    data-cost="1000"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>Free Thyroxine (FT4)</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="T3, T4 & TSH">
+                  <input
+                    type="checkbox"
+                    id="T3, T4 & TSH"
+                    name="blood-test"
+                    value="T3, T4 & TSH"
+                    data-cost="2400"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>T3, T4 & TSH</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="LH">
+                  <input
+                    type="checkbox"
+                    id="LH"
+                    name="blood-test"
+                    value="LH"
+                    data-cost="1200"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>LH</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="FSH">
+                  <input
+                    type="checkbox"
+                    id="FSH"
+                    name="blood-test"
+                    value="FSH"
+                    data-cost="1200"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>FSH</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="Prolactin">
+                  <input
+                    type="checkbox"
+                    id="Prolactin"
+                    name="blood-test"
+                    value="Prolactin"
+                    data-cost="1200"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>Prolactin</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="Testosterone">
+                  <input
+                    type="checkbox"
+                    id="Testosterone"
+                    name="blood-test"
+                    value="Testosterone"
+                    data-cost="1200"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>Testosterone</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="CA-125">
+                  <input
+                    type="checkbox"
+                    id="CA-125"
+                    name="blood-test"
+                    value="CA-125"
+                    data-cost="1200"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>CA-125</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="Beta HCG">
+                  <input
+                    type="checkbox"
+                    id="Beta HCG"
+                    name="blood-test"
+                    value="Beta HCG"
+                    data-cost="1200"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>Beta HCG</p>
+                </label>
+              </div>
+              <!-- Add labels to the remaining options similarly -->
+
+              <!-- Add more blood test options as needed -->
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="total-cost">Total Cost</label>
+            <input type="text" id="total-cost" name="total-cost" readonly />
+          </div>
+
+          <div class="form-group">
+            <label for="total-paid">Total Paid Amount</label>
+            <input type="text" id="total-paid" name="total-paid" />
+          </div>
+
+          <div class="form-group">
+            <label for="discount">Discount Amount</label>
+            <input type="text" id="discount" name="discount" />
+          </div>
+
+          <div class="form-group">
+            <label for="due-amount">Due Amount (Taka)</label>
+            <input type="text" id="due-amount" name="due-amount" readonly />
+          </div>
+
+          <div class="form-group">
+            <label for="admission-date">Admission Date</label>
+            <div class="date-input">
+              <i class="far fa-calendar-alt" style="margin-right: 10px"></i
+              ><!-- Added margin here -->
+              <input
+                type="text"
+                id="admission-date"
+                name="admission-date"
+                required
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <button type="submit">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modify the script to retrieve parameters from the URL and auto-fill the form -->
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Function to get URL parameters
+        function getParameterByName(name, url) {
+          if (!url) url = window.location.href;
+          name = name.replace(/[\[\]]/g, "\\$&");
+          var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+          if (!results) return null;
+          if (!results[2]) return "";
+          return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+
+        // Auto-fill form fields
+        const patientId = getParameterByName("id");
+        const patientName = getParameterByName("name");
+        const patientAge = getParameterByName("age");
+        const patientContact = getParameterByName("contact");
+        const patientDoctor = getParameterByName("doctor");
+        document.getElementById("patient-name").value = patientName;
+        document.getElementById("patient-age").value = patientAge;
+        document.getElementById("contact-number").value = patientContact;
+        document.querySelector("#doctor").value = patientDoctor;
+
+        // Get all the blood test checkboxes
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+        // Get the "Total Cost," "Total Paid Amount," and "Due Amount" input fields
+        const totalCostInput = document.getElementById("total-cost");
+        const totalPaidInput = document.getElementById("total-paid");
+        const discountInput = document.getElementById("discount");
+        const dueAmountInput = document.getElementById("due-amount");
+
+        totalCostInput.addEventListener("input", updateDueAmount);
+        totalPaidInput.addEventListener("input", updateDueAmount);
+        discountInput.addEventListener("input", updateDueAmount);
+
+        // Add an event listener to each checkbox
+        checkboxes.forEach((checkbox) => {
+          checkbox.addEventListener("change", updateTotalCost);
+        });
+
+        function updateTotalCost() {
+          let totalCost = 0;
+
+          // Loop through the checkboxes to calculate the total cost
+          checkboxes.forEach((checkbox) => {
+            if (checkbox.checked) {
+              totalCost += parseFloat(checkbox.getAttribute("data-cost"));
+            }
+          });
+
+          // Update the "Total Cost" input field
+          totalCostInput.value = totalCost.toFixed(2); // Format cost with two decimal places
+
+          // Update the "Due Amount" when Total Cost changes
+          updateDueAmount();
+        }
+
+        function updateDueAmount() {
+          const totalCost = parseFloat(totalCostInput.value) || 0;
+          const discount = parseFloat(discountInput.value) || 0;
+          const totalPaid = parseFloat(totalPaidInput.value) || 0;
+          const dueAmount = totalCost - (totalPaid + discount);
+
+          dueAmountInput.value = dueAmount.toFixed(2); // Format with two decimal places
+        }
+
+        const patientForm = document.getElementById("patient-form");
+
+        flatpickr("#admission-date", {
+          dateFormat: "Y-m-d H:i",
+          defaultDate: new Date(),
+          enableTime: true,
+        });
+
+        patientForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          // Collect data, including "Due Amount," "Total Cost," and "Total Paid"
+          const patientData = {
+            name: document.getElementById("patient-name").value,
+            age: document.getElementById("patient-age").value,
+            contact: document.getElementById("contact-number").value,
+            doctor: document.getElementById("doctor").value,
+            totalCost: document.getElementById("total-cost").value,
+            totalPaid: document.getElementById("total-paid").value,
+            discountAmount: document.getElementById("discount").value,
+            dueAmount: document.getElementById("due-amount").value,
+            date: document.getElementById("admission-date").value,
+          };
+
+          try {
+            const response = await fetch(`/addOtPathology/${patientId}`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(patientData),
+            });
+
+            if (response.ok) {
+              alert("OT Patient bloodtest data submitted successfully.");
+              window.location.href = "/existing-patient.html";
+              // Clear other input fields if needed
+            } else {
+              alert("Error submitting patient data. Please try again.");
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            alert("An error occurred. Please try again later.");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
