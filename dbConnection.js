@@ -6,6 +6,7 @@ const multer = require("multer");
 const PDFKit = require("pdfkit");
 const fs = require("fs");
 const path = require("path");
+const moment = require("moment");
 
 const db = mysql.createConnection({
   host: "localhost",
@@ -76,6 +77,7 @@ app.post("/formPost", (req, res) => {
 app.get("/clinique-accounts", (req, res) => {
   res.sendFile(__dirname + "/operators/pathology.html");
 });
+
 app.post("/addPathology", (req, res) => {
   console.log("Received a POST request to /addPathology");
   const {
@@ -87,10 +89,17 @@ app.post("/addPathology", (req, res) => {
     totalPaid,
     discountAmount,
     dueAmount,
+    totalCharge,
     date,
   } = req.body;
+
+  // Format the date
+  const formattedDate = moment(date, "YYYY-MM-DD HH:mm").format(
+    "YYYY-MM-DD HH:mm"
+  );
+
   const sql =
-    "INSERT INTO patient (name, age, contact, doctor, pathologyCost, pathologyPaid, discount, dueAmount, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    "INSERT INTO patient (name, age, contact, doctor, pathologyCost, totalPaid, discount, dueAmount, totalCharge, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
   const values = [
     name,
     age,
@@ -100,7 +109,8 @@ app.post("/addPathology", (req, res) => {
     totalPaid,
     discountAmount,
     dueAmount,
-    date,
+    totalCharge,
+    formattedDate,
   ];
 
   db.query(sql, values, (err, result) => {
@@ -146,11 +156,30 @@ app.get("/update-patient", (req, res) => {
 // Endpoint to update patient information
 app.post("/update-patient/:id", (req, res) => {
   const patientId = req.params.id;
-  const { otCharge, serviceCharge, pathologyPaid, dueAmount } = req.body;
+  const {
+    doctorCharge,
+    otCharge,
+    seatRent,
+    serviceCharge,
+    totalPaid,
+    totalCharge,
+    discount,
+    dueAmount,
+  } = req.body;
 
   const sql =
-    "UPDATE patient SET otCharge = ?, serviceCharge = ?, pathologyPaid = ? , dueAmount = ?  WHERE id = ?";
-  const values = [otCharge, serviceCharge, pathologyPaid, dueAmount, patientId];
+    "UPDATE patient SET doctorCharge = ?, otCharge = ?, seatRent = ?, serviceCharge = ?, totalPaid = ? , totalCharge = ?, discount = ?, dueAmount = ?  WHERE id = ?";
+  const values = [
+    doctorCharge,
+    otCharge,
+    seatRent,
+    serviceCharge,
+    totalPaid,
+    totalCharge,
+    discount,
+    dueAmount,
+    patientId,
+  ];
 
   db.query(sql, values, (err, result) => {
     if (err) {

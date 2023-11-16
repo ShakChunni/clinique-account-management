@@ -165,9 +165,19 @@
 
       /* Style for the button wrapper */
 
+      /* Style for the button wrapper */
+      #button-wrapper {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        flex-wrap: wrap; /* Allow buttons to wrap to the next line if needed */
+      }
 
       /* Optional: Add margin to the buttons for spacing */
-
+      #button-wrapper button {
+        margin: 2px;
+        margin-top: 25px;
+      }
 
       #save-button {
         background-color: #28a745; /* Change the background color */
@@ -215,7 +225,8 @@
       }
 
       #pathology-button:hover {
-        background-color: #d39e00; /* Change the hover background color */
+        background-color: #d39e00;
+        /* Change the hover background color */
       }
     </style>
   </head>
@@ -233,8 +244,8 @@
       </div>
       <div id="button-wrapper">
         <button id="save-button">Save</button>
-        <button id="print-button">Print</button>
         <button id="pathology-button">Pathology</button>
+        <button id="print-button">Print</button>
       </div>
       <!-- Add these fields for otCharge and serviceCharge -->
     </div>
@@ -309,8 +320,17 @@
               <span>${data.admissionFee}</span>
           </div>
           <div class="patient-field">
+              <label>Doctor's Fee</label>
+              <span id="doctor-charge-span" contentEditable="true">${data.doctorCharge}</span>
+          </div>
+
+          <div class="patient-field">
               <label>OT Charge</label>
               <span id="ot-charge-span" contentEditable="true">${data.otCharge}</span>
+          </div>
+          <div class="patient-field">
+              <label>Seat Rent</label>
+              <span id="seat-rent-span" contentEditable="true">${data.seatRent}</span>
           </div>
           <div class="patient-field">
               <label>Service Charge</label>
@@ -322,12 +342,17 @@
           </div>
           <div class="patient-field">
                 <label>Discount Amount</label>
-                  <span id="due-amount-span" contentEditable="true">${data.discount}</span>
+                  <span id="discount-span" contentEditable="true">${data.discount}</span>
           </div>
           <div class="patient-field">
-              <label>Pathology Paid</label>
-              <span id="pathology-paid-span" contentEditable="true">${data.pathologyPaid}</span>
+              <label>Total Charge</label>
+              <span id="pathology-paid-span">${data.totalCharge}</span>
           </div>
+          <div class="patient-field">
+              <label>Total Paid</label>
+              <span id="total-paid-span" contentEditable="true">${data.totalPaid}</span>
+          </div>
+
           <div class="patient-field">
                 <label>Due Amount</label>
                   <span id="due-amount-span">${data.dueAmount}</span>
@@ -339,10 +364,10 @@
             searchResults.style.display = "block";
             otChargeSpan.style.display = "none";
             serviceChargeSpan.style.display = "none";
-            pathologyPaidSpan.style.display = "none";
+            totalPaidSpan.style.display = "none";
             otChargeInput.style.display = "block";
             serviceChargeInput.style.display = "block";
-            pathologyPaidInput.style.display = "block";
+            totalPaidInput.style.display = "block";
             dueAmountSpan.style.display = "block";
             saveButton.style.display = "block";
           } else {
@@ -353,19 +378,35 @@
 
         saveButton.addEventListener("click", async () => {
           const patientId = patientIdInput.value;
+          const doctorCharge =
+            parseFloat(
+              document.getElementById("doctor-charge-span").textContent
+            ) || 0;
           const otCharge =
-            document.getElementById("ot-charge-span").textContent;
-          const serviceCharge = document.getElementById(
-            "service-charge-span"
-          ).textContent;
-          const pathologyPaid = document.getElementById(
-            "pathology-paid-span"
-          ).textContent;
-          const pathologyCost = document.getElementById(
-            "pathology-cost-span"
-          ).textContent;
+            parseFloat(document.getElementById("ot-charge-span").textContent) ||
+            0;
+          const serviceCharge =
+            parseFloat(
+              document.getElementById("service-charge-span").textContent
+            ) || 0;
+          const pathologyCost =
+            parseFloat(
+              document.getElementById("pathology-cost-span").textContent
+            ) || 0;
+          const discount =
+            parseFloat(document.getElementById("discount-span").textContent) ||
+            0;
+          const seatRent =
+            parseFloat(document.getElementById("seat-rent-span").textContent) ||
+            0;
 
-          const dueAmount = pathologyCost - pathologyPaid;
+          const totalCharge =
+            otCharge + serviceCharge + pathologyCost + seatRent;
+          const totalPaid =
+            parseFloat(
+              document.getElementById("total-paid-span").textContent
+            ) || 0;
+          const dueAmount = totalCharge - totalPaid - discount;
 
           const response = await fetch(`/update-patient/${patientId}`, {
             method: "POST",
@@ -373,9 +414,13 @@
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
+              doctorCharge,
               otCharge,
+              seatRent,
               serviceCharge,
-              pathologyPaid,
+              totalPaid,
+              totalCharge,
+              discount,
               dueAmount,
             }),
           });
