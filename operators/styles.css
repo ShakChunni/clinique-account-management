@@ -57,7 +57,7 @@ a:hover {
 }
 
 .option:hover {
-  background-color: #4b208c; /* Change to a professional color on hover */
+  background-color: #004e66; /* Change to a professional color on hover */
   transform: translateY(-5px); /* Slight upward lift on hover */
   box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3); /* Slightly larger box shadow */
 }
@@ -103,117 +103,24 @@ a:hover {
   position: absolute;
   top: 10px;
   right: 10px;
-  background-color: darkred; /* Professional blue color */
+  background-color: #dc3545; /* Elegant red color */
   color: #fff;
-  padding: 10px 20px;
-  border-radius: 10px;
+  padding: 8px 16px; /* Adjusted padding for a sleeker look */
+  border-radius: 8px; /* Slightly reduced border radius */
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
 .logout i {
-  font-size: 24px;
+  font-size: 20px; /* Slightly reduced icon size */
   margin-right: 5px;
 }
 
 .logout:hover {
-  background-color: red; /* Darker blue on hover */
+  background-color: #c82333; /* Darker red on hover */
 }
 
 /* Search Bar Styles */
 /* Add your existing styles above this comment */
 
-/* Style for the Add Expenditure Page */
-.add-expenditure-form {
-  background-color: #f7f7f7; /* Light gray background */
-  padding: 50px;
-  border-radius: 10px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-  width: 80%; /* Adjusted width for the form */
-  max-width: 600px; /* Maximum width for larger screens */
-  margin: 20px auto; /* Center the form horizontally */
-  text-align: center; /* Center content */
-}
 
-.add-expenditure-form h1 {
-  font-size: 24px; /* Larger title font size */
-  margin-bottom: 20px; /* Space below the title */
-}
-
-.add-expenditure-form .form-group {
-  margin-bottom: 20px; /* Space between form groups */
-}
-
-.add-expenditure-form label {
-  font-size: 18px; /* Larger label font size */
-  color: #333;
-}
-
-/* Style for the file input label */
-.add-expenditure-form .file-label {
-  display: inline-block;
-  padding: 14px; /* Larger input padding */
-  border: 4px dashed #007bff; /* Blue dashed border */
-  border-radius: 5px;
-  font-size: 18px; /* Larger input font size */
-  cursor: pointer; /* Change cursor to a hand on hover */
-  transition: border 0.3s ease; /* Smooth border transition */
-}
-
-/* Style for the file label when hovering over the input */
-.add-expenditure-form .file-input:hover + .file-label {
-  border-color: #004bff; /* Darker blue border on hover */
-}
-
-/* Style for the file input */
-.add-expenditure-form .file-input {
-  display: none; /* Hide the actual input */
-}
-
-/* Style for the file text (initial text) */
-.add-expenditure-form .file-input:not(:placeholder-shown) + .file-text::before {
-  content: "No file chosen, ";
-  color: #555; /* Text color for "No file chosen" */
-}
-
-/* Style for the file text (when a file is chosen) */
-.add-expenditure-form .file-input:not(:placeholder-shown) + .file-text::before {
-  content: "File chosen: ";
-  color: #007bff; /* Blue text color for chosen file */
-  font-weight: bold; /* Bold text for chosen file */
-}
-
-.add-expenditure-form input[type="text"],
-.add-expenditure-form input[type="number"],
-.add-expenditure-form input[type="file"] {
-  width: 100%;
-  padding: 12px; /* Larger input padding */
-  margin-bottom: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 18px; /* Larger input font size */
-}
-
-/* Style for the validation message */
-.add-expenditure-form .validation-message {
-  color: #ff0000; /* Red text color for error message */
-  font-size: 16px; /* Smaller font size for the message */
-  display: none; /* Initially hidden */
-}
-
-.add-expenditure-form button[type="submit"] {
-  background-color: #007bff; /* Blue color for "Submit" button */
-  color: #fff;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 10px;
-  font-size: 18px; /* Larger font size for the button text */
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.add-expenditure-form button[type="submit"]:hover {
-  background-color: #004bff; /* Darker blue color on hover */
-}
-
-/* Style for the form of pages */

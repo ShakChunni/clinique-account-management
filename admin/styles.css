@@ -118,7 +118,8 @@ body {
   position: absolute;
   top: 10px;
   left: 10px;
-  max-width: 100px; /* Adjust the width as needed */
+  margin-right: auto;
+  max-width: 80px; /* Adjust the width as needed */
 }
 
 .logo img {
