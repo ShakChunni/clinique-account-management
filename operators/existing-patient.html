@@ -317,7 +317,7 @@
 
           <div class="patient-field">
               <label>Admission Charge</label>
-              <span>${data.admissionFee}</span>
+              <span id="admission-fee-span">${data.admissionFee}</span>
           </div>
           <div class="patient-field">
               <label>Doctor's Fee</label>
@@ -378,6 +378,10 @@
 
         saveButton.addEventListener("click", async () => {
           const patientId = patientIdInput.value;
+          const admissionFee =
+            parseFloat(
+              document.getElementById("admission-fee-span").textContent
+            ) || 0;
           const doctorCharge =
             parseFloat(
               document.getElementById("doctor-charge-span").textContent
@@ -401,7 +405,7 @@
             0;
 
           const totalCharge =
-            otCharge + serviceCharge + pathologyCost + seatRent;
+            admissionFee + otCharge + serviceCharge + pathologyCost + seatRent;
           const totalPaid =
             parseFloat(
               document.getElementById("total-paid-span").textContent
@@ -450,9 +454,10 @@
           const patientAge = data.age;
           const patientContact = data.contact;
           const patientDoctor = data.doctor;
+          const totalCharge = data.totalCharge;
 
           // Redirect to otPathology.html with parameters
-          window.location.href = `/otPathology.html?id=${patientId}&name=${patientName}&age=${patientAge}&contact=${patientContact}&doctor=${patientDoctor}`;
+          window.location.href = `/otPathology.html?id=${patientId}&name=${patientName}&age=${patientAge}&contact=${patientContact}&doctor=${patientDoctor}&totalCharge=${totalCharge}`;
         });
       });
     </script>

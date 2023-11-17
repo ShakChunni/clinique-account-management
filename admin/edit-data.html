@@ -5,6 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Edit Patient Data</title>
     <link rel="stylesheet" href="styles.css" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #f5f5f5;
+        color: #28282b;
+      }
+    </style>
   </head>
   <body>
     <div class="edit-data-container">
@@ -13,7 +25,7 @@
         <input type="hidden" id="patientId" name="patientId" value="" />
         <div class="form-group">
           <label for="name">Name</label>
-          <input type="text" id="name" name="name" disabled />
+          <input type="text" id="name" name="name" required />
         </div>
         <div class="form-group">
           <label for="age">Age</label>
@@ -23,6 +35,16 @@
           <label for="contact">Contact</label>
           <input type="text" id="contact" name="contact" required />
         </div>
+        <div class="form-group">
+          <label for="doctor">Doctor</label>
+          <input type="text" id="doctor" name="doctor" />
+        </div>
+
+        <div class="form-group">
+          <label for="admissionFee">Admission Fee</label>
+          <input type="number" id="admissionFee" name="admissionFee" required />
+        </div>
+
         <div class="form-group">
           <label for="otCharge">OT Charge</label>
           <input
@@ -34,6 +56,17 @@
           />
         </div>
         <div class="form-group">
+          <label for="seatRent">Seat Rent</label>
+          <input
+            type="number"
+            id="seatRent"
+            name="seatRent"
+            required
+            step="0.01"
+          />
+        </div>
+
+        <div class="form-group">
           <label for="serviceCharge">Service Charge</label>
           <input
             type="number"
@@ -43,10 +76,7 @@
             step="0.01"
           />
         </div>
-        <div class="form-group">
-          <label for="admissionFee">Admission Fee</label>
-          <input type="number" id="admissionFee" name="admissionFee" required />
-        </div>
+
         <div class="form-group">
           <label for="pathologyCost">Pathology Cost</label>
           <input
@@ -57,6 +87,62 @@
             step="0.01"
           />
         </div>
+
+        <div class="form-group">
+          <label for="totalCharge">Total Charge</label>
+          <input
+            type="number"
+            id="totalCharge"
+            name="totalCharge"
+            required
+            step="0.01"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="discount">Discount Amount</label>
+          <input
+            type="number"
+            id="discount"
+            name="discount"
+            required
+            step="0.01"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="totaPaid">Total Paid</label>
+          <input
+            type="number"
+            id="totalPaid"
+            name="totalPaid"
+            required
+            step="0.01"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="dueAmount">Due Amount</label>
+          <input
+            type="number"
+            id="dueAmount"
+            name="dueAmount"
+            required
+            step="0.01"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="doctorCharge">Doctor Charge</label>
+          <input
+            type="number"
+            id="doctorCharge"
+            name="doctorCharge"
+            required
+            step="0.01"
+          />
+        </div>
+
         <button type="submit">Save Changes</button>
       </form>
     </div>
@@ -75,10 +161,17 @@
               $("#name").val(data.name);
               $("#age").val(data.age);
               $("#contact").val(data.contact);
-              $("#otCharge").val(data.otCharge);
-              $("#serviceCharge").val(data.serviceCharge);
+              $("#doctor").val(data.doctor);
               $("#admissionFee").val(data.admissionFee);
+              $("#otCharge").val(data.otCharge);
+              $("#seatRent").val(data.seatRent);
+              $("#serviceCharge").val(data.serviceCharge);
               $("#pathologyCost").val(data.pathologyCost);
+              $("#totalCharge").val(data.totalCharge);
+              $("#discount").val(data.discount);
+              $("#totalPaid").val(data.totalPaid);
+              $("#dueAmount").val(data.dueAmount);
+              $("#doctorCharge").val(data.doctorCharge);
             } else {
               alert("Patient not found.");
               // Redirect to the income list page or handle this case as needed
@@ -95,12 +188,29 @@
           // Gather the updated data
           const updatedData = {
             id: $("#patientId").val(),
+            name: $("#name").val(),
             age: $("#age").val(),
             contact: $("#contact").val(),
-            otCharge: $("#otCharge").val(),
-            serviceCharge: $("#serviceCharge").val(),
+            doctor: $("#doctor").val(),
             admissionFee: $("#admissionFee").val(),
+            otCharge: $("#otCharge").val(),
+            seatRent: $("#seatRent").val(),
+            serviceCharge: $("#serviceCharge").val(),
             pathologyCost: $("#pathologyCost").val(),
+            totalCharge:
+              parseFloat($("#admissionFee").val()) +
+              parseFloat($("#otCharge").val()) +
+              parseFloat($("#seatRent").val()) +
+              parseFloat($("#serviceCharge").val()) +
+              parseFloat($("#pathologyCost").val()),
+
+            discount: $("#discount").val(),
+            totalPaid: $("#totalPaid").val(),
+            dueAmount:
+              parseFloat($("#totalCharge").val()) -
+              parseFloat($("#totalPaid").val()) -
+              parseFloat($("#discount").val()),
+            doctorCharge: $("#doctorCharge").val(),
           };
 
           // Send the updated data to the server

@@ -556,8 +556,13 @@
           </div>
 
           <div class="form-group">
-            <label for="total-cost">Total Cost</label>
-            <input type="text" id="total-cost" name="total-cost" readonly />
+            <label for="pathology-cost">Pathology Cost</label>
+            <input
+              type="text"
+              id="pathology-cost"
+              name="pathology-cost"
+              readonly
+            />
           </div>
 
           <div class="form-group">
@@ -615,21 +620,18 @@
         const patientAge = getParameterByName("age");
         const patientContact = getParameterByName("contact");
         const patientDoctor = getParameterByName("doctor");
-        document.getElementById("patient-name").value = patientName;
-        document.getElementById("patient-age").value = patientAge;
-        document.getElementById("contact-number").value = patientContact;
-        document.querySelector("#doctor").value = patientDoctor;
+        const totalCharge = parseFloat(getParameterByName("totalCharge")) || 0;
 
         // Get all the blood test checkboxes
         const checkboxes = document.querySelectorAll('input[type="checkbox"]');
 
         // Get the "Total Cost," "Total Paid Amount," and "Due Amount" input fields
-        const totalCostInput = document.getElementById("total-cost");
+        const pathologyCostInput = document.getElementById("pathology-cost");
         const totalPaidInput = document.getElementById("total-paid");
         const discountInput = document.getElementById("discount");
         const dueAmountInput = document.getElementById("due-amount");
 
-        totalCostInput.addEventListener("input", updateDueAmount);
+        pathologyCostInput.addEventListener("input", updateDueAmount);
         totalPaidInput.addEventListener("input", updateDueAmount);
         discountInput.addEventListener("input", updateDueAmount);
 
@@ -638,30 +640,35 @@
           checkbox.addEventListener("change", updateTotalCost);
         });
 
+        // Autofill the form fields after the DOM is fully loaded
+        document.getElementById("patient-name").value = patientName;
+        document.getElementById("patient-age").value = patientAge;
+        document.getElementById("contact-number").value = patientContact;
+        document.getElementById("doctor").value = patientDoctor;
+
         function updateTotalCost() {
-          let totalCost = 0;
+          let pathologyCost = 0;
 
           // Loop through the checkboxes to calculate the total cost
           checkboxes.forEach((checkbox) => {
             if (checkbox.checked) {
-              totalCost += parseFloat(checkbox.getAttribute("data-cost"));
+              pathologyCost += parseFloat(checkbox.getAttribute("data-cost"));
             }
           });
 
-          // Update the "Total Cost" input field
-          totalCostInput.value = totalCost.toFixed(2); // Format cost with two decimal places
+          // Update the "Pathology Cost" input field
+          pathologyCostInput.value = pathologyCost.toFixed(2);
 
           // Update the "Due Amount" when Total Cost changes
           updateDueAmount();
         }
 
         function updateDueAmount() {
-          const totalCost = parseFloat(totalCostInput.value) || 0;
+          const pathologyCost = parseFloat(pathologyCostInput.value) || 0;
           const discount = parseFloat(discountInput.value) || 0;
           const totalPaid = parseFloat(totalPaidInput.value) || 0;
-          const dueAmount = totalCost - (totalPaid + discount);
-
-          dueAmountInput.value = dueAmount.toFixed(2); // Format with two decimal places
+          const dueAmount = pathologyCost - (totalPaid + discount);
+          dueAmountInput.value = dueAmount.toFixed(2);
         }
 
         const patientForm = document.getElementById("patient-form");
@@ -681,9 +688,10 @@
             age: document.getElementById("patient-age").value,
             contact: document.getElementById("contact-number").value,
             doctor: document.getElementById("doctor").value,
-            totalCost: document.getElementById("total-cost").value,
+            pathologyCost: document.getElementById("pathology-cost").value,
             totalPaid: document.getElementById("total-paid").value,
             discountAmount: document.getElementById("discount").value,
+            totalCharge: totalCharge + parseFloat(pathologyCostInput.value),
             dueAmount: document.getElementById("due-amount").value,
             date: document.getElementById("admission-date").value,
           };
@@ -698,7 +706,7 @@
             });
 
             if (response.ok) {
-              alert("OT Patient bloodtest data submitted successfully.");
+              alert("OT Patient blood test data submitted successfully.");
               window.location.href = "/existing-patient.html";
               // Clear other input fields if needed
             } else {

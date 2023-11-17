@@ -8,6 +8,9 @@
   </head>
   <body>
     <div class="container">
+      <a href="/admin/dashboard.html" class="logo">
+        <img src="../logo.png" alt="Logo" />
+      </a>
       <h1>Income List</h1>
       <div class="search-container">
         <input type="text" id="searchIdInput" placeholder="Search by ID" />
@@ -24,22 +27,63 @@
             <th>Date</th>
             <th>Admission Fee</th>
             <th>OT Charge</th>
+            <th>Seat Rent</th>
             <th>Service Charge</th>
             <th>Pathology Charge</th>
-            <th>Total Income</th>
-            <th>Action</th>
+            <th>Total Charge</th>
+            <th style="background-color: red; color: white">Discount Amount</th>
+            <th>Total Paid</th>
+            <th style="background-color: red; color: white">Due Amount</th>
+            <th style="background-color: red; color: white">Doctor's Fee</th>
+            <th style="background-color: green; color: white">Total Income</th>
+            <th style="background-color: yellowgreen; color: white">Action</th>
           </tr>
         </thead>
         <tbody id="incomeTable">
           <!-- Data will be dynamically inserted here -->
         </tbody>
       </table>
+
+      <div id="pagination">
+        <button id="prevPage">Previous Page</button>
+        <span id="currentPage">Page 1</span>
+        <button id="nextPage">Next Page</button>
+      </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- ... (your existing HTML code) ... -->
 
     <script>
       $(document).ready(function () {
         let allData = [];
+        let currentPage = 1;
+        const rowsPerPage = 25;
+
+        // Function to render the income data table for a specific page
+        function renderTableForPage(pageNumber) {
+          const startIndex = (pageNumber - 1) * rowsPerPage;
+          const endIndex = startIndex + rowsPerPage;
+          const pageData = allData.slice(startIndex, endIndex);
+          renderTable(pageData);
+        }
+
+        // Function to format the date
+        function formatDate(dateString) {
+          const options = {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false, // Ensure 24-hour format
+          };
+          const formattedDate = new Date(dateString).toLocaleDateString(
+            "en-US",
+            options
+          );
+          return formattedDate;
+        }
 
         // Function to render the income data table
         function renderTable(data) {
@@ -52,28 +96,48 @@
             );
           } else {
             data.forEach(function (row) {
+              // Format the date
+              const formattedDate = formatDate(row.date);
+
+              const admissionFee = row.admissionFee || 0;
+              const otCharge = row.otCharge || 0;
+              const seatRent = row.seatRent || 0;
+              const serviceCharge = row.serviceCharge || 0;
+              const pathologyCost = row.pathologyCost || 0;
+              const totalCharge = row.totalCharge || 0;
+              const discountAmount = row.discount || 0;
+              const totalPaid = row.totalPaid || 0;
+              const dueAmount = row.dueAmount || 0;
+              const doctorFee = row.doctorCharge || 0;
+
+              // Calculate total income
+              // Calculate total income
               const totalIncome =
-                row.admissionFee +
-                row.otCharge +
-                row.serviceCharge +
-                row.pathologyCost;
+                totalCharge - discountAmount - doctorFee - dueAmount;
+
               incomeTable.append(`
-                <tr>
-                  <td class="bold-text">${row.id}</td>
-                  <td class="bold-text">${row.name}</td>
-                  <td>${row.age}</td>
-                  <td>${row.contact}</td>
-                  <td>${row.date}</td>
-                  <td>&#2547;${row.admissionFee.toFixed(2)}</td>
-                  <td>&#2547;${row.otCharge.toFixed(2)}</td>
-                  <td>&#2547;${row.serviceCharge.toFixed(2)}</td>
-                  <td>&#2547;${row.pathologyCost.toFixed(2)}</td>
-                  <td>&#2547;${totalIncome.toFixed(2)}</td>
-                  <td><a class="edit-button" href="edit-data.html?id=${
-                    row.id
-                  }">Edit</a></td>
-                </tr>
-              `);
+                  <tr>
+                    <td class="bold-text">${row.id}</td>
+                    <td class="bold-text">${row.name}</td>
+                    <td>${row.age}</td>
+                    <td>${row.contact}</td>
+                    <td>${formattedDate}</td>
+                    <td>&#2547;${admissionFee.toFixed(2)}</td>
+                    <td>&#2547;${otCharge.toFixed(2)}</td>
+                    <td>&#2547;${seatRent.toFixed(2)}</td>
+                    <td>&#2547;${serviceCharge.toFixed(2)}</td>
+                    <td>&#2547;${pathologyCost.toFixed(2)}</td>
+                    <td>&#2547;${totalCharge.toFixed(2)}</td>
+                    <td>&#2547;${discountAmount.toFixed(2)}</td>
+                    <td>&#2547;${totalPaid.toFixed(2)}</td>
+                    <td>&#2547;${dueAmount.toFixed(2)}</td>
+                    <td>&#2547;${doctorFee.toFixed(2)}</td>        
+                    <td>&#2547;${totalIncome.toFixed(2)}</td>
+                    <td><a class="edit-button" href="edit-data.html?id=${
+                      row.id
+                    }">Edit</a></td>
+                  </tr>
+                `);
             });
           }
         }
@@ -83,8 +147,8 @@
           // Store the data in the 'allData' array
           allData = data;
 
-          // Render the initial income table
-          renderTable(data);
+          // Render the initial income table for the first page
+          renderTableForPage(currentPage);
         });
 
         // Search button click event
@@ -92,6 +156,25 @@
           const searchId = Number($("#searchIdInput").val()); // Convert input to a number
           const searchData = allData.filter((item) => item.id === searchId);
           renderTable(searchData);
+        });
+
+        // Previous page button click event
+        $("#prevPage").click(function () {
+          if (currentPage > 1) {
+            currentPage--;
+            renderTableForPage(currentPage);
+            $("#currentPage").text("Page " + currentPage);
+          }
+        });
+
+        // Next page button click event
+        $("#nextPage").click(function () {
+          const totalPages = Math.ceil(allData.length / rowsPerPage);
+          if (currentPage < totalPages) {
+            currentPage++;
+            renderTableForPage(currentPage);
+            $("#currentPage").text("Page " + currentPage);
+          }
         });
       });
     </script>

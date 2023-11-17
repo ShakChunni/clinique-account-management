@@ -105,13 +105,26 @@ body {
 }
 
 .container {
-  max-width: 1800px;
+  max-width: 2000px;
   margin: 0 auto;
   padding: 20px;
   background-color: #fff;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
   border-radius: 10px;
   text-align: center;
+}
+
+.logo {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  max-width: 100px; /* Adjust the width as needed */
+}
+
+.logo img {
+  width: 100%;
+  height: auto;
+  border-radius: 5px; /* Add border-radius for a rounded look */
 }
 
 h1 {
@@ -150,6 +163,35 @@ tr:nth-child(even) {
   background-color: #f2f2f2;
 }
 
+#pagination {
+  margin-top: 20px;
+}
+
+#prevPage,
+#nextPage {
+  background-color: #4caf50; /* Green */
+  border: none;
+  color: white;
+  padding: 10px 15px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+#prevPage:hover,
+#nextPage:hover {
+  background-color: #45a049;
+}
+
+#currentPage {
+  margin: 0 10px;
+  font-size: 16px;
+}
+
 /* Style for the Edit button */
 /* Style for the Edit button */
 .edit-button {
@@ -179,8 +221,8 @@ tr:nth-child(even) {
 /* Set background color and text color for the page */
 
 /* Style for the container */
-.edit-container {
-  max-width: 400px; /* Adjust the width as needed */
+.edit-data-container {
+  max-width: 2000px; /* Adjust the width as needed */
   margin: 0 auto;
   padding: 20px;
   background-color: #fff;
@@ -215,7 +257,7 @@ tr:nth-child(even) {
 .edit-form-group input[type="number"],
 .edit-form-group input[type="datetime-local"] {
   width: 100%;
-  padding: 10px;
+  padding: 15px;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
@@ -253,15 +295,6 @@ body {
 }
 
 /* Center the content */
-.edit-data-container {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #fff; /* White background */
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-  text-align: center;
-}
 
 /* Style the h1 */
 .edit-data-title {
@@ -279,15 +312,20 @@ body {
 /* Style labels in form groups */
 .form-group label {
   display: block;
-  font-weight: bold; /* Make the label text bold */
-  color: #3498db; /* Blue color for labels */
+  font-weight: bold;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  font-size: 24px;
+  color: #145da0;
 }
 
 /* Style input fields */
 .form-group input[type="text"],
 .form-group input[type="number"] {
+  display: inline-block;
   width: 100%;
-  padding: 15px; /* Larger padding for input fields */
+  padding: 15px;
+  font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 5px;
 }

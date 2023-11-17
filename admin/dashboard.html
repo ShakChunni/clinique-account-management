@@ -4,10 +4,90 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #f5f5f5;
+        color: #28282b;
+      }
 
-    <!-- Include jQuery for AJAX requests -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      .dashboard {
+        max-width: 1400px;
+        margin: 250px auto;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        padding: 20px;
+      }
+
+      .header {
+        text-align: center;
+      }
+
+      .logout {
+        float: right;
+        cursor: pointer;
+      }
+
+      h1 {
+        font-size: 40px;
+        margin-bottom: 20px;
+        font-weight: bold;
+        color: #189ab4;
+        text-align: center;
+      }
+
+      .stats-container {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+      }
+
+      .stat-link {
+        text-decoration: none;
+        color: inherit;
+        flex: 0 0 30%;
+        margin: 15px 0;
+      }
+
+      .stat {
+        background-color: #fff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+        transition: transform 0.3s;
+      }
+
+      .stat:hover {
+        transform: translateY(-5px);
+      }
+
+      .icon {
+        font-size: 36px;
+        color: #3498db;
+        margin-bottom: 10px;
+      }
+
+      .info {
+        color: #333;
+      }
+
+      .title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .amount {
+        font-size: 24px;
+        color: #27ae60;
+      }
+    </style>
   </head>
   <body>
     <div class="dashboard">
@@ -24,7 +104,9 @@
             <i class="fas fa-coins icon"></i>
             <div class="info">
               <p class="title">Total Income</p>
-              <p class="amount" id="totalIncome">Calculating...</p>
+              <p class="amount" style="color: #27ae60" id="totalIncome">
+                Calculating...
+              </p>
             </div>
           </div>
         </a>
@@ -33,7 +115,9 @@
             <i class="fas fa-shopping-cart icon"></i>
             <div class="info">
               <p class="title">Total Expenditure</p>
-              <p class="amount" id="totalExpenditure">Calculating...</p>
+              <p class="amount" style="color: #dc3545" id="totalExpenditure">
+                Calculating...
+              </p>
             </div>
           </div>
         </a>
@@ -50,10 +134,10 @@
       </div>
     </div>
 
-    <!-- Add JavaScript to fetch data from the server and update the UI -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <script>
       $(document).ready(function () {
-        // Fetch income and expenditure data from the server
         $.get("/getIncomeExpenditure", function (data) {
           $("#totalIncome").text(
             "৳ " + data.totalIncome.toFixed(2).toLocaleString()

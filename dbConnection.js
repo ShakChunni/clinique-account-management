@@ -42,6 +42,8 @@ const storage = multer.diskStorage({
 });
 
 app.use("/images", express.static(__dirname + "/images"));
+app.use("/logo.png", express.static(__dirname + "/logo.png"));
+app.use("/index.html", express.static(__dirname + "/index.html"));
 
 const upload = multer({ storage });
 app.use(upload.single("image"));
@@ -213,7 +215,8 @@ app.post("/addOtPathology/:id", (req, res) => {
     age,
     contact,
     doctor,
-    totalCost,
+    pathologyCost,
+    totalCharge,
     totalPaid,
     discountAmount,
     dueAmount,
@@ -221,13 +224,14 @@ app.post("/addOtPathology/:id", (req, res) => {
   } = req.body;
 
   const sql =
-    "UPDATE patient SET name=?, age=?, contact=?, doctor=?, pathologyCost=?, pathologyPaid=?, discount=?, dueAmount=?, date=? WHERE id=?";
+    "UPDATE patient SET name=?, age=?, contact=?, doctor=?, pathologyCost=?, totalCharge = ?, totalPaid=?, discount=?, dueAmount=?, date=? WHERE id=?";
   const values = [
     name,
     age,
     contact,
     doctor,
-    totalCost,
+    pathologyCost,
+    totalCharge,
     totalPaid,
     discountAmount,
     dueAmount,
@@ -689,12 +693,20 @@ app.get("/getPatientAdmin", (req, res) => {
 app.post("/updatePatientAdmin", (req, res) => {
   const patientId = req.body.id;
   const updatedData = {
+    name: req.body.name,
     age: req.body.age,
     contact: req.body.contact,
-    otCharge: req.body.otCharge,
-    serviceCharge: req.body.serviceCharge,
+    doctor: req.body.doctor,
     admissionFee: req.body.admissionFee,
+    otCharge: req.body.otCharge,
+    seatRent: req.body.seatRent,
+    serviceCharge: req.body.serviceCharge,
     pathologyCost: req.body.pathologyCost,
+    totalCharge: req.body.totalCharge,
+    discount: req.body.discount,
+    totalPaid: req.body.totalPaid,
+    dueAmount: req.body.dueAmount,
+    doctorCharge: req.body.doctorCharge,
   };
   const query = "UPDATE patient SET ? WHERE id = ?";
 
