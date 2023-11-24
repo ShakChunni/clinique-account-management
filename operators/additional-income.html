@@ -15,213 +15,7 @@
     />
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background: #f5f5f5;
-        color: #28282b;
-      }
-
-      .container {
-        max-width: 2000px;
-        min-height: 100vh;
-        margin: 0 auto;
-        padding: 25px;
-        background-color: #fff;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-        border-radius: 10px;
-      }
-
-      h1 {
-        font-size: 40px;
-        margin-bottom: 20px;
-        font-weight: bold;
-        color: #189ab4;
-        text-align: center;
-      }
-
-      .form-group {
-        margin-bottom: 25px;
-      }
-
-      label {
-        display: block;
-        font-weight: bold;
-        margin-bottom: 8px;
-        font-size: 18px;
-        color: #05445e;
-      }
-
-      input[type="text"],
-      input[type="number"] {
-        width: 100%;
-        padding: 12px;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        font-size: 18px;
-      }
-
-      .options {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 15px;
-        padding: 15px 0;
-      }
-
-      .option {
-        flex-basis: calc(33.33% - 15px);
-        background-color: #fff;
-        padding: 15px;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        display: flex;
-        align-items: center;
-        transition: box-shadow 0.3s, background-color 0.3s;
-      }
-
-      .option:hover {
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-      }
-
-      .option input[type="checkbox"] {
-        margin-right: 10px;
-      }
-
-      .option input[type="checkbox"]:checked {
-        background-color: #28a745;
-      }
-
-      .option input[type="checkbox"] + label {
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        color: #343a40;
-      }
-
-      .option input[type="checkbox"]:checked + label {
-        color: #fff;
-      }
-
-      .option p {
-        margin: 0;
-      }
-
-      .icon {
-        font-size: 24px;
-      }
-
-      .date-input {
-        display: flex;
-        align-items: center;
-        font-size: 18px;
-      }
-
-      .date-input i {
-        margin-right: 10px;
-      }
-
-      input[type="submit"] {
-        background-color: #dc3545;
-        color: #fff;
-        padding: 12px 24px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 18px;
-      }
-
-      input[type="text"]:read-only {
-        background-color: #ddd;
-        color: #777;
-      }
-
-      input[type="checkbox"] {
-        background-color: #dc3545;
-      }
-
-      .small-box {
-        display: none;
-        transition: box-shadow 0.3s;
-      }
-
-      #admission-date {
-        background-color: #fff;
-        border: 1px solid #ccc;
-        opacity: 1;
-      }
-
-      .doctor-dropdown {
-        display: inline-block;
-        position: relative;
-        width: 100%;
-      }
-
-      .doctor-selector {
-        display: flex;
-        align-items: center;
-        cursor: pointer;
-        border: 1px solid #ccc;
-        padding: 15px;
-        border-radius: 6px;
-        background-color: #fff; /* White background for better contrast */
-      }
-
-      .selected-doctor {
-        flex: 1;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        color: #343a40; /* Dark text color */
-      }
-
-      .doctor-options {
-        display: none;
-        position: absolute;
-        background-color: #fff;
-        border: 1px solid #ccc;
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        z-index: 1;
-        width: 100%;
-      }
-
-      .doctor-options li {
-        padding: 15px;
-        cursor: pointer;
-        border-top: 1px solid #ccc;
-      }
-
-      .doctor-options li:hover {
-        background-color: #f0f0f0;
-        border-top: 1px solid #ccc;
-      }
-
-      .doctor-options li::before {
-        content: "•";
-        margin-right: 5px;
-      }
-
-      button[type="submit"] {
-        background-color: #28a745;
-        color: #fff;
-        padding: 12px 24px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 18px;
-      }
-
-      button[type="submit"]:hover {
-        background-color: #218838;
-      }
-    </style>
+    <link rel="stylesheet" href="genStyles.css" />
   </head>
   <body>
     <div class="container">
@@ -246,49 +40,22 @@
             />
           </div>
           <div class="form-group">
-            <label for="doctor">Doctor</label>
+            <label for="doctor">Income Type</label>
             <div class="doctor-dropdown">
               <div class="doctor-selector">
-                <div class="selected-doctor">Select a doctor</div>
+                <div class="selected-doctor">Select a type</div>
                 <i class="fas fa-caret-down"></i>
               </div>
               <ul class="doctor-options">
-                <li data-doctor="Doctor 1">Prof. Dr. Sufia Khatun</li>
-                <li data-doctor="Doctor 2">Prof. Dr.A.N.M. Naushad Khan</li>
-                <li data-doctor="Doctor 3">Asst Prof. Dr. Sultana Rajia</li>
-                <li data-doctor="Doctor 4">Asst Director Dr. Hosna Begum</li>
-                <li data-doctor="Doctor 5">Prof. Dr. Molla Nazrul Islam</li>
-                <li data-doctor="Doctor 6">Asst Prof. Dr. Aminur Rahman</li>
-                <li data-doctor="Doctor 7">Dr. Md. Mahabubur Rahman Shahin</li>
-                <li data-doctor="Doctor 8">Dr. Tahsin Firoza Khan (Amina)</li>
-                <li data-doctor="Doctor 9">Asst Prof. Dr. Sujit Das</li>
-                <li data-doctor="Doctor 10">Dr. Ananna Debnath</li>
-                <li data-doctor="Doctor 11">
-                  Asst Prof. Dr. Gulam Mustafa Manik
-                </li>
-                <li data-doctor="Doctor 12">
-                  Associate Prof. Dr. Kazi Shah Alam
-                </li>
-                <li data-doctor="Doctor 13">
-                  Asst Prof. Dr. Muhammad Rafiqul Islam
-                </li>
-                <li data-doctor="Doctor 14">Prof. Dr. Muhammad Mohsin</li>
-                <li data-doctor="Doctor 15">Dr. Morium Akter</li>
+                <li data-doctor="Doctor 1">Pethidine Sale</li>
+                <li data-doctor="Doctor 2">Pharmacy Rent</li>
+                <li data-doctor="Doctor 3">Chamber Rent</li>
+                <li data-doctor="Doctor 4">I Department Rent</li>
+                <li data-doctor="Doctor 5">BSF Income</li>
               </ul>
             </div>
           </div>
-          <div class="form-group">
-            <label for="admission-fee">Admission Fee</label>
-            <div class="admission-fee-input">
-              <input
-                type="text"
-                id="admission-fee"
-                name="admission-fee"
-                value="300"
-                readonly
-              />
-            </div>
-          </div>
+
           <div class="form-group">
             <label for="admission-date">Admission Date</label>
             <div class="date-input">
