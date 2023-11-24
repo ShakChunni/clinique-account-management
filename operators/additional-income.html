@@ -19,45 +19,38 @@
   </head>
   <body>
     <div class="container">
-      <h1 style="margin-bottom: 20px">Add Patient</h1>
+      <h1 style="margin-bottom: 20px">Additional Income</h1>
       <div class="add-patient-form">
-        <form id="patient-form" method="POST" action="/add-patient">
+        <form id="patient-form" method="POST" action="/additional-income">
           <div class="form-group">
-            <label for="patient-name">Patient Name</label>
-            <input type="text" id="patient-name" name="patient-name" required />
-          </div>
-          <div class="form-group">
-            <label for="patient-age">Patient Age</label>
-            <input type="number" id="patient-age" name="patient-age" required />
-          </div>
-          <div class="form-group">
-            <label for="contact-number">Contact Number</label>
-            <input
-              type="text"
-              id="contact-number"
-              name="contact-number"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label for="doctor">Income Type</label>
-            <div class="doctor-dropdown">
-              <div class="doctor-selector">
-                <div class="selected-doctor">Select a type</div>
+            <label for="incomeType">Income Type</label>
+            <div class="incomeType-dropdown">
+              <div class="incomeType-selector">
+                <div class="selected-incomeType">Select a type</div>
                 <i class="fas fa-caret-down"></i>
               </div>
-              <ul class="doctor-options">
-                <li data-doctor="Doctor 1">Pethidine Sale</li>
-                <li data-doctor="Doctor 2">Pharmacy Rent</li>
-                <li data-doctor="Doctor 3">Chamber Rent</li>
-                <li data-doctor="Doctor 4">I Department Rent</li>
-                <li data-doctor="Doctor 5">BSF Income</li>
+              <ul class="incomeType-options">
+                <li data-incomeType="incomeType 1">Pethidine Sale</li>
+                <li data-incomeType="incomeType 2">Pharmacy Rent</li>
+                <li data-incomeType="incomeType 3">Chamber Rent</li>
+                <li data-incomeType="incomeType 4">I Department Rent</li>
+                <li data-incomeType="incomeType 5">BSF Income</li>
               </ul>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="income-fee">Income Amount</label>
+            <div class="income-fee-input">
+              <input
+                type="text"
+                id="income-fee"
+                name="income-fee"
+              />
             </div>
           </div>
 
           <div class="form-group">
-            <label for="admission-date">Admission Date</label>
+            <label for="admission-date">Date</label>
             <div class="date-input">
               <i class="far fa-calendar-alt"></i>
               <input
