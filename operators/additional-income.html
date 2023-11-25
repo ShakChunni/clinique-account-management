@@ -29,7 +29,7 @@
                 <div class="selected-incomeType">Select a type</div>
                 <i class="fas fa-caret-down"></i>
               </div>
-              <ul class="incomeType-options">
+              <ul class="incomeType-options" required>
                 <li data-incomeType="incomeType 1">Pethidine Sale</li>
                 <li data-incomeType="incomeType 2">Pharmacy Rent</li>
                 <li data-incomeType="incomeType 3">Chamber Rent</li>
@@ -45,6 +45,8 @@
                 type="text"
                 id="income-fee"
                 name="income-fee"
+                required
+                pattern="^\d+(\.\d{2})?$"
               />
             </div>
           </div>
@@ -68,73 +70,77 @@
         </form>
       </div>
     </div>
-    <script>
-      const selector = document.querySelector(".doctor-selector");
-      const options = document.querySelector(".doctor-options");
-
-      selector.addEventListener("click", function () {
-        options.style.display =
-          options.style.display === "block" ? "none" : "block";
-      });
-
-      options.addEventListener("click", function (e) {
-        if (e.target.tagName === "LI") {
-          const selectedDoctor = e.target.textContent; // Use the text content
-          document.querySelector(".selected-doctor").textContent =
-            selectedDoctor;
-          options.style.display = "none";
-
-          // Deselect all other options
-          const doctorOptions = document.querySelectorAll(".doctor-options li");
-          doctorOptions.forEach((option) =>
-            option.classList.remove("selected")
-          );
-          e.target.classList.add("selected");
-        }
-      });
-    </script>
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-        const patientForm = document.getElementById("patient-form");
-
+        // Date picker
         flatpickr("#admission-date", {
           dateFormat: "Y-m-d H:i",
           defaultDate: new Date(),
           enableTime: true,
         });
+        const incomeForm = document.getElementById("patient-form");
+        const incomeTypeSelector = document.querySelector(
+          ".incomeType-selector"
+        );
+        const incomeTypeOptions = document.querySelector(".incomeType-options");
 
-        patientForm.addEventListener("submit", async (e) => {
+        incomeTypeSelector.addEventListener("click", function (event) {
+          incomeTypeOptions.style.display =
+            incomeTypeOptions.style.display === "block" ? "none" : "block";
+          event.stopPropagation(); // Prevent the click event from propagating to the document
+        });
+
+        // Close the dropdown if the user clicks outside of it
+        document.addEventListener("click", function () {
+          incomeTypeOptions.style.display = "none";
+        });
+
+        incomeTypeOptions.addEventListener("click", function (e) {
+          if (e.target.tagName === "LI") {
+            const selectedIncomeType = e.target.textContent;
+            document.querySelector(".selected-incomeType").textContent =
+              selectedIncomeType;
+            incomeTypeOptions.style.display = "none";
+
+            // Deselect all other options
+            const incomeTypeOptions = document.querySelectorAll(
+              ".incomeType-options li"
+            );
+            incomeTypeOptions.forEach((option) =>
+              option.classList.remove("selected")
+            );
+            e.target.classList.add("selected");
+          }
+        });
+
+        incomeForm.addEventListener("submit", async (e) => {
           e.preventDefault();
 
           // Collect data
-          const patientData = {
-            name: document.getElementById("patient-name").value,
-            age: document.getElementById("patient-age").value,
-            contact: document.getElementById("contact-number").value,
-            doctor: document.querySelector(".selected-doctor").textContent,
-            admissionFee: document.getElementById("admission-fee").value,
+          const incomeData = {
+            incomeType: document.querySelector(".selected-incomeType")
+              .textContent,
+            incomeAmount: document.getElementById("income-fee").value,
             date: document.getElementById("admission-date").value,
           };
 
           try {
-            const response = await fetch("/formPost", {
+            const response = await fetch("/additional-income", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify(patientData),
+              body: JSON.stringify(incomeData),
             });
 
             if (response.ok) {
-              window.location.href = "/voucher.html";
-              console.log("Patient added successfully");
-              document.getElementById("patient-name").value = "";
-              document.getElementById("patient-age").value = "";
-              document.getElementById("contact-number").value = "";
-              document.querySelector(".selected-doctor").textContent = "";
+              alert("Income added successfully");
+              console.log("Income added successfully");
+              document.querySelector(".selected-incomeType").textContent = "";
+              document.getElementById("income-fee").value = "";
             } else {
-              alert("Error submitting patient data. Please try again.");
+              alert("Error submitting income data. Please try again.");
             }
           } catch (error) {
             console.error("Error:", error);

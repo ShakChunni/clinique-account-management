@@ -252,6 +252,37 @@ app.post("/addOtPathology/:id", (req, res) => {
   });
 });
 
+//additional-income
+
+// Endpoint to render the HTML form
+app.get("/additional-income", (req, res) => {
+  res.sendFile(__dirname + "/path_to_your_html_file.html");
+});
+
+// Endpoint to handle the form submission and insert data into the database
+app.post("/additional-income", (req, res) => {
+  console.log("Received a POST request to /additional-income");
+
+  const { incomeType, incomeAmount, date } = req.body;
+  const operator = ""; // You can update this later
+
+  const sql =
+    "INSERT INTO otherincome (incomeType, income, date, operator) VALUES (?, ?, ?, ?)";
+  const values = [incomeType, incomeAmount, date, operator];
+
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      console.error("Error inserting income data into the database:", err);
+      res
+        .status(500)
+        .json({ error: "An error occurred while adding the income." });
+    } else {
+      console.log("Income data inserted into the database.");
+      res.status(200).json({ message: "Income added successfully." });
+    }
+  });
+});
+
 // Endpoint to add a new expenditure to the database
 app.get("/add-expenditure", (req, res) => {
   res.sendFile(__dirname + "/operators/expenditure.html");

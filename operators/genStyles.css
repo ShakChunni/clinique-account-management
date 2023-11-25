@@ -452,6 +452,10 @@ input[type="checkbox"]:checked {
 
 /* Styles for additional income */
 
+.incomeType-options {
+  display: none;
+}
+
 .incomeType-dropdown {
   display: inline-block;
   position: relative;
