@@ -12,7 +12,7 @@
   </head>
   <body>
     <div class="container">
-      <div class="logout" onclick="window.location.href='login.html'">
+      <div class="logout" onclick="logout()">
         <i class="fas fa-sign-out-alt"></i>
         Logout
       </div>
@@ -47,6 +47,40 @@
           <p>Additional Income</p>
         </a>
       </div>
+      <div id="username-container"></div>
     </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Fetch the username from the server
+        fetch("/get-username")
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.username) {
+              // Display the username in the container
+              const usernameContainer =
+                document.getElementById("username-container");
+              usernameContainer.innerHTML = `<p>Welcome, ${data.username}!</p>`;
+            }
+          })
+          .catch((error) => console.error("Error fetching username:", error));
+
+        // Function to handle logout
+        function logout() {
+          fetch("/logout")
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.success) {
+                // Redirect to the login page after logout
+                window.location.href = "/operators/login.html";
+              }
+            })
+            .catch((error) => console.error("Error logging out:", error));
+        }
+
+        // Attach the logout function to the logout button click event
+        const logoutButton = document.querySelector(".logout");
+        logoutButton.addEventListener("click", logout);
+      });
+    </script>
   </body>
 </html>

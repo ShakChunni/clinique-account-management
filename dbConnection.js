@@ -7,6 +7,8 @@ const PDFKit = require("pdfkit");
 const fs = require("fs");
 const path = require("path");
 const moment = require("moment");
+const bcrypt = require("bcrypt");
+const session = require("express-session");
 
 const db = mysql.createConnection({
   host: "localhost",
@@ -22,6 +24,19 @@ db.connect((err) => {
     console.log("Connected to MySQL database");
   }
 });
+
+app.set("view engine", "ejs");
+
+// Use the express-session middleware
+app.use(
+  session({
+    secret: "myVeryStrongAndSecretPassphraseForSession", // Change this to a strong secret
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+
+// ... rest of your code
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -44,9 +59,134 @@ const storage = multer.diskStorage({
 app.use("/images", express.static(__dirname + "/images"));
 app.use("/logo.png", express.static(__dirname + "/logo.png"));
 app.use("/index.html", express.static(__dirname + "/index.html"));
-
+app.use(
+  "/operators/dashboard.html",
+  express.static(__dirname + "/operators/dashboard.html")
+);
 const upload = multer({ storage });
 app.use(upload.single("image"));
+
+//auth operator
+//auth operator
+app.get("/dashboard.html", (req, res) => {
+  // Check if the user is logged in by verifying the session
+  if (req.session.username) {
+    // Output the username to the server's console
+    console.log("Username:", req.session.username);
+
+    res.sendFile(__dirname + "/operators/dashboard.html");
+  } else {
+    // Redirect to the login page if the user is not logged in
+    res.redirect(__dirname + "/index.html");
+  }
+});
+
+// Handle signup
+app.get("/clinique-accounts", (req, res) => {
+  res.sendFile(__dirname + "/operators/signup.html");
+});
+
+app.post("/signupOperator", async (req, res) => {
+  const { name, username, password } = req.body;
+
+  // Check if the username is already taken
+  const checkUsernameQuery = "SELECT * FROM operator WHERE username = ?";
+  db.query(checkUsernameQuery, [username], (err, results) => {
+    if (err) {
+      console.error("Error checking username:", err);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+
+    if (results.length > 0) {
+      return res.status(400).json({ error: "Username already exists" });
+    }
+
+    // Hash the password
+    bcrypt.hash(password, 10, (hashErr, hashedPassword) => {
+      if (hashErr) {
+        console.error("Error hashing password:", hashErr);
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+
+      // Insert new operator into the database
+      const insertOperatorQuery =
+        "INSERT INTO operator (name, username, password) VALUES (?, ?, ?)";
+      db.query(
+        insertOperatorQuery,
+        [name, username, hashedPassword],
+        (insertErr) => {
+          if (insertErr) {
+            console.error("Error inserting operator:", insertErr);
+            return res.status(500).json({ error: "Internal Server Error" });
+          }
+
+          res.status(200).json({ message: "Signup successful" });
+        }
+      );
+    });
+  });
+});
+
+// ... rest of your code
+// Handle login form submission
+// Handle login form submission
+app.get("/clinique-accounts", (req, res) => {
+  res.sendFile(__dirname + "/operators/login.html");
+});
+
+app.post("/loginOperator", async (req, res) => {
+  const { username, password } = req.body;
+
+  // Fetch the user from the database
+  const query = "SELECT * FROM operator WHERE username = ?";
+  db.query(query, [username], async (err, results) => {
+    if (err) {
+      console.error("Database error: ", err);
+      res.status(500).send("Internal Server Error");
+    } else {
+      if (results.length > 0) {
+        // User found, check password
+        const match = await bcrypt.compare(password, results[0].password);
+
+        if (match) {
+          // Passwords match, login successful
+          // Set a session with the username
+          req.session.username = username;
+
+          res.status(200).send("Login Successful");
+        } else {
+          // Passwords don't match
+          res.status(401).send("Invalid Credentials");
+        }
+      } else {
+        // User not found
+        res.status(401).send("Invalid Credentials");
+      }
+    }
+  });
+});
+// Add these routes to your server-side code
+
+// Fetch username route
+app.get("/get-username", (req, res) => {
+  if (req.session.username) {
+    res.json({ username: req.session.username });
+  } else {
+    res.json({ username: null });
+  }
+});
+
+// Logout route
+app.get("/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error("Error destroying session:", err);
+      res.json({ success: false });
+    } else {
+      res.json({ success: true });
+    }
+  });
+});
 
 // Endpoint to add a new patient to the database
 app.get("/clinique-accounts", (req, res) => {
