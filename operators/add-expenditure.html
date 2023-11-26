@@ -81,16 +81,6 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-        let username;
-        // Fetch the username from the server
-        fetch("/get-username")
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.username) {
-              username = data.username;
-            }
-          })
-          .catch((error) => console.error("Error fetching username:", error));
         flatpickr("#admission-date", {
           dateFormat: "Y-m-d h:i K", // Updated date format for 12-hour time with AM/PM
           defaultDate: new Date(),
@@ -100,7 +90,7 @@
         const operatorInput = document.createElement("input");
         operatorInput.type = "hidden";
         operatorInput.name = "operator";
-        operatorInput.value = username;
+        const username = window.appUsername;
 
         const expenditureForm = document.getElementById("expenditure-form");
         expenditureForm.appendChild(operatorInput);
@@ -176,6 +166,13 @@
 
             // Append the compressed image to the FormData
             formData.set("image", compressedImage);
+
+            // Get the admission date value directly from the input field
+            const date =
+              document.getElementById("admission-date").value;
+
+            // Append the admission date to the FormData
+            formData.set("date", date);
 
             try {
               const response = await fetch("/add-expenditure", {

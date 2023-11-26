@@ -176,7 +176,90 @@ app.post("/loginOperator", async (req, res) => {
     }
   });
 });
-// Add these routes to your server-side code
+// Admin side auth
+
+// Handle signup
+app.get("/clinique-accounts", (req, res) => {
+  res.sendFile(__dirname + "/admin/signup.html");
+});
+
+app.post("/signupAdmin", async (req, res) => {
+  const { name, username, password } = req.body;
+
+  // Check if the username is already taken
+  const checkUsernameQuery = "SELECT * FROM admin WHERE username = ?";
+  db.query(checkUsernameQuery, [username], (err, results) => {
+    if (err) {
+      console.error("Error checking username:", err);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+
+    if (results.length > 0) {
+      return res.status(400).json({ error: "Username already exists" });
+    }
+
+    // Hash the password
+    bcrypt.hash(password, 10, (hashErr, hashedPassword) => {
+      if (hashErr) {
+        console.error("Error hashing password:", hashErr);
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+
+      // Insert new operator into the database
+      const insertOperatorQuery =
+        "INSERT INTO admin (name, username, password) VALUES (?, ?, ?)";
+      db.query(
+        insertOperatorQuery,
+        [name, username, hashedPassword],
+        (insertErr) => {
+          if (insertErr) {
+            console.error("Error inserting operator:", insertErr);
+            return res.status(500).json({ error: "Internal Server Error" });
+          }
+
+          res.status(200).json({ message: "Signup successful" });
+        }
+      );
+    });
+  });
+});
+
+// Handle login form submission
+app.get("/clinique-accounts", (req, res) => {
+  res.sendFile(__dirname + "/admin/login.html");
+});
+
+app.post("/loginAdmin", async (req, res) => {
+  const { username, password } = req.body;
+
+  // Fetch the user from the database
+  const query = "SELECT * FROM admin WHERE username = ?";
+  db.query(query, [username], async (err, results) => {
+    if (err) {
+      console.error("Database error: ", err);
+      res.status(500).send("Internal Server Error");
+    } else {
+      if (results.length > 0) {
+        // User found, check password
+        const match = await bcrypt.compare(password, results[0].password);
+
+        if (match) {
+          // Passwords match, login successful
+          // Set a session with the username
+          req.session.username = username;
+
+          res.status(200).send("Login Successful");
+        } else {
+          // Passwords don't match
+          res.status(401).send("Invalid Credentials");
+        }
+      } else {
+        // User not found
+        res.status(401).send("Invalid Credentials");
+      }
+    }
+  });
+});
 
 // Fetch username route
 app.get("/get-username", (req, res) => {
@@ -450,15 +533,17 @@ app.post("/additional-income", (req, res) => {
 app.get("/add-expenditure", (req, res) => {
   res.sendFile(__dirname + "/operators/expenditure.html");
 });
-
-app.post("/add-expenditure", (req, res) => {
+app.post("/add-expenditure", isAuthenticated, (req, res) => {
   console.log("Received a POST request to /add-expenditure");
 
-  const { description, cost, date, operator } = req.body;
+  const { description, cost, date } = req.body; // Updated to include admissionDate
+  const username = req.user.username; // Now req.user should be defined
   const imageName = req.file.filename;
+
+  // Modify the SQL query to include admission date
   const sql =
-    "INSERT INTO expenditure (description, cost, image_name, date, operator) VALUES (?, ?, ?, ?, ?)";
-  const values = [description, cost, imageName, date, operator];
+    "INSERT INTO expenditure (description, cost, image_name, operator, date) VALUES (?, ?, ?, ?, ?)";
+  const values = [description, cost, imageName, date, username, date];
 
   db.query(sql, values, (err, result) => {
     if (err) {

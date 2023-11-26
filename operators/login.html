@@ -22,7 +22,7 @@
       }
 
       h1 {
-        font-size: 40px;
+        font-size: 75px;
         margin-bottom: 20px;
         font-weight: bold;
         color: #189ab4;
@@ -73,7 +73,7 @@
   </head>
   <body>
     <div class="container">
-      <h1>Login</h1>
+      <h1>LOGIN PAGE</h1>
       <form id="login-form" method="POST" action="/loginOperator">
         <div class="form-group">
           <label for="username">Username</label>
@@ -109,7 +109,7 @@
 
             if (response.ok) {
               console.log("Login successful");
-              window.location.href = "/dashboard.html";
+              window.location.href = "/operators/dashboard.html";
               document.getElementById("username").value = "";
 
               // You can redirect the user to another page or perform other actions here

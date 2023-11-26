@@ -3,12 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sign Up - Clinic Management System</title>
-
-    <!-- Include your main styles -->
-    <link rel="stylesheet" href="mainStyles.css" />
-
-    <!-- Include additional styles for the signup page -->
+    <title>Login - Clinic Management System</title>
     <style>
       /* Add your additional styling for the signup page */
       body {
@@ -27,10 +22,10 @@
       }
 
       h1 {
-        font-size: 40px;
+        font-size: 75px;
         margin-bottom: 20px;
         font-weight: bold;
-        color: #189ab4;
+        color: #8d99ae;
         text-align: center;
       }
 
@@ -63,7 +58,7 @@
       button {
         width: 100%;
         padding: 10px;
-        background-color: #189ab4;
+        background-color: rgb(37, 124, 141);
         color: #fff;
         border: none;
         border-radius: 5px;
@@ -78,56 +73,49 @@
   </head>
   <body>
     <div class="container">
-      <h1>Sign Up</h1>
-      <div class="signup-form">
-        <form id="signup-form" method="POST" action="/signupOperator">
-          <div class="form-group">
-            <label for="name">Name</label>
-            <input type="text" id="name" name="name" required />
-          </div>
-          <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" required />
-          </div>
-          <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required />
-          </div>
-          <div class="form-group">
-            <button type="submit">Sign Up</button>
-          </div>
-        </form>
-      </div>
+      <h1>LOGIN PAGE</h1>
+      <form id="login-form" method="POST" action="/loginAdmin">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" required />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required />
+        </div>
+        <div class="form-group">
+          <button type="submit">Login</button>
+        </div>
+      </form>
     </div>
-
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-        const signupForm = document.getElementById("signup-form");
+        const loginForm = document.getElementById("login-form");
 
-        signupForm.addEventListener("submit", async (e) => {
+        loginForm.addEventListener("submit", async (e) => {
           e.preventDefault();
 
-          const name = document.getElementById("name").value;
           const username = document.getElementById("username").value;
           const password = document.getElementById("password").value;
 
           try {
-            const response = await fetch("/signupOperator", {
+            const response = await fetch("/loginAdmin", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify({ name, username, password }),
+              body: JSON.stringify({ username, password }),
             });
 
             if (response.ok) {
-              console.log("Signup successful");
-              window.location.href = "/operators/login.html";
-              // You can redirect the user to the login page or perform other actions here
+              console.log("Login successful");
+              window.location.href = "/admin/dashboard.html";
+              document.getElementById("username").value = "";
+
+              // You can redirect the user to another page or perform other actions here
             } else {
-              console.error("Signup failed");
-              alert("Error creating account. Please try again.");
+              console.error("Login failed");
+              alert("Invalid credentials. Please try again.");
             }
           } catch (error) {
             console.error("Error:", error);
