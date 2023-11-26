@@ -507,3 +507,43 @@ input[type="checkbox"]:checked {
   content: "•";
   margin-right: 5px;
 }
+
+.file-label {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 8px;
+}
+
+.file-input {
+  font-size: 100px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.file-text {
+  display: inline-block;
+  margin-left: 8px;
+  color: #343a40;
+}
+
+.clear-image-button {
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  font-size: 14px;
+  display: none;
+}
+
+.selected-image-message {
+  margin-top: 10px;
+  color: #28a745;
+  display: none;
+}

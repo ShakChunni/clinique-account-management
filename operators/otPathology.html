@@ -474,7 +474,7 @@
         const patientForm = document.getElementById("patient-form");
 
         flatpickr("#admission-date", {
-          dateFormat: "Y-m-d H:i",
+          dateFormat: "Y-m-d h:i K", // Updated date format for 12-hour time with AM/PM
           defaultDate: new Date(),
           enableTime: true,
         });

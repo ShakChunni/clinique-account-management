@@ -73,9 +73,19 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
+        let username;
+        // Fetch the username from the server
+        fetch("/get-username")
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.username) {
+              username = data.username;
+            }
+          })
+          .catch((error) => console.error("Error fetching username:", error));
         // Date picker
         flatpickr("#admission-date", {
-          dateFormat: "Y-m-d H:i",
+          dateFormat: "Y-m-d h:i K", // Updated date format for 12-hour time with AM/PM
           defaultDate: new Date(),
           enableTime: true,
         });
@@ -117,12 +127,13 @@
         incomeForm.addEventListener("submit", async (e) => {
           e.preventDefault();
 
-          // Collect data
+          // Collect data including the username
           const incomeData = {
             incomeType: document.querySelector(".selected-incomeType")
               .textContent,
             incomeAmount: document.getElementById("income-fee").value,
             date: document.getElementById("admission-date").value,
+            operator: username, // Include the username
           };
 
           try {

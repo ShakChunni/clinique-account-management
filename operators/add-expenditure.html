@@ -8,185 +8,12 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
     />
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
 
-      body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background: #f5f5f5;
-        color: #28282b;
-      }
-
-      .container {
-        max-width: 2000px;
-        min-height: 100vh;
-        margin: 0 auto;
-        padding: 25px;
-        background-color: #fff;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-        border-radius: 10px;
-      }
-
-      h1 {
-        font-size: 40px;
-        margin-bottom: 20px;
-        font-weight: bold;
-        color: #189ab4;
-        text-align: center;
-      }
-
-      .form-group {
-        margin-bottom: 25px;
-      }
-
-      label {
-        display: block;
-        font-weight: bold;
-        margin-bottom: 8px;
-        font-size: 18px;
-        color: #05445e;
-      }
-
-      input[type="text"],
-      input[type="number"] {
-        width: 100%;
-        padding: 12px;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        font-size: 18px;
-      }
-
-      .options {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 15px;
-        padding: 15px 0;
-      }
-
-      .option {
-        flex-basis: calc(33.33% - 15px);
-        background-color: #fff;
-        padding: 15px;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        display: flex;
-        align-items: center;
-        transition: box-shadow 0.3s, background-color 0.3s;
-      }
-
-      .option:hover {
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-      }
-
-      .option input[type="checkbox"] {
-        margin-right: 10px;
-      }
-
-      .option input[type="checkbox"]:checked {
-        background-color: #28a745;
-      }
-
-      .option input[type="checkbox"] + label {
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        color: #343a40;
-      }
-
-      .option input[type="checkbox"]:checked + label {
-        color: #fff;
-      }
-
-      .option p {
-        margin: 0;
-      }
-
-      .icon {
-        font-size: 24px;
-      }
-
-      .date-input {
-        display: flex;
-        align-items: center;
-        font-size: 18px;
-      }
-
-      .date-input i {
-        margin-right: 10px;
-      }
-
-      /* Existing styles... */
-
-      .form-group {
-        margin-bottom: 25px;
-      }
-
-      .label-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .file-label {
-        position: relative;
-        overflow: hidden;
-        display: inline-block;
-        cursor: pointer;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        padding: 8px;
-      }
-
-      .file-input {
-        font-size: 100px;
-        position: absolute;
-        left: 0;
-        top: 0;
-        opacity: 0;
-        cursor: pointer;
-      }
-
-      .file-text {
-        display: inline-block;
-        margin-left: 8px;
-        color: #343a40;
-      }
-
-      .clear-image-button {
-        background: none;
-        border: none;
-        color: #dc3545;
-        cursor: pointer;
-        font-size: 14px;
-        display: none;
-      }
-
-      .selected-image-message {
-        margin-top: 10px;
-        color: #28a745;
-        display: none;
-      }
-
-      /* Adjusted styles for the button */
-      button[type="submit"] {
-        background-color: #28a745;
-        color: #fff;
-        padding: 12px 24px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 18px;
-        margin-top: 10px; /* Add some spacing */
-      }
-
-      button[type="submit"]:hover {
-        background-color: #218838;
-      }
-    </style>
+    <link rel="stylesheet" href="genStyles.css" />
   </head>
   <body>
     <div class="container">
@@ -230,15 +57,14 @@
               <span id="selected-image-name">Image selected</span>
             </div>
           </div>
-
           <div class="form-group">
-            <label for="expenditure-date">Date</label>
+            <label for="admission-date">Date</label>
             <div class="date-input">
               <i class="far fa-calendar-alt"></i>
               <input
                 type="text"
-                id="expenditure-date"
-                name="expenditure-date"
+                id="admission-date"
+                name="admission-date"
                 required
               />
             </div>
@@ -255,23 +81,30 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-        // Initialize Flatpickr for the "Date" field
-        flatpickr("#expenditure-date", {
-          dateFormat: "Y-m-d", // Adjust the date format as needed
-          defaultDate: "today",
+        let username;
+        // Fetch the username from the server
+        fetch("/get-username")
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.username) {
+              username = data.username;
+            }
+          })
+          .catch((error) => console.error("Error fetching username:", error));
+        flatpickr("#admission-date", {
+          dateFormat: "Y-m-d h:i K", // Updated date format for 12-hour time with AM/PM
+          defaultDate: new Date(),
+          enableTime: true,
         });
-      });
-    </script>
 
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        // Initialize Flatpickr for the "Date" field
-        flatpickr("#expenditure-date", {
-          dateFormat: "Y-m-d", // Adjust the date format as needed
-          defaultDate: "today",
-        });
+        const operatorInput = document.createElement("input");
+        operatorInput.type = "hidden";
+        operatorInput.name = "operator";
+        operatorInput.value = username;
 
         const expenditureForm = document.getElementById("expenditure-form");
+        expenditureForm.appendChild(operatorInput);
+
         const fileInput = document.getElementById("image");
         const selectedImageMessage = document.querySelector(
           ".selected-image-message"
@@ -341,7 +174,7 @@
               0.8
             );
 
-            // Create a new FormData object and append the compressed image
+            // Append the compressed image to the FormData
             formData.set("image", compressedImage);
 
             try {

@@ -36,6 +36,17 @@ app.use(
   })
 );
 
+// Middleware to check if the user is authenticated
+const isAuthenticated = (req, res, next) => {
+  if (req.session.username) {
+    // User is authenticated
+    req.user = { username: req.session.username };
+    next();
+  } else {
+    // User is not authenticated
+    res.status(401).send("Unauthorized");
+  }
+};
 // ... rest of your code
 
 app.use(express.json());
@@ -170,8 +181,13 @@ app.post("/loginOperator", async (req, res) => {
 // Fetch username route
 app.get("/get-username", (req, res) => {
   if (req.session.username) {
-    res.json({ username: req.session.username });
+    // Assuming req.session.username is set securely during the user authentication process
+    const username = req.session.username;
+
+    // Send the username as JSON
+    res.json({ username });
   } else {
+    // Handle the case where the username is not available
     res.json({ username: null });
   }
 });
@@ -196,10 +212,20 @@ app.get("/clinique-accounts", (req, res) => {
 //addmitting new patient
 app.post("/formPost", (req, res) => {
   console.log("Received a POST request to /formPost");
-  const { name, age, contact, doctor, admissionFee, date } = req.body;
+  const { name, age, contact, doctor, admissionFee, date, operator } = req.body;
   const sql =
-    "INSERT INTO patient (name, age, contact, doctor, admissionFee, date) VALUES (?, ?, ?, ?, ?, ?)";
-  const values = [name, age, contact, doctor, admissionFee, date];
+    "INSERT INTO patient (name, age, contact, doctor, admissionFee, totalCharge, totalPaid, date, operator) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+  const values = [
+    name,
+    age,
+    contact,
+    doctor,
+    admissionFee,
+    admissionFee,
+    admissionFee,
+    date,
+    operator,
+  ];
 
   db.query(sql, values, (err, result) => {
     if (err) {
@@ -233,6 +259,7 @@ app.post("/addPathology", (req, res) => {
     dueAmount,
     totalCharge,
     date,
+    operator,
   } = req.body;
 
   // Format the date
@@ -241,7 +268,7 @@ app.post("/addPathology", (req, res) => {
   );
 
   const sql =
-    "INSERT INTO patient (name, age, contact, doctor, pathologyCost, totalPaid, discount, dueAmount, totalCharge, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    "INSERT INTO patient (name, age, contact, doctor, pathologyCost, totalPaid, discount, dueAmount, totalCharge, date, operator) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
   const values = [
     name,
     age,
@@ -253,6 +280,7 @@ app.post("/addPathology", (req, res) => {
     dueAmount,
     totalCharge,
     formattedDate,
+    operator,
   ];
 
   db.query(sql, values, (err, result) => {
@@ -289,14 +317,8 @@ app.get("/getPatient/:id", (req, res) => {
     }
   });
 });
-
-// Endpoint to update patient information
-app.get("/update-patient", (req, res) => {
-  res.sendFile(__dirname + "/operators/existing-patient.html");
-});
-
-// Endpoint to update patient information
-app.post("/update-patient/:id", (req, res) => {
+// Endpoint to update patient data in the database
+app.post("/update-patient/:id", isAuthenticated, (req, res) => {
   const patientId = req.params.id;
   const {
     doctorCharge,
@@ -309,8 +331,10 @@ app.post("/update-patient/:id", (req, res) => {
     dueAmount,
   } = req.body;
 
+  const username = req.user.username; // Now req.user should be defined
+
   const sql =
-    "UPDATE patient SET doctorCharge = ?, otCharge = ?, seatRent = ?, serviceCharge = ?, totalPaid = ? , totalCharge = ?, discount = ?, dueAmount = ?  WHERE id = ?";
+    "UPDATE patient SET doctorCharge = ?, otCharge = ?, seatRent = ?, serviceCharge = ?, totalPaid = ?, totalCharge = ?, discount = ?, dueAmount = ?, operator = ? WHERE id = ?";
   const values = [
     doctorCharge,
     otCharge,
@@ -320,6 +344,7 @@ app.post("/update-patient/:id", (req, res) => {
     totalCharge,
     discount,
     dueAmount,
+    username,
     patientId,
   ];
 
@@ -399,12 +424,11 @@ app.get("/additional-income", (req, res) => {
   res.sendFile(__dirname + "/path_to_your_html_file.html");
 });
 
-// Endpoint to handle the form submission and insert data into the database
+// Update the endpoint to handle the form submission and insert data into the database
 app.post("/additional-income", (req, res) => {
   console.log("Received a POST request to /additional-income");
 
-  const { incomeType, incomeAmount, date } = req.body;
-  const operator = ""; // You can update this later
+  const { incomeType, incomeAmount, date, operator } = req.body;
 
   const sql =
     "INSERT INTO otherincome (incomeType, income, date, operator) VALUES (?, ?, ?, ?)";
@@ -422,7 +446,6 @@ app.post("/additional-income", (req, res) => {
     }
   });
 });
-
 // Endpoint to add a new expenditure to the database
 app.get("/add-expenditure", (req, res) => {
   res.sendFile(__dirname + "/operators/expenditure.html");
@@ -431,11 +454,11 @@ app.get("/add-expenditure", (req, res) => {
 app.post("/add-expenditure", (req, res) => {
   console.log("Received a POST request to /add-expenditure");
 
-  const { description, cost } = req.body;
+  const { description, cost, date, operator } = req.body;
   const imageName = req.file.filename;
   const sql =
-    "INSERT INTO expenditure (description, cost, image_name) VALUES (?, ?, ?)";
-  const values = [description, cost, imageName];
+    "INSERT INTO expenditure (description, cost, image_name, date, operator) VALUES (?, ?, ?, ?, ?)";
+  const values = [description, cost, imageName, date, operator];
 
   db.query(sql, values, (err, result) => {
     if (err) {

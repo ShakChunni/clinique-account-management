@@ -36,6 +36,23 @@
     </script>
 
     <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Function to get the value of a query parameter from the URL
+        function getQueryParam(name) {
+          const urlParams = new URLSearchParams(window.location.search);
+          return urlParams.get(name);
+        }
+
+        // Get the username from the URL
+        const username = getQueryParam("username");
+
+        // Display the username in the container
+        const usernameContainer = document.getElementById("username-container");
+        usernameContainer.innerHTML = `<p>Welcome, ${username}!</p>`;
+      });
+    </script>
+
+    <script>
       document.addEventListener("DOMContentLoaded", () => {
         const patientIdInput = document.getElementById("patient-id");
         const searchButton = document.getElementById("search-button");
@@ -68,86 +85,72 @@
           if (response.ok) {
             // Display the patient information
             const patientInfo = `
-          <h2>Patient Information</h2>
-          <div class="patient-field">
-              <label>ID</label>
-              <span>${data.id}</span>
-          </div>
-          <div class="patient-field">
-              <label>Name</label>
-              <span>${data.name}</span>
-          </div>
-          <div class="patient-field">
-              <label>Age</label>
-              <span>${data.age}</span>
-          </div>
-          <div class="patient-field">
-              <label>Contact</label>
-              <span>${data.contact}</span>
-          </div>
+                <h2>Patient Information</h2>
+                <div class="patient-field">
+                    <label>ID</label>
+                    <span>${data.id}</span>
+                </div>
+                <div class="patient-field">
+                    <label>Name</label>
+                    <span>${data.name}</span>
+                </div>
+                <div class="patient-field">
+                    <label>Age</label>
+                    <span>${data.age}</span>
+                </div>
+                <div class="patient-field">
+                    <label>Contact</label>
+                    <span>${data.contact}</span>
+                </div>
 
-          <div class="patient-field">
-              <label>Doctor</label>
-              <span>${data.doctor}</span>
-          </div>
-          <div class="patient-field">
-              <label>Admission Charge</label>
-              <span id="admission-fee-span">${data.admissionFee}</span>
-          </div>
-          <div class="patient-field">
-              <label>Doctor's Fee</label>
-              <span id="doctor-charge-span" contentEditable="true">${
-                data.doctorCharge
-              }</span>
-          </div>
+                <div class="patient-field">
+                    <label>Doctor</label>
+                    <span>${data.doctor}</span>
+                </div>
+                <div class="patient-field">
+                    <label>Admission Charge</label>
+                    <span id="admission-fee-span">${data.admissionFee}</span>
+                </div>
+                <div class="patient-field">
+                    <label>Doctor's Fee</label>
+                    <span id="doctor-charge-span" contentEditable="true">${data.doctorCharge}</span>
+                </div>
 
-          <div class="patient-field">
-              <label>OT Charge</label>
-              <span id="ot-charge-span" contentEditable="true">${
-                data.otCharge
-              }</span>
-          </div>
-          <div class="patient-field">
-              <label>Seat Rent</label>
-              <span id="seat-rent-span" contentEditable="true">${
-                data.seatRent
-              }</span>
-          </div>
-          <div class="patient-field">
-              <label>Service Charge</label>
-              <span id="service-charge-span" contentEditable="true">${
-                data.serviceCharge
-              }</span>
-          </div>
-          <div class="patient-field">
-              <label>Pathology Cost</label>
-              <span id="pathology-cost-span">${data.pathologyCost}</span>
-          </div>
-          <div class="patient-field">
-                <label>Discount Amount</label>
-                  <span id="discount-span" contentEditable="true">${
-                    data.discount
-                  }</span>
-          </div>
-          <div class="patient-field">
-              <label>Total Charge</label>
-              <span id="pathology-paid-span">${
-                data.totalCharge - data.admissionFee
-              }</span>
-          </div>
-          <div class="patient-field">
-              <label>Total Paid</label>
-              <span id="total-paid-span" contentEditable="true">${
-                data.totalPaid
-              }</span>
-          </div>
+                <div class="patient-field">
+                    <label>OT Charge</label>
+                    <span id="ot-charge-span" contentEditable="true">${data.otCharge}</span>
+                </div>
+                <div class="patient-field">
+                    <label>Seat Rent</label>
+                    <span id="seat-rent-span" contentEditable="true">${data.seatRent}</span>
+                </div>
+                <div class="patient-field">
+                    <label>Service Charge</label>
+                    <span id="service-charge-span" contentEditable="true">${data.serviceCharge}</span>
+                </div>
+                <div class="patient-field">
+                    <label>Pathology Cost</label>
+                    <span id="pathology-cost-span">${data.pathologyCost}</span>
+                </div>
+                <div class="patient-field">
+                      <label>Discount Amount</label>
+                        <span id="discount-span" contentEditable="true">${data.discount}</span>
+                </div>
+                <div class="patient-field">
+                    <label>Total Charge</label>
+                    <span id="total-charge-span">${data.totalCharge}</span>
+                </div>
+                <div class="patient-field">
+                    <label>Total Paid</label>
+                    <span id="total-paid-span" contentEditable="true">${data.totalPaid}</span>
+                </div>
 
-          <div class="patient-field">
-                <label>Due Amount</label>
-                  <span id="due-amount-span">${data.dueAmount}</span>
-          </div>
+                <div class="patient-field">
+                      <label>Due Amount</label>
+                        <span id="due-amount-span">${data.dueAmount}</span>
+                </div>
 
-        `;
+              `;
 
             searchResults.innerHTML = patientInfo;
             searchResults.style.display = "block";
@@ -201,23 +204,30 @@
             ) || 0;
           const dueAmount = totalCharge - admissionFee - totalPaid - discount;
 
-          const response = await fetch(`/update-patient/${patientId}`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              doctorCharge,
-              otCharge,
-              seatRent,
-              serviceCharge,
-              totalPaid,
-              totalCharge,
-              discount,
-              dueAmount,
-            }),
-          });
+          // Retrieve the username from the global variable
+          const username = window.appUsername;
 
+          // Rest of your code...
+
+          const response = await fetch(
+            `/update-patient/${patientId}?username=${username}`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                doctorCharge,
+                otCharge,
+                seatRent,
+                serviceCharge,
+                totalPaid,
+                totalCharge,
+                discount,
+                dueAmount,
+              }),
+            }
+          );
           if (response.ok) {
             alert("Patient data updated successfully.");
           } else {
