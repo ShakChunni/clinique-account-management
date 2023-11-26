@@ -81,8 +81,9 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
+        // Update the date format for Flatpickr to exclude the time
         flatpickr("#admission-date", {
-          dateFormat: "Y-m-d h:i K", // Updated date format for 12-hour time with AM/PM
+          dateFormat: "Y-m-d h:i K", // Use lowercase 'h' for 12-hour format, 'K' for AM/PM
           defaultDate: new Date(),
           enableTime: true,
         });
@@ -90,7 +91,6 @@
         const operatorInput = document.createElement("input");
         operatorInput.type = "hidden";
         operatorInput.name = "operator";
-        const username = window.appUsername;
 
         const expenditureForm = document.getElementById("expenditure-form");
         expenditureForm.appendChild(operatorInput);
@@ -168,8 +168,7 @@
             formData.set("image", compressedImage);
 
             // Get the admission date value directly from the input field
-            const date =
-              document.getElementById("admission-date").value;
+            const date = document.getElementById("admission-date").value;
 
             // Append the admission date to the FormData
             formData.set("date", date);

@@ -9,6 +9,8 @@ const path = require("path");
 const moment = require("moment");
 const bcrypt = require("bcrypt");
 const session = require("express-session");
+const uuid = require("uuid"); // Import the uuid package
+
 const pdf = require("html-pdf");
 
 const db = mysql.createConnection({
@@ -32,12 +34,16 @@ function getBase64Image(file) {
   return Buffer.from(data).toString("base64");
 }
 
-// Use the express-session middleware
+// Use uuid to generate unique session IDs
 app.use(
   session({
-    secret: "myVeryStrongAndSecretPassphraseForSession", // Change this to a strong secret
+    genid: (req) => {
+      return uuid.v4(); // use UUID v4 for session IDs
+    },
+    secret: "your-secret-key",
     resave: false,
     saveUninitialized: true,
+    cookie: { secure: false },
   })
 );
 
@@ -52,7 +58,6 @@ const isAuthenticated = (req, res, next) => {
     res.status(401).send("Unauthorized");
   }
 };
-// ... rest of your code
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -97,8 +102,8 @@ app.get("/dashboard.html", (req, res) => {
   }
 });
 
-// Handle signup
-app.get("/clinique-accounts", (req, res) => {
+// Operator signup
+app.get("/clinique-accounts/operator/signup", (req, res) => {
   res.sendFile(__dirname + "/operators/signup.html");
 });
 
@@ -143,10 +148,8 @@ app.post("/signupOperator", async (req, res) => {
   });
 });
 
-// ... rest of your code
-// Handle login form submission
-// Handle login form submission
-app.get("/clinique-accounts", (req, res) => {
+// Operator login
+app.get("/clinique-accounts/operator/login", (req, res) => {
   res.sendFile(__dirname + "/operators/login.html");
 });
 
@@ -183,8 +186,8 @@ app.post("/loginOperator", async (req, res) => {
 });
 // Admin side auth
 
-// Handle signup
-app.get("/clinique-accounts", (req, res) => {
+// Admin signup
+app.get("/clinique-accounts/admin/signup", (req, res) => {
   res.sendFile(__dirname + "/admin/signup.html");
 });
 
@@ -229,8 +232,8 @@ app.post("/signupAdmin", async (req, res) => {
   });
 });
 
-// Handle login form submission
-app.get("/clinique-accounts", (req, res) => {
+// Admin login
+app.get("/clinique-accounts/admin/login", (req, res) => {
   res.sendFile(__dirname + "/admin/login.html");
 });
 
@@ -298,9 +301,10 @@ app.get("/clinique-accounts", (req, res) => {
 });
 
 //addmitting new patient
-app.post("/formPost", (req, res) => {
+app.post("/formPost", isAuthenticated, (req, res) => {
   console.log("Received a POST request to /formPost");
-  const { name, age, contact, doctor, admissionFee, date, operator } = req.body;
+  const { name, age, contact, doctor, admissionFee, date } = req.body;
+  const username = req.user.username; // Now req.user should be defined
   const sql =
     "INSERT INTO patient (name, age, contact, doctor, admissionFee, totalCharge, totalPaid, date, operator) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
   const values = [
@@ -312,7 +316,7 @@ app.post("/formPost", (req, res) => {
     admissionFee,
     admissionFee,
     date,
-    operator,
+    username,
   ];
 
   db.query(sql, values, (err, result) => {
@@ -334,7 +338,7 @@ app.get("/clinique-accounts", (req, res) => {
   res.sendFile(__dirname + "/operators/pathology.html");
 });
 
-app.post("/addPathology", (req, res) => {
+app.post("/addPathology", isAuthenticated, (req, res) => {
   console.log("Received a POST request to /addPathology");
   const {
     name,
@@ -347,9 +351,8 @@ app.post("/addPathology", (req, res) => {
     dueAmount,
     totalCharge,
     date,
-    operator,
   } = req.body;
-
+  const username = req.user.username; // Now req.user should be defined
   // Format the date
   const formattedDate = moment(date, "YYYY-MM-DD HH:mm").format(
     "YYYY-MM-DD HH:mm"
@@ -368,7 +371,7 @@ app.post("/addPathology", (req, res) => {
     dueAmount,
     totalCharge,
     formattedDate,
-    operator,
+    username,
   ];
 
   db.query(sql, values, (err, result) => {
@@ -444,6 +447,7 @@ app.post("/update-patient/:id", isAuthenticated, (req, res) => {
         .json({ error: "An error occurred while updating patient data." });
     } else {
       console.log("Patient data updated.");
+      console.log("Result:", username);
       res.status(200).json({ message: "Patient data updated successfully." });
     }
   });
@@ -513,14 +517,15 @@ app.get("/additional-income", (req, res) => {
 });
 
 // Update the endpoint to handle the form submission and insert data into the database
-app.post("/additional-income", (req, res) => {
+app.post("/additional-income", isAuthenticated, (req, res) => {
   console.log("Received a POST request to /additional-income");
 
-  const { incomeType, incomeAmount, date, operator } = req.body;
+  const { incomeType, incomeAmount, date } = req.body;
+  const username = req.user.username; // Now req.user should be defined
 
   const sql =
     "INSERT INTO otherincome (incomeType, income, date, operator) VALUES (?, ?, ?, ?)";
-  const values = [incomeType, incomeAmount, date, operator];
+  const values = [incomeType, incomeAmount, date, username];
 
   db.query(sql, values, (err, result) => {
     if (err) {
@@ -541,14 +546,13 @@ app.get("/add-expenditure", (req, res) => {
 app.post("/add-expenditure", isAuthenticated, (req, res) => {
   console.log("Received a POST request to /add-expenditure");
 
-  const { description, cost, date } = req.body; // Updated to include admissionDate
-  const username = req.user.username; // Now req.user should be defined
+  const { description, cost, date } = req.body;
+  const username = req.user.username;
   const imageName = req.file.filename;
 
-  // Modify the SQL query to include admission date
   const sql =
     "INSERT INTO expenditure (description, cost, image_name, operator, date) VALUES (?, ?, ?, ?, ?)";
-  const values = [description, cost, imageName, date, username, date];
+  const values = [description, cost, imageName, username, date];
 
   db.query(sql, values, (err, result) => {
     if (err) {

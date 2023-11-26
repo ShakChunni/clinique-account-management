@@ -129,16 +129,6 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-        let username;
-        // Fetch the username from the server
-        fetch("/get-username")
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.username) {
-              username = data.username;
-            }
-          })
-          .catch((error) => console.error("Error fetching username:", error));
         const patientForm = document.getElementById("patient-form");
 
         flatpickr("#admission-date", {
@@ -151,6 +141,7 @@
           e.preventDefault();
 
           // Collect data
+          const username = window.appUsername;
           const patientData = {
             name: document.getElementById("patient-name").value,
             age: document.getElementById("patient-age").value,
@@ -158,7 +149,6 @@
             doctor: document.querySelector(".selected-doctor").textContent,
             admissionFee: document.getElementById("admission-fee").value,
             date: document.getElementById("admission-date").value,
-            operator: username,
           };
 
           try {

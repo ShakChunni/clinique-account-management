@@ -420,6 +420,7 @@
         const patientAge = getParameterByName("age");
         const patientContact = getParameterByName("contact");
         const patientDoctor = getParameterByName("doctor");
+        const totalPaid = parseFloat(getParameterByName("totalPaid")) || 0;
         const totalCharge = parseFloat(getParameterByName("totalCharge")) || 0;
 
         // Get all the blood test checkboxes
@@ -489,7 +490,8 @@
             contact: document.getElementById("contact-number").value,
             doctor: document.getElementById("doctor").value,
             pathologyCost: document.getElementById("pathology-cost").value,
-            totalPaid: document.getElementById("total-paid").value,
+            totalPaid:
+              300 + parseFloat(document.getElementById("total-paid").value),
             discountAmount: document.getElementById("discount").value,
             totalCharge: totalCharge + parseFloat(pathologyCostInput.value),
             dueAmount: document.getElementById("due-amount").value,

@@ -202,7 +202,7 @@
             parseFloat(
               document.getElementById("total-paid-span").textContent
             ) || 0;
-          const dueAmount = totalCharge - admissionFee - totalPaid - discount;
+          const dueAmount = totalCharge - totalPaid - discount;
 
           // Retrieve the username from the global variable
           const username = window.appUsername;
@@ -253,6 +253,7 @@
           const patientAge = data.age;
           const patientContact = data.contact;
           const patientDoctor = data.doctor;
+          const totalPaid = data.totalPaid;
           const totalCharge = data.totalCharge;
 
           // Redirect to otPathology.html with parameters
