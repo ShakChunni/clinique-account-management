@@ -132,9 +132,10 @@
         const patientForm = document.getElementById("patient-form");
 
         flatpickr("#admission-date", {
-          dateFormat: "Y-m-d h:i K", // Updated date format for 12-hour time with AM/PM
+          dateFormat: "Y-m-d H:i", // Use uppercase 'H' for 24-hour format
           defaultDate: new Date(),
           enableTime: true,
+          time_24hr: false, // Set to true if you want 24-hour format
         });
 
         patientForm.addEventListener("submit", async (e) => {

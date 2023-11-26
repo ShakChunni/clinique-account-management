@@ -83,9 +83,10 @@
       document.addEventListener("DOMContentLoaded", () => {
         // Update the date format for Flatpickr to exclude the time
         flatpickr("#admission-date", {
-          dateFormat: "Y-m-d h:i K", // Use lowercase 'h' for 12-hour format, 'K' for AM/PM
+          dateFormat: "Y-m-d H:i", // Use uppercase 'H' for 24-hour format
           defaultDate: new Date(),
           enableTime: true,
+          time_24hr: false, // Set to true if you want 24-hour format
         });
 
         const operatorInput = document.createElement("input");
