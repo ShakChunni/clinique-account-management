@@ -73,8 +73,6 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-
-        // Date picker
         flatpickr("#admission-date", {
           dateFormat: "Y-m-d H:i", // Use uppercase 'H' for 24-hour format
           defaultDate: new Date(),
@@ -117,6 +115,7 @@
         });
 
         incomeForm.addEventListener("submit", async (e) => {
+          console.log("Form submitted");
           e.preventDefault();
 
           // Collect data including the username
@@ -125,7 +124,6 @@
               .textContent,
             incomeAmount: document.getElementById("income-fee").value,
             date: document.getElementById("admission-date").value,
-            operator: username, // Include the username
           };
 
           try {

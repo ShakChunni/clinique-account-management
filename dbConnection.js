@@ -546,13 +546,14 @@ app.get("/add-expenditure", (req, res) => {
 app.post("/add-expenditure", isAuthenticated, (req, res) => {
   console.log("Received a POST request to /add-expenditure");
 
-  const { description, cost, date } = req.body;
-  const username = req.user.username;
+  const { description, cost, date } = req.body; // Updated to include admissionDate
+  const username = req.user.username; // Now req.user should be defined
   const imageName = req.file.filename;
 
+  // Modify the SQL query to include admission date
   const sql =
     "INSERT INTO expenditure (description, cost, image_name, operator, date) VALUES (?, ?, ?, ?, ?)";
-  const values = [description, cost, imageName, username, date];
+  const values = [description, cost, imageName, date, username, date];
 
   db.query(sql, values, (err, result) => {
     if (err) {
@@ -708,7 +709,7 @@ app.get("/generate-patient-pdf", (req, res) => {
 
     // Styling for the PDF
     const titleStyle = {
-      fontSize: 35,
+      fontSize: 50, // Increased font size to 50 points
       font: __dirname + "/fonts/OpenSans-Bold.ttf",
       align: "center",
       margin: 30,
@@ -716,14 +717,14 @@ app.get("/generate-patient-pdf", (req, res) => {
 
     const cellStyle = {
       font: __dirname + "/fonts/OpenSans-Regular.ttf",
-      fontSize: 35,
+      fontSize: 20, // Adjusted font size to 20 points
       padding: 10,
-      margin: 0, // Removed extra margin
+      margin: 0,
     };
 
     const takaFont = __dirname + "/fonts/FN Hasan Kolkata Unicode.ttf"; // Taka symbol font
 
-    doc.text("Patient Admission Form", { ...titleStyle, fontSize: 35 });
+    doc.text("Patient Admission Form", { ...titleStyle, fontSize: 50 }); // Explicitly set the font size for the title
 
     const tableX = 50;
     const tableY = 150;
@@ -777,7 +778,7 @@ app.get("/generate-patient-pdf", (req, res) => {
   });
 });
 
-//pathology pdf
+//pathology information pdf
 
 app.get("/generate-patient-pathology-pdf", (req, res) => {
   const sql = "SELECT * FROM patient ORDER BY id DESC LIMIT 1";
@@ -790,142 +791,139 @@ app.get("/generate-patient-pathology-pdf", (req, res) => {
     } else {
       const patientData = result[0];
       const html = `
-<html>
-  <head>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background: #fff; /* Set background color to white */
-        color: #28282b;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start; /* Align items to the left */
-        justify-content: center;
-        min-height: 100vh;
-      }
-
-
-      .header {
-        display: flex;
-        align-items: center;
-        margin-bottom: 20px;
-      }
-
-      .logo {
-        width: 80px;
-        margin-right: 10px;
-        align-self: left;
-      }
-
-      h1 {
-        font-size: 30px;
-        margin-bottom: 10px;
-        font-weight: bold;
-        color: #189ab4;
-        align-self: center;
-      }
-
-      h2 {
-        font-size: 18px;
-        color: #189ab4;
-        margin-bottom: 20px;
-        align-self: center;
-      }
-
-      /* Add this to your existing styles or replace your existing content styles */
-      .patient-info {
-        margin-top: 20px;
-      }
+      <html>
+      <head>
+        <style>
+          * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+          }
     
-      .info-row {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 10px;
-      }
+          body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #fff;
+          }
     
-      .info-label {
-        font-weight: bold;
-        margin-right: 10px;
-        width: 150px; /* Adjust as needed for alignment */
-        text-align: left;
-      }
+          .header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background-color: #f0f0f0;
+            text align: center;
+          }
+      
+          #logo {
+            max-width: 80px;
+            max-height: 400px;
+            margin-right: 40px;
+             /* Adjust the margin as needed */
+          }
+      
+          .clinic-name {
+            margin-left: 10px; /* Adjust the margin as needed */
+            margin-bottom: 250px;
+            font-size: 32px;
+            font-weight: bold;
+            color: #189ab4;
+          }
     
-      .info-data {
-        flex-grow: 1;
-        text-align: right;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
+          h1 {
+            font-size: 26px;
+            margin-bottom: 2px;
+            font-weight: bold;
+            color: #189ab4;
+            text-align: center;
+          }
+    
+          h2 {
+            font-size: 24px;
+            margin-bottom: 35px;
+            color: #189ab4;
+            background-color: #f0f0f0;
+            text-align: center;
+          }
+    
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+          }
+    
+          th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+          }
+    
+          th {
+            background-color: #f2f2f2;
+          }
+    
+          .info-data {
+            font-weight: italic;
+            text-align: right;
+            font-size: 14px;
+          }
+        </style>
+      </head>
+      <body>
+      
       <div class="header">
-        <img src="data:image/png;base64,${getBase64Image(
-          "logo.png"
-        )}" alt="Logo" class="logo" />
-        <div>
-          <h1>FEROZA NURSING HOME</h1>
-          <h2>Kharampatty, Kishoreganj</h2>
-        </div>
-      </div>
-      <div class="content">
-  <h2>Patient Details</h2>
-  <div class="patient-info">
-    <div class="info-row">
-      <span class="info-label">ID:</span>
-      <span class="info-data">${patientData.id}</span>
+      <img
+        src="data:image/png;base64,${getBase64Image("logo.png")}"
+        alt="Logo"
+        id="logo"
+      />
+      <span class="clinic-name">
+        FEROZA NURSING HOME
+      </span>
     </div>
-    <div class="info-row">
-      <span class="info-label">Name:</span>
-      <span class="info-data">${patientData.name}</span>
-    </div>
-    <div class="info-row">
-      <span class="info-label">Contact:</span>
-      <span class="info-data">${patientData.contact}</span>
-    </div>
-    <div class="info-row">
-      <span class="info-label">Doctor:</span>
-      <span class="info-data">${patientData.doctor}</span>
-    </div>
-    <div class="info-row">
-      <span class="info-label">Total Cost:</span>
-      <span class="info-data">${String.fromCharCode(0x09f3)}${
-        patientData.pathologyCost
-      }</span>
-    </div>
-    <div class="info-row">
-      <span class="info-label">Total Paid:</span>
-      <span class="info-data">${String.fromCharCode(0x09f3)}${
-        patientData.totalPaid
-      }</span>
-    </div>
-    <div class="info-row">
-      <span class="info-label">Discount Amount:</span>
-      <span class="info-data">${String.fromCharCode(0x09f3)}${
-        patientData.discount
-      }</span>
-    </div>
-    <div class="info-row">
-      <span class="info-label">Due Amount:</span>
-      <span class="info-data">${String.fromCharCode(0x09f3)}${
-        patientData.dueAmount
-      }</span>
-    </div>
-  </div>
-</div>
-
-    </div>
-  </body>
-</html>
+        <h2>Kharampatty, Kishoreganj</h2>  
+        <table>
+          <tr>
+            <th>ID</th>
+            <td>${patientData.id}</td>
+          </tr>
+          <tr>
+            <th>Name</th>
+            <td>${patientData.name}</td>
+          </tr>
+          <tr>
+          <th>Age</th>
+          <td>${patientData.age}</td>
+        </tr>
+          <tr>
+            <th>Contact</th>
+            <td>${patientData.contact}</td>
+          </tr>
+          <tr>
+            <th>Doctor</th>
+            <td>${patientData.doctor}</td>
+          </tr>
+          <tr>
+            <th>Total Cost</th>
+            <td>${String.fromCharCode(0x09f3)}${patientData.pathologyCost}</td>
+          </tr>
+          <tr>
+            <th>Total Paid</th>
+            <td>${String.fromCharCode(0x09f3)}${patientData.totalPaid}</td>
+          </tr>
+          <tr>
+            <th>Discount Amount</th>
+            <td>${String.fromCharCode(0x09f3)}${patientData.discount}</td>
+          </tr>
+          <tr>
+            <th>Due Amount</th>
+            <td>${String.fromCharCode(0x09f3)}${patientData.dueAmount}</td>
+          </tr>
+        </table>
+      </body>
+    </html>
+     
 `;
-
-      // Rest of your code...
 
       const options = {
         format: "Letter",
@@ -955,8 +953,12 @@ app.get("/generate-patient-pathology-pdf", (req, res) => {
 //admin part
 // Create a new endpoint to calculate and retrieve income and expenditure
 app.get("/getIncomeExpenditure", (req, res) => {
-  const sqlIncome =
-    "SELECT SUM(otCharge + serviceCharge + admissionFee) AS totalIncome FROM patient";
+  const sqlIncome = `
+    SELECT SUM(otCharge + serviceCharge + admissionFee) AS totalIncome FROM patient
+    UNION
+    SELECT SUM(income) AS totalIncome FROM otherincome
+`;
+
   const sqlExpenditure =
     "SELECT SUM(cost) AS totalExpenditure FROM expenditure";
 

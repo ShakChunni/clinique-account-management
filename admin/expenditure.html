@@ -19,6 +19,8 @@
             <th>Description</th>
             <th>Image</th>
             <th>Cost</th>
+            <th>Date</th>
+            <th>Operator</th>
           </tr>
         </thead>
         <tbody id="expenditureTable">
@@ -47,6 +49,8 @@
                     row.image_name
                   }" target="_blank"><img src="../images/${row.image_name}" alt="${row.image_name}" width="100"></a></td>
                   <td>&#2547;${row.cost.toFixed(2)}</td>
+                  <td>${row.date}</td>
+                  <td>${row.operator}</td>
                 </tr>
               `);
             });
