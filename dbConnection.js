@@ -9,6 +9,7 @@ const path = require("path");
 const moment = require("moment");
 const bcrypt = require("bcrypt");
 const session = require("express-session");
+const pdf = require("html-pdf");
 
 const db = mysql.createConnection({
   host: "localhost",
@@ -25,7 +26,11 @@ db.connect((err) => {
   }
 });
 
-app.set("view engine", "ejs");
+function getBase64Image(file) {
+  const filePath = path.join(__dirname, file);
+  const data = fs.readFileSync(filePath);
+  return Buffer.from(data).toString("base64");
+}
 
 // Use the express-session middleware
 app.use(
@@ -68,7 +73,7 @@ const storage = multer.diskStorage({
 });
 
 app.use("/images", express.static(__dirname + "/images"));
-app.use("/logo.png", express.static(__dirname + "/logo.png"));
+app.use("/logo.png", express.static(path.join(__dirname, "/logo.png")));
 app.use("/index.html", express.static(__dirname + "/index.html"));
 app.use(
   "/operators/dashboard.html",
@@ -769,114 +774,176 @@ app.get("/generate-patient-pdf", (req, res) => {
 });
 
 //pathology pdf
-app.get("/pathology-voucher.html", (req, res) => {
-  // Use path.join to create the correct path to the HTML file
-  const filePath = path.join(__dirname, "operators", "pathology-voucher.html");
-
-  // Send the file to the client
-  res.sendFile(filePath);
-});
-
-//pathology pdf
 
 app.get("/generate-patient-pathology-pdf", (req, res) => {
-  const patientId = req.query.patientId; // Retrieve patientId from the query parameter
-  console.log("Received patientId:", patientId);
   const sql = "SELECT * FROM patient ORDER BY id DESC LIMIT 1";
   db.query(sql, (err, result) => {
     if (err) {
       console.error("Error fetching latest patient data:", err);
-      res
-        .status(500)
-        .json({ error: "An error occurred while generating the PDF voucher." });
+      res.status(500).json({
+        error: "An error occurred while generating the PDF voucher.",
+      });
     } else {
       const patientData = result[0];
-      const doc = new PDFKit();
-      res.setHeader("Content-Type", "application/pdf");
-      res.setHeader("Content-Disposition", "attachment; filename=voucher.pdf");
+      const html = `
+<html>
+  <head>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-      // Styling for the PDF
-      const titleStyle = {
-        fontSize: 1000, // Increased font size
-        font: __dirname + "/fonts/OpenSans-Bold.ttf",
-        align: "center",
-        margin: 800,
-        // Changed color to blue
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #fff; /* Set background color to white */
+        color: #28282b;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start; /* Align items to the left */
+        justify-content: center;
+        min-height: 100vh;
+      }
+
+
+      .header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .logo {
+        width: 80px;
+        margin-right: 10px;
+        align-self: left;
+      }
+
+      h1 {
+        font-size: 30px;
+        margin-bottom: 10px;
+        font-weight: bold;
+        color: #189ab4;
+        align-self: center;
+      }
+
+      h2 {
+        font-size: 18px;
+        color: #189ab4;
+        margin-bottom: 20px;
+        align-self: center;
+      }
+
+      /* Add this to your existing styles or replace your existing content styles */
+      .patient-info {
+        margin-top: 20px;
+      }
+    
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+    
+      .info-label {
+        font-weight: bold;
+        margin-right: 10px;
+        width: 150px; /* Adjust as needed for alignment */
+        text-align: left;
+      }
+    
+      .info-data {
+        flex-grow: 1;
+        text-align: right;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <img src="data:image/png;base64,${getBase64Image(
+          "logo.png"
+        )}" alt="Logo" class="logo" />
+        <div>
+          <h1>FEROZA NURSING HOME</h1>
+          <h2>Kharampatty, Kishoreganj</h2>
+        </div>
+      </div>
+      <div class="content">
+  <h2>Patient Details</h2>
+  <div class="patient-info">
+    <div class="info-row">
+      <span class="info-label">ID:</span>
+      <span class="info-data">${patientData.id}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Name:</span>
+      <span class="info-data">${patientData.name}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Contact:</span>
+      <span class="info-data">${patientData.contact}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Doctor:</span>
+      <span class="info-data">${patientData.doctor}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Total Cost:</span>
+      <span class="info-data">${String.fromCharCode(0x09f3)}${
+        patientData.pathologyCost
+      }</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Total Paid:</span>
+      <span class="info-data">${String.fromCharCode(0x09f3)}${
+        patientData.totalPaid
+      }</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Discount Amount:</span>
+      <span class="info-data">${String.fromCharCode(0x09f3)}${
+        patientData.discount
+      }</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Due Amount:</span>
+      <span class="info-data">${String.fromCharCode(0x09f3)}${
+        patientData.dueAmount
+      }</span>
+    </div>
+  </div>
+</div>
+
+    </div>
+  </body>
+</html>
+`;
+
+      // Rest of your code...
+
+      const options = {
+        format: "Letter",
+        orientation: "portrait",
+        border: "10mm",
       };
 
-      const locationStyle = {
-        fontSize: 20, // Font size for location
-        font: __dirname + "/fonts/OpenSans-Regular.ttf",
-        align: "center",
-        margin: 10,
-      };
-
-      const cellStyle = {
-        font: __dirname + "/fonts/OpenSans-Regular.ttf",
-        fontSize: 40,
-        padding: 10,
-      };
-
-      const takaFont = __dirname + "/fonts/FN Hasan Kolkata Unicode.ttf"; // Taka symbol font
-
-      doc.pipe(res);
-
-      // Add your logo at the top left
-      const logoPath = __dirname + "/logo.png";
-      doc.image(logoPath, 50, 50, { width: 50 });
-
-      doc.fillColor("#0000ff").text("FEROZA NURSING HOME", { ...titleStyle });
-      doc
-        .fillColor("#0000ff")
-        .text("Kharampatty, Kishoreganj", { ...locationStyle });
-
-      // Create a table-like structure
-      const table = {
-        "Patient ID": patientData.id,
-        "Patient Name": patientData.name,
-        "Patient Age": patientData.age,
-        "Contact Number": patientData.contact,
-        "Blood test Under": patientData.doctor,
-        "Total Cost": `${String.fromCharCode(0x09f3)}${
-          patientData.pathologyCost
-        }`,
-        "Discount Amount": `${String.fromCharCode(0x09f3)}${
-          patientData.discount
-        }`,
-        "Total Paid": `${String.fromCharCode(0x09f3)}${
-          patientData.pathologyPaid
-        }`,
-        "Due Amount": `${String.fromCharCode(0x09f3)}${patientData.dueAmount}`,
-        "Admission Date": patientData.date,
-      };
-
-      // Set up the initial position
-      const tableX = 50;
-      const tableY = 250; // Adjusted the starting Y position for the table
-      const col1X = tableX;
-      const col2X = tableX + 300;
-
-      doc.font(__dirname + "/fonts/OpenSans-Bold.ttf");
-      const rowHeight = 40;
-
-      Object.keys(table).forEach((label, index) => {
-        const yPos = tableY + index * rowHeight;
-        doc
-          .font(__dirname + "/fonts/OpenSans-Regular.ttf")
-          .text(label, col1X, yPos, cellStyle)
-          .font(takaFont) // Use the Taka symbol font
-          .text(table[label], col2X, yPos, cellStyle);
-
-        if (index < Object.keys(table).length - 1) {
-          const lineYPos = yPos + rowHeight;
-          doc
-            .moveTo(col1X, lineYPos)
-            .lineTo(col2X + 300, lineYPos)
-            .stroke();
+      pdf.create(html, options).toStream((err, stream) => {
+        if (err) {
+          console.error("Error creating PDF:", err);
+          res.status(500).json({
+            error: "An error occurred while generating the PDF voucher.",
+          });
+        } else {
+          res.setHeader("Content-Type", "application/pdf");
+          res.setHeader(
+            "Content-Disposition",
+            "attachment; filename=voucher.pdf"
+          );
+          stream.pipe(res);
         }
       });
-
-      doc.end();
     }
   });
 });
