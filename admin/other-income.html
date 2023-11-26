@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Income List</title>
+    <title>Other Income List</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -11,7 +11,7 @@
       <a href="/admin/dashboard.html" class="logo">
         <img src="../logo.png" alt="Logo" />
       </a>
-      <h1>Income List</h1>
+      <h1>Other Income List</h1>
       <div class="search-container">
         <input type="text" id="searchIdInput" placeholder="Search by ID" />
         <button id="searchButton">Search</button>
@@ -21,23 +21,10 @@
         <thead>
           <tr>
             <th class="bold-text">ID</th>
-            <th class="bold-text">Name</th>
-            <th>Age</th>
-            <th>Contact</th>
-            <th>Date</th>
-            <th>Admission Fee</th>
-            <th>OT Charge</th>
-            <th>Seat Rent</th>
-            <th>Service Charge</th>
-            <th>Pathology Charge</th>
-            <th>Total Charge</th>
-            <th style="background-color: red; color: white">Discount Amount</th>
-            <th>Total Paid</th>
-            <th style="background-color: red; color: white">Due Amount</th>
-            <th style="background-color: red; color: white">Doctor's Fee</th>
-            <th style="background-color: green; color: white">Total Income</th>
+            <th class="bold-text">Income Type</th>
+            <th class="bold-text">Income</th>
+            <th class="bold-text">Date</th>
             <th class="bold-text">Operator</th>
-            <th style="background-color: yellowgreen; color: white">Action</th>
           </tr>
         </thead>
         <tbody id="incomeTable">
@@ -52,8 +39,6 @@
       </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <!-- ... (your existing HTML code) ... -->
 
     <script>
       $(document).ready(function () {
@@ -100,52 +85,21 @@
               // Format the date
               const formattedDate = formatDate(row.date);
 
-              const admissionFee = row.admissionFee || 0;
-              const otCharge = row.otCharge || 0;
-              const seatRent = row.seatRent || 0;
-              const serviceCharge = row.serviceCharge || 0;
-              const pathologyCost = row.pathologyCost || 0;
-              const totalCharge = row.totalCharge || 0;
-              const discountAmount = row.discount || 0;
-              const totalPaid = row.totalPaid || 0;
-              const dueAmount = row.dueAmount || 0;
-              const doctorFee = row.doctorCharge || 0;
-
-              // Calculate total income
-              // Calculate total income
-              const totalIncome =
-                totalCharge - discountAmount - doctorFee - dueAmount;
-
               incomeTable.append(`
                   <tr>
                     <td class="bold-text">${row.id}</td>
-                    <td class="bold-text">${row.name}</td>
-                    <td>${row.age}</td>
-                    <td>${row.contact}</td>
+                    <td class="bold-text">${row.incomeType}</td>
+                    <td>&#2547;${row.income.toFixed(2)}</td>
                     <td>${formattedDate}</td>
-                    <td>&#2547;${admissionFee.toFixed(2)}</td>
-                    <td>&#2547;${otCharge.toFixed(2)}</td>
-                    <td>&#2547;${seatRent.toFixed(2)}</td>
-                    <td>&#2547;${serviceCharge.toFixed(2)}</td>
-                    <td>&#2547;${pathologyCost.toFixed(2)}</td>
-                    <td>&#2547;${totalCharge.toFixed(2)}</td>
-                    <td>&#2547;${discountAmount.toFixed(2)}</td>
-                    <td>&#2547;${totalPaid.toFixed(2)}</td>
-                    <td>&#2547;${dueAmount.toFixed(2)}</td>
-                    <td>&#2547;${doctorFee.toFixed(2)}</td>        
-                    <td>&#2547;${totalIncome.toFixed(2)}</td>
                     <td>${row.operator}</td>
-                    <td><a class="edit-button" href="edit-data.html?id=${
-                      row.id
-                    }">Edit</a></td>
                   </tr>
                 `);
             });
           }
         }
 
-        // Fetch income data from the server
-        $.get("/getIncome", function (data) {
+        // Fetch other income data from the server
+        $.get("/getOtherIncome", function (data) {
           // Store the data in the 'allData' array
           allData = data;
 

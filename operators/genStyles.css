@@ -547,3 +547,27 @@ input[type="checkbox"]:checked {
   color: #28a745;
   display: none;
 }
+/* Media queries for responsiveness */
+@media screen and (min-width: 600px) {
+  .stat-link {
+    flex: 0 0 48%; /* Two columns on screens wider than 600px */
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .stat-link {
+    flex: 0 0 32%; /* Three columns on screens wider than 768px */
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .stat-link {
+    flex: 0 0 24%; /* Four columns on screens wider than 992px */
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .stat-link {
+    flex: 0 0 22%; /* Five columns on screens wider than 1200px */
+  }
+}

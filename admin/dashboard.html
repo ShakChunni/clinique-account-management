@@ -13,47 +13,34 @@
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         background: #f5f5f5;
         color: #28282b;
-        margin: 0; /* Remove default margin to ensure full width on smaller screens */
+        margin: 0;
       }
-
-      .dashboard {
-        max-width: 1200px;
-        margin: 250px auto; /* Adjusted margin for better centering */
-        background-color: #fff;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
-        padding: 20px;
-      }
-
-      .header {
-        text-align: center;
-        margin-bottom: 20px; /* Added margin for better spacing */
-      }
-
-      .logout {
-        float: right;
-        cursor: pointer;
-      }
-
       h1 {
-        font-size: 40px;
-        margin-bottom: 20px;
+        font-size: 48px;
+        margin-bottom: 5px;
         font-weight: bold;
         color: #189ab4;
         text-align: center;
       }
 
+      .dashboard {
+        display: flex;
+        height: 100vh;
+      }
+
       .stats-container {
         display: flex;
-        justify-content: space-between;
-        flex-wrap: wrap;
+        flex-direction: row; /* Display options in a row */
+        justify-content: space-around; /* Distribute options evenly */
+        align-items: center;
+        width: 100%;
       }
 
       .stat-link {
         text-decoration: none;
         color: inherit;
-        flex: 0 0 100%; /* Full width on smaller screens */
-        margin: 15px 0;
+        flex: 1;
+        margin: 15px;
       }
 
       .stat {
@@ -70,9 +57,9 @@
       }
 
       .icon {
-        font-size: 36px;
+        font-size: 96px; /* Larger icon size */
         color: #3498db;
-        margin-bottom: 10px;
+        margin-bottom: 20px;
       }
 
       .info {
@@ -89,48 +76,17 @@
         font-size: 24px;
         color: #27ae60;
       }
-
-      /* Media queries for responsiveness */
-      @media screen and (min-width: 600px) {
-        .stat-link {
-          flex: 0 0 48%; /* Two columns on screens wider than 600px */
-        }
-      }
-
-      @media screen and (min-width: 768px) {
-        .stat-link {
-          flex: 0 0 32%; /* Three columns on screens wider than 768px */
-        }
-      }
-
-      @media screen and (min-width: 992px) {
-        .stat-link {
-          flex: 0 0 24%; /* Four columns on screens wider than 992px */
-        }
-      }
-
-      @media screen and (min-width: 1200px) {
-        .stat-link {
-          flex: 0 0 22%; /* Five columns on screens wider than 1200px */
-        }
-      }
     </style>
   </head>
   <body>
+    <h1>Admin Dashboard</h1>
     <div class="dashboard">
-      <div class="header">
-        <div class="logout" onclick="window.location.href = '../index.html'">
-          <i class="fas fa-sign-out-alt"></i>
-        </div>
-        <h1>Admin Dashboard</h1>
-      </div>
-
       <div class="stats-container">
-        <a href="income.html" class="stat-link">
+        <a href="types-of-income.html" class="stat-link">
           <div class="stat">
-            <i class="fas fa-coins icon"></i>
+            <i class="fas fa-money-bill-wave icon"></i>
             <div class="info">
-              <p class="title">Total Income</p>
+              <p class="title">Income</p>
               <p class="amount" style="color: #27ae60" id="totalIncome">
                 Calculating...
               </p>

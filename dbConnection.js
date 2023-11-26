@@ -999,6 +999,20 @@ app.post("/updatePatientAdmin", (req, res) => {
   });
 });
 
+// Endpoint to get other income data
+app.get("/getOtherIncome", (req, res) => {
+  const sql = "SELECT * FROM otherincome";
+
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.error("Error fetching other income data:", err);
+      res.status(500).json({ error: "Internal Server Error" });
+    } else {
+      res.status(200).json(result);
+    }
+  });
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
