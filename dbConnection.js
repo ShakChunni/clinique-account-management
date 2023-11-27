@@ -568,128 +568,184 @@ app.post("/add-expenditure", isAuthenticated, (req, res) => {
   });
 });
 
-app.get("/voucher.html", (req, res) => {
-  // Use path.join to create the correct path to the HTML file
-  const filePath = path.join(__dirname, "operators", "voucher.html");
+//addmission voucher
 
-  // Send the file to the client
-  res.sendFile(filePath);
-});
-
-app.get("/generate-pdf", async (req, res) => {
+app.get("/generate-pdf", (req, res) => {
   // Fetch the latest patient data from the database
   const sql = "SELECT * FROM patient ORDER BY id DESC LIMIT 1";
   db.query(sql, (err, result) => {
     if (err) {
       console.error("Error fetching latest patient data:", err);
-      res
-        .status(500)
-        .json({ error: "An error occurred while generating the PDF voucher." });
+      res.status(500).json({
+        error: "An error occurred while generating the PDF voucher.",
+      });
     } else {
       const patientData = result[0];
-      const doc = new PDFKit();
-      res.setHeader("Content-Type", "application/pdf");
-      res.setHeader("Content-Disposition", "attachment; filename=voucher.pdf");
+      const html = `
+        <html>
+        <head>
+        <style>
+          * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+          }
+    
+          body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #fff;
+          }
+    
+          .header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background-color: #f0f0f0;
+            text align: center;
+          }
+      
+          #logo {
+            max-width: 80px;
+            max-height: 400px;
+            margin-right: 40px;
+             /* Adjust the margin as needed */
+          }
+      
+          .clinic-name {
+            margin-left: 10px; /* Adjust the margin as needed */
+            margin-bottom: 250px;
+            font-size: 32px;
+            font-weight: bold;
+            color: #189ab4;
+          }
+    
+          h1 {
+            font-size: 26px;
+            margin-bottom: 2px;
+            font-weight: bold;
+            color: #189ab4;
+            text-align: center;
+          }
+    
+          h2 {
+            font-size: 24px;
+            margin-bottom: 35px;
+            color: #189ab4;
+            background-color: #f0f0f0;
+            text-align: center;
+          }
+    
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+          }
+    
+          th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+          }
+    
+          th {
+            background-color: #f2f2f2;
+          }
+    
+          .info-data {
+            font-weight: italic;
+            text-align: right;
+            font-size: 14px;
+          }
+        </style>
 
-      // Styling for the PDF
-      const titleStyle = {
-        fontSize: 1000, // Increased font size
-        font: __dirname + "/fonts/OpenSans-Bold.ttf",
-        align: "center",
-        margin: 800,
-        // Changed color to blue
+        </head>
+        <body>
+          <div class="header">
+            <img src="data:image/png;base64,${getBase64Image(
+              "logo.png"
+            )}" alt="Logo" id="logo" />
+            <span class="clinic-name">FEROZA NURSING HOME</span>
+          </div>
+          <h2>Kharampatty, Kishoreganj</h2>
+          <table>
+            <tr>
+              <th>Patient ID</th>
+              <td>${patientData.id}</td>
+            </tr>
+            <tr>
+              <th>Patient Name</th>
+              <td>${patientData.name}</td>
+            </tr>
+            <tr>
+              <th>Patient Age</th>
+              <td>${patientData.age}</td>
+            </tr>
+            <tr>
+              <th>Contact Number</th>
+              <td>${patientData.contact}</td>
+            </tr>
+            <tr>
+              <th>Admitted Under</th>
+              <td>${patientData.doctor}</td>
+            </tr>
+            <tr>
+              <th>Admission Fee</th>
+              <td>${String.fromCharCode(0x09f3)}${patientData.admissionFee}</td>
+            </tr>
+            <tr>
+              <th>Admission Date</th>
+              <td>${patientData.date}</td>
+            </tr>
+          </table>
+        </body>
+        </html>
+      `;
+
+      const options = {
+        format: "Letter",
+        orientation: "portrait",
+        border: "10mm",
       };
 
-      const locationStyle = {
-        fontSize: 20, // Font size for location
-        font: __dirname + "/fonts/OpenSans-Regular.ttf",
-        align: "center",
-        margin: 10,
-      };
-
-      const cellStyle = {
-        font: __dirname + "/fonts/OpenSans-Regular.ttf",
-        fontSize: 40,
-        padding: 10,
-      };
-
-      const takaFont = __dirname + "/fonts/FN Hasan Kolkata Unicode.ttf"; // Taka symbol font
-
-      doc.pipe(res);
-
-      // Add your logo at the top left
-      const logoPath = __dirname + "/logo.png";
-      doc.image(logoPath, 50, 50, { width: 50 });
-
-      doc.fillColor("#0000ff").text("FEROZA NURSING HOME", { ...titleStyle });
-      doc
-        .fillColor("#0000ff")
-        .text("Kharampatty, Kishoreganj", { ...locationStyle });
-
-      // Create a table-like structure
-      const table = {
-        "Patient ID": patientData.id,
-        "Patient Name": patientData.name,
-        "Patient Age": patientData.age,
-        "Contact Number": patientData.contact,
-        "Admitted Under": patientData.doctor,
-        "Admission Fee": `${String.fromCharCode(0x09f3)}${
-          patientData.admissionFee
-        }`,
-        "Admission Date": patientData.date,
-      };
-
-      // Set up the initial position
-      const tableX = 50;
-      const tableY = 250; // Adjusted the starting Y position for the table
-      const col1X = tableX;
-      const col2X = tableX + 300;
-
-      doc.font(__dirname + "/fonts/OpenSans-Bold.ttf");
-      const rowHeight = 40;
-
-      Object.keys(table).forEach((label, index) => {
-        const yPos = tableY + index * rowHeight;
-        doc
-          .font(__dirname + "/fonts/OpenSans-Regular.ttf")
-          .text(label, col1X, yPos, cellStyle)
-          .font(takaFont) // Use the Taka symbol font
-          .text(table[label], col2X, yPos, cellStyle);
-
-        if (index < Object.keys(table).length - 1) {
-          const lineYPos = yPos + rowHeight;
-          doc
-            .moveTo(col1X, lineYPos)
-            .lineTo(col2X + 300, lineYPos)
-            .stroke();
+      pdf.create(html, options).toStream((err, stream) => {
+        if (err) {
+          console.error("Error creating PDF:", err);
+          res.status(500).json({
+            error: "An error occurred while generating the PDF voucher.",
+          });
+        } else {
+          res.setHeader("Content-Type", "application/pdf");
+          res.setHeader(
+            "Content-Disposition",
+            "attachment; filename=voucher.pdf"
+          );
+          stream.pipe(res);
         }
       });
-
-      doc.end();
     }
   });
 });
 
-//final pdf
-app.get("/final-voucher.html", (req, res) => {
-  // Use path.join to create the correct path to the HTML file
-  const filePath = path.join(__dirname, "operators", "final-voucher.html");
-
-  // Send the file to the client
+// Use path.join to create the correct path to the HTML file
+app.get("/voucher.html", (req, res) => {
+  const filePath = path.join(__dirname, "operators", "voucher.html");
   res.sendFile(filePath);
 });
-app.get("/generate-patient-pdf", (req, res) => {
-  const patientId = req.query.patientId; // Retrieve patientId from the query parameter
-  console.log("Received patientId:", patientId);
 
-  // Fetch patient data from the database
+//final pdf
+
+app.get("/generate-patient-pdf", (req, res) => {
+  const patientId = req.query.patientId;
+
   const sql = "SELECT * FROM patient WHERE id = ?";
   db.query(sql, [patientId], (err, result) => {
     if (err) {
       console.error("Error fetching patient data:", err);
-      return res
-        .status(500)
-        .json({ error: "An error occurred while fetching patient data." });
+      return res.status(500).json({
+        error: "An error occurred while fetching patient data.",
+      });
     }
 
     if (result.length === 0) {
@@ -698,86 +754,164 @@ app.get("/generate-patient-pdf", (req, res) => {
 
     const patientData = result[0];
 
-    const doc = new PDFKit();
-    res.setHeader("Content-Type", "application/pdf");
-    res.setHeader(
-      "Content-Disposition",
-      `attachment; filename=patient_information_${patientId}.pdf`
-    );
-
-    doc.pipe(res);
-
-    // Styling for the PDF
-    const titleStyle = {
-      fontSize: 50, // Increased font size to 50 points
-      font: __dirname + "/fonts/OpenSans-Bold.ttf",
-      align: "center",
-      margin: 30,
-    };
-
-    const cellStyle = {
-      font: __dirname + "/fonts/OpenSans-Regular.ttf",
-      fontSize: 20, // Adjusted font size to 20 points
-      padding: 10,
-      margin: 0,
-    };
-
-    const takaFont = __dirname + "/fonts/FN Hasan Kolkata Unicode.ttf"; // Taka symbol font
-
-    doc.text("Patient Admission Form", { ...titleStyle, fontSize: 50 }); // Explicitly set the font size for the title
-
-    const tableX = 50;
-    const tableY = 150;
-    const col1X = tableX;
-    const col2X = tableX + 300;
-
-    doc.font(__dirname + "/fonts/OpenSans-Bold.ttf");
-
-    const rowHeight = 40;
-    const rows = [
-      ["Patient ID", patientData.id],
-      ["Patient Name", patientData.name],
-      ["Patient Age", patientData.age],
-      ["Contact Number", patientData.contact],
-      [
-        "Admission Fee",
-        `${String.fromCharCode(0x09f3)}${patientData.admissionFee}`,
-      ], // Insert Taka symbol
-      ["Admission Date", patientData.date],
-      ["OT Charge", `${String.fromCharCode(0x09f3)}${patientData.otCharge}`], // Insert Taka symbol
-      [
-        "Service Charge",
-        `${String.fromCharCode(0x09f3)}${patientData.serviceCharge}`,
-      ],
-      [
-        "Pathology Charge",
-        `${String.fromCharCode(0x09f3)}${patientData.pathologyCost}`,
-      ],
-      // Insert Taka symbol
-    ];
-
-    for (let i = 0; i < rows.length; i++) {
-      const [label, value] = rows[i];
-      const yPos = tableY + i * rowHeight; // Removed + 1
-      doc
-        .font(__dirname + "/fonts/OpenSans-Regular.ttf")
-        .text(label, 50, yPos, cellStyle)
-        .font(takaFont) // Use the Taka symbol font
-        .text(value, 300, yPos, cellStyle);
-
-      if (i < rows.length - 1) {
-        const lineYPos = yPos + rowHeight;
-        doc
-          .moveTo(col1X, lineYPos)
-          .lineTo(col2X + 300, lineYPos)
-          .stroke();
+    const html = `
+      <html>
+      <head>
+      <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
       }
-    }
 
-    doc.end();
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background: #fff;
+      }
+
+      .header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        background-color: #f0f0f0;
+        text align: center;
+      }
+  
+      #logo {
+        max-width: 80px;
+        max-height: 400px;
+        margin-right: 40px;
+         /* Adjust the margin as needed */
+      }
+  
+      .clinic-name {
+        margin-left: 10px; /* Adjust the margin as needed */
+        margin-bottom: 250px;
+        font-size: 32px;
+        font-weight: bold;
+        color: #189ab4;
+      }
+
+      h1 {
+        font-size: 26px;
+        margin-bottom: 2px;
+        font-weight: bold;
+        color: #189ab4;
+        text-align: center;
+      }
+
+      h2 {
+        font-size: 24px;
+        margin-bottom: 35px;
+        color: #189ab4;
+        background-color: #f0f0f0;
+        text-align: center;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+
+      th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+
+      .info-data {
+        font-weight: italic;
+        text-align: right;
+        font-size: 14px;
+      }
+    </style>
+      </head>
+      <body>
+        <div class="header">
+          <img src="data:image/png;base64,${getBase64Image(
+            "logo.png"
+          )}" alt="Logo" id="logo" />
+          <span class="clinic-name">FEROZA NURSING HOME</span>
+        </div>
+        <h2>Kharampatty, Kishoreganj</h2>
+        <table>
+          <tr>
+            <th>Patient ID</th>
+            <td>${patientData.id}</td>
+          </tr>
+          <tr>
+            <th>Patient Name</th>
+            <td>${patientData.name}</td>
+          </tr>
+          <tr>
+            <th>Patient Age</th>
+            <td>${patientData.age}</td>
+          </tr>
+          <tr>
+            <th>Contact Number</th>
+            <td>${patientData.contact}</td>
+          </tr>
+          <tr>
+            <th>Admission Fee</th>
+            <td>${String.fromCharCode(0x09f3)}${patientData.admissionFee}</td>
+          </tr>
+          <tr>
+            <th>Admission Date</th>
+            <td>${patientData.date}</td>
+          </tr>
+          <tr>
+            <th>OT Charge</th>
+            <td>${String.fromCharCode(0x09f3)}${patientData.otCharge}</td>
+          </tr>
+          <tr>
+            <th>Service Charge</th>
+            <td>${String.fromCharCode(0x09f3)}${patientData.serviceCharge}</td>
+          </tr>
+          <tr>
+            <th>Pathology Charge</th>
+            <td>${String.fromCharCode(0x09f3)}${patientData.pathologyCost}</td>
+          </tr>
+        </table>
+      </body>
+      </html>
+    `;
+
+    const options = {
+      format: "Letter",
+      orientation: "portrait",
+      border: "10mm",
+    };
+
+    pdf.create(html, options).toStream((err, stream) => {
+      if (err) {
+        console.error("Error creating PDF:", err);
+        res.status(500).json({
+          error: "An error occurred while generating the PDF voucher.",
+        });
+      } else {
+        res.setHeader("Content-Type", "application/pdf");
+        res.setHeader(
+          "Content-Disposition",
+          `attachment; filename=patient_information_${patientId}.pdf`
+        );
+        stream.pipe(res);
+      }
+    });
   });
 });
 
+// Use path.join to create the correct path to the HTML file
+app.get("/final-voucher.html", (req, res) => {
+  const filePath = path.join(__dirname, "operators", "final-voucher.html");
+  res.sendFile(filePath);
+});
 //pathology information pdf
 
 app.get("/generate-patient-pathology-pdf", (req, res) => {
