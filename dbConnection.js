@@ -34,8 +34,20 @@ function getBase64Image(file) {
   return Buffer.from(data).toString("base64");
 }
 
-//pore
-const crypto = require("crypto");
+const secretKey = crypto.randomBytes(32).toString('hex');
+
+app.use(
+  session({
+    genid: (req) => {
+      return uuid.v4(); // use UUID v4 for session IDs
+    },
+    secret: secretKey,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false },
+  })
+);
+
 
 const allowedUsernames = ["ash", "amina", "zayed", "maruf"];
 
