@@ -1,6 +1,6 @@
 # Feroza Accounts Management Web App
 
-![Feroza Accounts Logo](logo.png)
+[![Feroza Accounts Logo](logo.png)](http://feroza-accounts.com/app/)
 
 Welcome to Feroza Accounts, a comprehensive web application designed to streamline and automate the financial and operational processes of Feroza Nursing Home, located in Kishoreganj. This application is built with Node.js for the backend and SQL for the database, while the frontend utilizes HTML, JavaScript, and CSS.
 
