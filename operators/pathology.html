@@ -13,7 +13,7 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
     />
-    <link rel="stylesheet" href="genStyles.css" />
+    <link rel="stylesheet" href="genStyles" />
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   </head>
@@ -21,7 +21,7 @@
     <div class="container">
       <h1 style="margin-bottom: 20px">Blood Tests</h1>
       <div class="add-patient-form">
-        <form id="patient-form" method="POST" action="/addPathology">
+        <form id="patient-form" method="POST" action="/app/addPathology">
           <div class="form-group">
             <label for="patient-name">Patient Name</label>
             <input type="text" id="patient-name" name="patient-name" required />
@@ -90,6 +90,62 @@
                 </label>
               </div>
               <div class="option small-box">
+                <label for="Prothombin Time">
+                  <input
+                    type="checkbox"
+                    id="Prothombin Time"
+                    name="blood-test"
+                    value="Prothombin Time"
+                    data-cost="1000"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>Prothombin Timet</p>
+                </label>
+              </div>
+              
+              <div class="option small-box">
+                <label for="HB%">
+                  <input
+                    type="checkbox"
+                    id="HB%"
+                    name="blood-test"
+                    value="HB%"
+                    data-cost="200"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>HB%</p>
+                </label>
+              </div>              
+ 
+              <div class="option small-box">
+                <label for="BT, CT">
+                  <input
+                    type="checkbox"
+                    id="BT, CT"
+                    name="blood-test"
+                    value="BT, CT"
+                    data-cost="350"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>BT, CTt</p>
+                </label>
+              </div> 
+ 
+              <div class="option small-box">
+                <label for="CE (Circulating Eosin Phil)">
+                  <input
+                    type="checkbox"
+                    id="CE (Circulating Eosin Phil)"
+                    name="blood-test"
+                    value="CE (Circulating Eosin Phil)"
+                    data-cost="200"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>CE (Circulating Eosin Phil)</p>
+                </label>
+              </div> 
+              
+              <div class="option small-box">
                 <label for="Platelet Count">
                   <input
                     type="checkbox"
@@ -102,6 +158,37 @@
                   <p>Platelet Count</p>
                 </label>
               </div>
+              
+              <div class="option small-box">
+                <label for="Blood Group & Rh Factor">
+                  <input
+                    type="checkbox"
+                    id="Blood Group & Rh Factor"
+                    name="blood-test"
+                    value="Blood Group & Rh Factor"
+                    data-cost="100"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>Blood Group & Rh Factor</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="Cross Match (Screening Test)">
+                  <input
+                    type="checkbox"
+                    id="Cross Match (Screening Test)"
+                    name="blood-test"
+                    value="Cross Match (Screening Test)"
+                    data-cost="1000"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>Cross Match (Screening Test)</p>
+                </label>
+              </div>
+              
+              
+              
               <div class="option small-box">
                 <label for="RBS (Random Blood Sugar)">
                   <input
@@ -128,6 +215,22 @@
                   <p>RBS (Random Blood Sugar) with CUS</p>
                 </label>
               </div>
+              <div class="option small-box">
+                <label for="Fasting Blood Sugar">
+                  <input
+                    type="checkbox"
+                    id="Fasting Blood Sugar"
+                    name="blood-test"
+                    value="Fasting Blood Sugar"
+                    data-cost="100"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>Fasting Blood Sugar</p>
+                </label>
+              </div>              
+              
+              
+              
               <div class="option small-box">
                 <label for="2 Hours After Breakfast (2HABF)">
                   <input
@@ -197,7 +300,302 @@
                   <p>OGTT</p>
                 </label>
               </div>
+              
+              <div class="option small-box">
+                <label for="MP (Malaria Parasite)">
+                  <input
+                    type="checkbox"
+                    id="MP (Malaria Parasite)"
+                    name="blood-test"
+                    value="MP (Malaria Parasite)"
+                    data-cost="200"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>MP (Malaria Parasite)</p>
+                </label>
+              </div>
+              
+              <div class="option small-box">
+                <label for="ASO Titre">
+                  <input
+                    type="checkbox"
+                    id="ASO Titre"
+                    name="blood-test"
+                    value="ASO Titre"
+                    data-cost="500"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>ASO Titre</p>
+                </label>
+              </div>              
 
+              <div class="option small-box">
+                <label for="CRP">
+                  <input
+                    type="checkbox"
+                    id="CRP"
+                    name="blood-test"
+                    value="CRP"
+                    data-cost="400"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>CRP</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="R.A. Test">
+                  <input
+                    type="checkbox"
+                    id="R.A. Test"
+                    name="blood-test"
+                    value="R.A. Test"
+                    data-cost="500"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>R.A. Test</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="R.A. Test (Turbidimetric)">
+                  <input
+                    type="checkbox"
+                    id="R.A. Test (Turbidimetric)"
+                    name="blood-test"
+                    value="R.A. Test (Turbidimetric)"
+                    data-cost="600"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>R.A. Test (Turbidimetric)</p>
+                </label>
+              </div>
+
+
+              <div class="option small-box">
+                <label for="TPHA">
+                  <input
+                    type="checkbox"
+                    id="TPHA"
+                    name="blood-test"
+                    value="TPHA"
+                    data-cost="500"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>TPHA</p>
+                </label>
+              </div>
+              <div class="option small-box">
+                <label for="VDRL">
+                  <input
+                    type="checkbox"
+                    id="VDRL"
+                    name="blood-test"
+                    value="VDRL"
+                    data-cost="300"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>VDRL</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="S. Bilirubin">
+                  <input
+                    type="checkbox"
+                    id="S. Bilirubin"
+                    name="blood-test"
+                    value="S. Bilirubin"
+                    data-cost="250"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>S. Bilirubin</p>
+                </label>
+              </div>
+
+              <div class="option small-box">
+                <label for="HBsAg">
+                  <input
+                    type="checkbox"
+                    id="HBsAg"
+                    name="blood-test"
+                    value="HBsAg"
+                    data-cost="500"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>HBsAg</p>
+                </label>
+              </div>
+              <div class="option small-box">
+                <label for="SGPT (ALT)">
+                  <input
+                    type="checkbox"
+                    id="SGPT (ALT)"
+                    name="blood-test"
+                    value="SGPT (ALT)"
+                    data-cost="400"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>SGPT (ALT)</p>
+                </label>
+              </div>
+              
+              <div class="option small-box">
+                <label for="SGOT (AST)">
+                  <input
+                    type="checkbox"
+                    id="SGOT (AST)"
+                    name="blood-test"
+                    value="SGOT (AST)"
+                    data-cost="400"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>SGOT (AST)</p>
+                </label>
+              </div>
+              
+              <div class="option small-box">
+                <label for="Serum Amylase">
+                  <input
+                    type="checkbox"
+                    id="Serum Amylase"
+                    name="blood-test"
+                    value="Serum Amylase"
+                    data-cost="1000"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>Serum Amylase</p>
+                </label>
+              </div>              
+              
+              <div class="option small-box">
+                <label for="Serum Creatinine">
+                  <input
+                    type="checkbox"
+                    id="Serum Creatinine"
+                    name="blood-test"
+                    value="Serum Creatinine"
+                    data-cost="300"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>Serum Creatinine</p>
+                </label>
+              </div>               
+
+              <div class="option small-box">
+                <label for="Serum Urea">
+                  <input
+                    type="checkbox"
+                    id="Serum Urea"
+                    name="blood-test"
+                    value="Serum Urea"
+                    data-cost="400"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>Serum Urea</p>
+                </label>
+              </div> 
+              
+              <div class="option small-box">
+                <label for="Serum Uric Acid">
+                  <input
+                    type="checkbox"
+                    id="Serum Uric Acid"
+                    name="blood-test"
+                    value="Serum Uric Acid"
+                    data-cost="500"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>Serum Uric Acid</p>
+                </label>
+              </div> 
+              
+              <div class="option small-box">
+                <label for="Lipid Profile">
+                  <input
+                    type="checkbox"
+                    id="Lipid Profile"
+                    name="blood-test"
+                    value="Lipid Profile"
+                    data-cost="1000"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>Lipid Profile</p>
+                </label>
+              </div>               
+              
+              <div class="option small-box">
+                <label for="Semen Analysis">
+                  <input
+                    type="checkbox"
+                    id="Semen Analysis"
+                    name="blood-test"
+                    value="Semen Analysis"
+                    data-cost="600"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>Semen Analysis</p>
+                </label>
+              </div>               
+ 
+              <div class="option small-box">
+                <label for="ICT for TB">
+                  <input
+                    type="checkbox"
+                    id="ICT for TB"
+                    name="blood-test"
+                    value="ICT for TB"
+                    data-cost="600"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>ICT for TB</p>
+                </label>
+              </div>               
+         
+              <div class="option small-box">
+                <label for="ICT for Kala-Azar (Ag/Ab)">
+                  <input
+                    type="checkbox"
+                    id="ICT for Kala-Azar (Ag/Ab)"
+                    name="blood-test"
+                    value="ICT for Kala-Azar (Ag/Ab)"
+                    data-cost="800"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>ICT for Kala-Azar (Ag/Ab)</p>
+                </label>
+              </div>          
+         
+              <div class="option small-box">
+                <label for="Anti HIV (ICT)">
+                  <input
+                    type="checkbox"
+                    id="Anti HIV (ICT)"
+                    name="blood-test"
+                    value="Anti HIV (ICT)"
+                    data-cost="700"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>Anti HIV (ICT)</p>
+                </label>
+              </div>  
+         
+ 
+              <div class="option small-box">
+                <label for="Urine for C/S">
+                  <input
+                    type="checkbox"
+                    id="Urine for C/S"
+                    name="blood-test"
+                    value="Urine for C/S"
+                    data-cost="1000"
+                  />
+                  <i class="fas fa-vial icon"></i>
+                  <p>Urine for C/S</p>
+                </label>
+              </div>  
+ 
+              
               <div class="option small-box">
                 <label for="Widal Test">
                   <input
@@ -404,7 +802,7 @@
         options.style.display =
           options.style.display === "block" ? "none" : "block";
       });
-
+      
       options.addEventListener("click", function (e) {
         if (e.target.tagName === "LI") {
           const selectedDoctor = e.target.textContent; // Use the text content
@@ -431,6 +829,8 @@
       const totalPaidInput = document.getElementById("total-paid");
       const discountInput = document.getElementById("discount");
       const dueAmountInput = document.getElementById("due-amount");
+      const urlParams = new URLSearchParams(window.location.search);
+      const username = urlParams.get('username');
 
       totalCostInput.addEventListener("input", updateDueAmount);
       totalPaidInput.addEventListener("input", updateDueAmount);
@@ -494,10 +894,11 @@
             dueAmount: document.getElementById("due-amount").value,
             totalCharge: document.getElementById("total-cost").value,
             date: document.getElementById("admission-date").value,
+            username: username,
           };
 
           try {
-            const response = await fetch("/addPathology", {
+            const response = await fetch("/app/addPathology", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -507,7 +908,7 @@
 
             if (response.ok) {
               alert("Patient data submitted successfully.");
-              window.location.href = "/pathology-voucher.html";
+             window.location.href = `/app/operators/pathology-voucher?username=${encodeURIComponent(username)}`;
               document.getElementById("patient-name").value = "";
               document.getElementById("patient-age").value = "";
               document.getElementById("contact-number").value = "";

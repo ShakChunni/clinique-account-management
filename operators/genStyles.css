@@ -166,6 +166,63 @@ input[type="checkbox"] {
   margin-right: 5px;
 }
 
+.department-dropdown {
+  display: inline-block;
+  position: relative;
+  width: 100%;
+}
+
+.department-selector {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  padding: 15px;
+  border-radius: 6px;
+  background-color: #fff; /* White background for better contrast */
+}
+
+.selected-department {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #343a40; /* Dark text color */
+}
+
+.department-options {
+  display: none;
+  position: absolute;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  z-index: 1;
+  width: 100%;
+}
+
+.department-options li {
+  padding: 15px;
+  cursor: pointer;
+  border-top: 1px solid #ccc;
+}
+
+.department-options li:hover {
+  background-color: #f0f0f0;
+  border-top: 1px solid #ccc;
+}
+
+.department-options li::before {
+  content: "•";
+  margin-right: 5px;
+}
+
+
+
+
+
+
 button[type="submit"] {
   background-color: #28a745;
   color: #fff;
@@ -374,7 +431,7 @@ button {
 }
 
 .option {
-  flex-basis: calc(33.33% - 10px);
+  flex-basis: calc(10% - 10px);
   background-color: #fff;
   padding: 10px;
   border: 1px solid #ccc;

@@ -72,22 +72,37 @@
   </head>
   <body>
     <div class="income-options">
-      <div
-        class="income-option"
-        onclick="window.location.href = 'income.html'"
-      >
+      <div class="income-option" onclick="redirectToPage('/app/admin/income')">
         <i class="fas fa-user-md icon"></i>
         <div class="title">Income from Patients</div>
         <div class="subtitle">Track income from patients</div>
       </div>
-      <div
-        class="income-option"
-        onclick="window.location.href = 'other-income.html'"
-      >
+      <div class="income-option" onclick="redirectToPage('/app/admin/other-income')">
         <i class="fas fa-dollar-sign icon"></i>
         <div class="title">Income from Others</div>
         <div class="subtitle">Track income from other sources</div>
       </div>
+        <div class="income-option" onclick="redirectToPage('/app/admin/doctor-income')">
+         <i class="fas fa-chart-line icon"></i> <!-- Changed icon class -->
+        <div class="title">Income of Doctor</div>
+        <div class="subtitle">Track income of doctor</div>
+      </div>
+      <div class="income-option" onclick="redirectToPage('/app/admin/operator-income')">
+        <i class="fas fa-file-invoice-dollar icon"></i>
+        <div class="title">Income of Operator</div>
+        <div class="subtitle">Track income of operators</div>
+      </div>
     </div>
+    <script>
+      function redirectToPage(page) {
+        // Retrieve the username from the current URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const usernameValue = urlParams.get('username');
+    
+        // Redirect to the next page with the username as a query parameter
+        window.location.href = `${page}?username=${encodeURIComponent(usernameValue)}`;
+      }
+    </script>
   </body>
+  
 </html>

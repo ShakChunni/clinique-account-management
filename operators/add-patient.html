@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Add Patient - Clinic Management System</title>
+    <title>Add Patient - Feroza Clinique Management System</title>
 
     <link
       rel="stylesheet"
@@ -14,21 +14,29 @@
       href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
     />
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <link rel="stylesheet" href="genStyles.css" />
+    <link rel="stylesheet" href="genStyles" />
   </head>
   <body>
     <div class="container">
       <h1 style="margin-bottom: 20px">Add Patient</h1>
       <div class="add-patient-form">
-        <form id="patient-form" method="POST" action="/add-patient">
+        <form id="patient-form" method="POST" action="/app/add-patient">
           <div class="form-group">
             <label for="patient-name">Patient Name</label>
             <input type="text" id="patient-name" name="patient-name" required />
           </div>
           <div class="form-group">
+            <label for="patient-name">Patient's  Father's/Husband's Name</label>
+            <input type="text" id="patient-fname" name="patient-fname" required />
+          </div>
+          <div class="form-group">
             <label for="patient-age">Patient Age</label>
             <input type="number" id="patient-age" name="patient-age" required />
           </div>
+          <div class="form-group">
+            <label for="patient-name">Patient's  Address</label>
+            <input type="text" id="patient-address" name="patient-address" required />
+          </div>          
           <div class="form-group">
             <label for="contact-number">Contact Number</label>
             <input
@@ -37,6 +45,10 @@
               name="contact-number"
               required
             />
+          </div>
+          <div class="form-group">
+            <label for="patient-age">Cabin Number</label>
+            <input type="number" id="cabin-number" name="cabin-number" required />
           </div>
           <div class="form-group">
             <label for="doctor">Doctor</label>
@@ -67,6 +79,22 @@
                 </li>
                 <li data-doctor="Doctor 14">Prof. Dr. Muhammad Mohsin</li>
                 <li data-doctor="Doctor 15">Dr. Morium Akter</li>
+              </ul>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="department">Department</label>
+            <div class="department-dropdown">
+              <div class="department-selector">
+                <div class="selected-department">Select a department</div>
+                <i class="fas fa-caret-down"></i>
+              </div>
+              <ul class="department-options">
+                <li data-doctor="Department 1">Medicine</li>
+                <li data-doctor="Department 2">Surgery</li>
+                <li data-doctor="Department 3">Obstetrics</li>
+                <li data-doctor="Department 4">Gynaecology</li>
+                <li data-doctor="Department 5">Pediatrics</li>
               </ul>
             </div>
           </div>
@@ -126,48 +154,81 @@
         }
       });
     </script>
+    
+    <script>
+      const departmentSelector = document.querySelector(".department-selector");
+      const departmentOptions = document.querySelector(".department-options");
+    
+      departmentSelector.addEventListener("click", function () {
+        departmentOptions.style.display =
+          departmentOptions.style.display === "block" ? "none" : "block";
+      });
+    
+      departmentOptions.addEventListener("click", function (e) {
+        if (e.target.tagName === "LI") {
+          const selectedDepartment = e.target.textContent; // Use the text content
+          document.querySelector(".selected-department").textContent =
+            selectedDepartment;
+          departmentOptions.style.display = "none";
+    
+          // Deselect all other options
+          const departmentOptionsList = document.querySelectorAll(
+            ".department-options li"
+          );
+          departmentOptionsList.forEach((option) =>
+            option.classList.remove("selected")
+          );
+          e.target.classList.add("selected");
+        }
+      });
+    </script>
+
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const patientForm = document.getElementById("patient-form");
-
+    
         flatpickr("#admission-date", {
-          dateFormat: "Y-m-d H:i", // Use uppercase 'H' for 24-hour format
+          dateFormat: "Y-m-d H:i",
           defaultDate: new Date(),
           enableTime: true,
-          time_24hr: false, // Set to true if you want 24-hour format
+          time_24hr: false,
         });
-
+    
         patientForm.addEventListener("submit", async (e) => {
           e.preventDefault();
-
+    
+          // Extract username from the current URL
+          const urlParams = new URLSearchParams(window.location.search);
+          const username = urlParams.get("username");
+    
           // Collect data
-          const username = window.appUsername;
           const patientData = {
             name: document.getElementById("patient-name").value,
+            fname: document.getElementById("patient-fname").value,
             age: document.getElementById("patient-age").value,
+            address: document.getElementById("patient-address").value,
             contact: document.getElementById("contact-number").value,
+            cabin: document.getElementById("cabin-number").value,
             doctor: document.querySelector(".selected-doctor").textContent,
+            department: document.querySelector(".selected-department").textContent,
             admissionFee: document.getElementById("admission-fee").value,
             date: document.getElementById("admission-date").value,
+            username: username,
           };
-
+    
           try {
-            const response = await fetch("/formPost", {
+            const response = await fetch("/app/add-patient", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify(patientData),
             });
-
+    
             if (response.ok) {
-              window.location.href = "/voucher.html";
+              window.location.href = `/app/operators/voucher?username=${encodeURIComponent(username)}`;
               console.log("Patient added successfully");
-              document.getElementById("patient-name").value = "";
-              document.getElementById("patient-age").value = "";
-              document.getElementById("contact-number").value = "";
-              document.querySelector(".selected-doctor").textContent = "";
             } else {
               alert("Error submitting patient data. Please try again.");
             }
@@ -178,5 +239,6 @@
         });
       });
     </script>
+
   </body>
 </html>

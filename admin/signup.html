@@ -80,7 +80,7 @@
     <div class="container">
       <h1>Sign Up</h1>
       <div class="signup-form">
-        <form id="signup-form" method="POST" action="/signupOperator">
+        <form id="signup-form" method="POST" action="/app/admin/signupAdmin">
           <div class="form-group">
             <label for="name">Name</label>
             <input type="text" id="name" name="name" required />
@@ -113,7 +113,7 @@
           const password = document.getElementById("password").value;
 
           try {
-            const response = await fetch("/signupAdmin", {
+            const response = await fetch("/app/admin/signupAdmin", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -123,7 +123,7 @@
 
             if (response.ok) {
               console.log("Signup successful");
-              window.location.href = "/admin/login.html";
+              window.location.href = "/app/admin/login";
               // You can redirect the user to the login page or perform other actions here
             } else {
               console.error("Signup failed");

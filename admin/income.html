@@ -4,13 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Income List</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="/app/admin/styles" />
   </head>
   <body>
     <div class="container">
-      <a href="/admin/dashboard.html" class="logo">
-        <img src="../logo.png" alt="Logo" />
-      </a>
+    <a href="/app/admin/dashboard" class="logo" onclick="redirectToPage('/app/admin/dashboard'); return false;">
+      <img src="/app/logo" alt="Logo" />
+    </a>
       <h1>Income List</h1>
       <div class="search-container">
         <input type="text" id="searchIdInput" placeholder="Search by ID" />
@@ -26,15 +26,18 @@
             <th>Contact</th>
             <th>Date</th>
             <th>Admission Fee</th>
+            <th style="background-color: black; color: white">Admitted Under</th>
+            <th style="background-color: red; color: white">Doctor's Fee</th>
+            <th>OT Type</th>
             <th>OT Charge</th>
+            <th>Cabin Number</th>
             <th>Seat Rent</th>
             <th>Service Charge</th>
             <th>Pathology Charge</th>
-            <th>Total Charge</th>
             <th style="background-color: red; color: white">Discount Amount</th>
+            <th>Total Charge</th>
             <th>Total Paid</th>
             <th style="background-color: red; color: white">Due Amount</th>
-            <th style="background-color: red; color: white">Doctor's Fee</th>
             <th style="background-color: green; color: white">Total Income</th>
             <th class="bold-text">Operator</th>
             <th style="background-color: yellowgreen; color: white">Action</th>
@@ -53,7 +56,18 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <!-- ... (your existing HTML code) ... -->
+
+    <script>
+        function redirectToPage(page) {
+          // Retrieve the username from the current URL
+          const urlParams = new URLSearchParams(window.location.search);
+          const usernameValue = urlParams.get('username');
+          console.log('Username:', usernameValue);
+        
+          // Redirect to the next page with the username as a query parameter
+          window.location.href = `${page}?username=${encodeURIComponent(usernameValue)}`;
+        }
+    </script>
 
     <script>
       $(document).ready(function () {
@@ -114,7 +128,7 @@
               // Calculate total income
               // Calculate total income
               const totalIncome =
-                totalCharge - discountAmount - doctorFee - dueAmount;
+                totalCharge + admissionFee + doctorFee - dueAmount;
 
               incomeTable.append(`
                   <tr>
@@ -124,18 +138,21 @@
                     <td>${row.contact}</td>
                     <td>${formattedDate}</td>
                     <td>&#2547;${admissionFee.toFixed(2)}</td>
+                    <td>${row.doctor}</td>
+                    <td>&#2547;${doctorFee.toFixed(2)}</td>
+                    <td>${row.otType}</td>
                     <td>&#2547;${otCharge.toFixed(2)}</td>
+                    <td>${row.seatNumber}</td>
                     <td>&#2547;${seatRent.toFixed(2)}</td>
                     <td>&#2547;${serviceCharge.toFixed(2)}</td>
                     <td>&#2547;${pathologyCost.toFixed(2)}</td>
-                    <td>&#2547;${totalCharge.toFixed(2)}</td>
                     <td>&#2547;${discountAmount.toFixed(2)}</td>
+                    <td>&#2547;${totalCharge.toFixed(2)}</td>
                     <td>&#2547;${totalPaid.toFixed(2)}</td>
                     <td>&#2547;${dueAmount.toFixed(2)}</td>
-                    <td>&#2547;${doctorFee.toFixed(2)}</td>        
                     <td>&#2547;${totalIncome.toFixed(2)}</td>
                     <td>${row.operator}</td>
-                    <td><a class="edit-button" href="edit-data.html?id=${
+                    <td><a class="edit-button" href="/app/admin/edit-data?id=${
                       row.id
                     }">Edit</a></td>
                   </tr>
@@ -145,7 +162,7 @@
         }
 
         // Fetch income data from the server
-        $.get("/getIncome", function (data) {
+        $.get("/app/getIncome", function (data) {
           // Store the data in the 'allData' array
           allData = data;
 

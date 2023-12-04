@@ -69,12 +69,37 @@
       button:hover {
         background-color: #004e66;
       }
+      
+    /* Media queries for responsiveness */
+    @media screen and (min-width: 600px) {
+      .stat-link {
+        flex: 0 0 48%; /* Two columns on screens wider than 600px */
+      }
+    }
+    
+    @media screen and (min-width: 768px) {
+      .stat-link {
+        flex: 0 0 32%; /* Three columns on screens wider than 768px */
+      }
+    }
+    
+    @media screen and (min-width: 992px) {
+      .stat-link {
+        flex: 0 0 24%; /* Four columns on screens wider than 992px */
+      }
+    }
+    
+    @media screen and (min-width: 1200px) {
+      .stat-link {
+        flex: 0 0 22%; /* Five columns on screens wider than 1200px */
+      }
+    }
     </style>
   </head>
   <body>
     <div class="container">
       <h1>LOGIN PAGE</h1>
-      <form id="login-form" method="POST" action="/loginAdmin">
+      <form id="login-form" method="POST" action="/app/admin/loginAdmin">
         <div class="form-group">
           <label for="username">Username</label>
           <input type="text" id="username" name="username" required />
@@ -99,7 +124,7 @@
           const password = document.getElementById("password").value;
 
           try {
-            const response = await fetch("/loginAdmin", {
+            const response = await fetch("/app/admin/loginAdmin", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -109,10 +134,8 @@
 
             if (response.ok) {
               console.log("Login successful");
-              window.location.href = "/admin/dashboard.html";
-              document.getElementById("username").value = "";
-
-              // You can redirect the user to another page or perform other actions here
+              // Append username as a URL parameter and redirect to the dashboard
+              window.location.href = "/app/admin/dashboard?username=" + encodeURIComponent(username);
             } else {
               console.error("Login failed");
               alert("Invalid credentials. Please try again.");

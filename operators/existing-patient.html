@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Existing Patient - Clinic Management System</title>
     <!-- Additional CSS specific to existing-patient.html if needed -->
-    <link rel="stylesheet" href="genStyles.css" />
+    <link rel="stylesheet" href="genStyles" />
   </head>
   <body>
     <div class="container">
@@ -36,23 +36,6 @@
     </script>
 
     <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        // Function to get the value of a query parameter from the URL
-        function getQueryParam(name) {
-          const urlParams = new URLSearchParams(window.location.search);
-          return urlParams.get(name);
-        }
-
-        // Get the username from the URL
-        const username = getQueryParam("username");
-
-        // Display the username in the container
-        const usernameContainer = document.getElementById("username-container");
-        usernameContainer.innerHTML = `<p>Welcome, ${username}!</p>`;
-      });
-    </script>
-
-    <script>
       document.addEventListener("DOMContentLoaded", () => {
         const patientIdInput = document.getElementById("patient-id");
         const searchButton = document.getElementById("search-button");
@@ -79,7 +62,7 @@
           const patientId = patientIdInput.value;
 
           // Fetch patient information
-          const response = await fetch(`/getPatient/${patientId}`);
+          const response = await fetch(`/app/operators/getPatient/${patientId}`);
           const data = await response.json();
 
           if (response.ok) {
@@ -95,6 +78,10 @@
                     <span>${data.name}</span>
                 </div>
                 <div class="patient-field">
+                    <label>Father/Husband's Name</label>
+                    <span>${data.fname}</span>
+                </div> 
+                <div class="patient-field">
                     <label>Age</label>
                     <span>${data.age}</span>
                 </div>
@@ -102,23 +89,39 @@
                     <label>Contact</label>
                     <span>${data.contact}</span>
                 </div>
-
+                <div class="patient-field">
+                    <label>Address</label>
+                    <span>${data.address}</span>
+                </div>
                 <div class="patient-field">
                     <label>Doctor</label>
                     <span>${data.doctor}</span>
                 </div>
                 <div class="patient-field">
+                    <label>Department</label>
+                    <span>${data.department}</span>
+                </div>                
+                <div class="patient-field">
                     <label>Admission Charge</label>
                     <span id="admission-fee-span">${data.admissionFee}</span>
                 </div>
+
+                <div class="patient-field">
+                  <label>Operation Type</label>
+                  <span id="ot-type-span" contentEditable="true">${data.otType}</span>
+                </div>
+                
                 <div class="patient-field">
                     <label>Doctor's Fee</label>
                     <span id="doctor-charge-span" contentEditable="true">${data.doctorCharge}</span>
                 </div>
-
                 <div class="patient-field">
                     <label>OT Charge</label>
                     <span id="ot-charge-span" contentEditable="true">${data.otCharge}</span>
+                </div>
+                <div class="patient-field">
+                    <label>Cabin Number</label>
+                    <span id="seat-number-span" contentEditable="true">${data.seatNumber}</span>
                 </div>
                 <div class="patient-field">
                     <label>Seat Rent</label>
@@ -152,114 +155,97 @@
 
               `;
 
-            searchResults.innerHTML = patientInfo;
-            searchResults.style.display = "block";
-            otChargeSpan.style.display = "none";
-            serviceChargeSpan.style.display = "none";
-            totalPaidSpan.style.display = "none";
-            otChargeInput.style.display = "block";
-            serviceChargeInput.style.display = "block";
-            totalPaidInput.style.display = "block";
-            dueAmountSpan.style.display = "block";
-            saveButton.style.display = "block";
-          } else {
-            searchResults.innerHTML = "<p>Patient not found.</p>";
-            searchResults.style.display = "block";
-          }
-        });
-
-        saveButton.addEventListener("click", async () => {
-          const patientId = patientIdInput.value;
-          const admissionFee =
-            parseFloat(
-              document.getElementById("admission-fee-span").textContent
-            ) || 0;
-          const doctorCharge =
-            parseFloat(
-              document.getElementById("doctor-charge-span").textContent
-            ) || 0;
-          const otCharge =
-            parseFloat(document.getElementById("ot-charge-span").textContent) ||
-            0;
-          const serviceCharge =
-            parseFloat(
-              document.getElementById("service-charge-span").textContent
-            ) || 0;
-          const pathologyCost =
-            parseFloat(
-              document.getElementById("pathology-cost-span").textContent
-            ) || 0;
-          const discount =
-            parseFloat(document.getElementById("discount-span").textContent) ||
-            0;
-          const seatRent =
-            parseFloat(document.getElementById("seat-rent-span").textContent) ||
-            0;
-
-          const totalCharge =
-            admissionFee + otCharge + serviceCharge + pathologyCost + seatRent;
-          const totalPaid =
-            parseFloat(
-              document.getElementById("total-paid-span").textContent
-            ) || 0;
-          const dueAmount = totalCharge - totalPaid - discount;
-
-          // Retrieve the username from the global variable
-          const username = window.appUsername;
-
-          // Rest of your code...
-
-          const response = await fetch(
-            `/update-patient/${patientId}?username=${username}`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                doctorCharge,
-                otCharge,
-                seatRent,
-                serviceCharge,
-                totalPaid,
-                totalCharge,
-                discount,
-                dueAmount,
-              }),
-            }
-          );
-          if (response.ok) {
-            alert("Patient data updated successfully.");
-          } else {
-            alert("Error updating patient data. Please try again.");
-          }
-        });
-
-        const printButton = document.getElementById("print-button");
-        printButton.addEventListener("click", () => {
-          const patientId = patientIdInput.value;
-          console.log(patientId);
-          window.location.href = `/final-voucher.html?patientId=${patientId}`;
-        });
-
-        const pathologyButton = document.getElementById("pathology-button");
-        pathologyButton.addEventListener("click", async () => {
-          const patientId = patientIdInput.value;
-          console.log(patientId);
-          const response = await fetch(`/getPatient/${patientId}`);
-          const data = await response.json();
-          // Get patient details
-          const patientName = data.name;
-          const patientAge = data.age;
-          const patientContact = data.contact;
-          const patientDoctor = data.doctor;
-          const totalPaid = data.totalPaid;
-          const totalCharge = data.totalCharge;
-
-          // Redirect to otPathology.html with parameters
-          window.location.href = `/otPathology.html?id=${patientId}&name=${patientName}&age=${patientAge}&contact=${patientContact}&doctor=${patientDoctor}&totalCharge=${totalCharge}`;
-        });
-      });
+                searchResults.innerHTML = patientInfo;
+                searchResults.style.display = "block";
+                otChargeSpan.style.display = "none";
+                serviceChargeSpan.style.display = "none";
+                otChargeInput.style.display = "block";
+                serviceChargeInput.style.display = "block";
+                totalPaidInput.style.display = "block";
+                dueAmountSpan.style.display = "block";
+                saveButton.style.display = "block";
+              } else {
+                searchResults.innerHTML = "<p>Patient not found.</p>";
+                searchResults.style.display = "block";
+              }
+            });
+        
+            saveButton.addEventListener("click", async () => {
+              const patientId = patientIdInput.value;
+              const admissionFee = parseFloat(document.getElementById("admission-fee-span").textContent) || 0;
+              const doctorCharge = parseFloat(document.getElementById("doctor-charge-span").textContent) || 0;
+              const otCharge = parseFloat(document.getElementById("ot-charge-span").textContent) || 0;
+              const serviceCharge = parseFloat(document.getElementById("service-charge-span").textContent) || 0;
+              const pathologyCost = parseFloat(document.getElementById("pathology-cost-span").textContent) || 0;
+              const discount = parseFloat(document.getElementById("discount-span").textContent) || 0;
+              const seatRent = parseFloat(document.getElementById("seat-rent-span").textContent) || 0;
+        
+              const totalCharge = doctorCharge + otCharge + serviceCharge + pathologyCost + seatRent - discount;
+              const totalPaid = parseFloat(document.getElementById("total-paid-span").textContent) || 0;
+              const dueAmount = totalCharge - totalPaid;
+              const otType = document.getElementById("ot-type-span").textContent;
+              const seatNumber = document.getElementById("seat-number-span").textContent;
+              // Extract username from the current URL
+              const urlParams = new URLSearchParams(window.location.search);
+              const username = urlParams.get("username");
+        
+              const response = await fetch(`/app/update-patient/${patientId}?username=${username}`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  otType,
+                  doctorCharge,
+                  otCharge,
+                  seatNumber,
+                  seatRent,
+                  serviceCharge,
+                  totalPaid,
+                  totalCharge,
+                  discount,
+                  dueAmount,
+                  username,
+                }),
+              });
+        
+              if (response.ok) {
+                alert("Patient data updated successfully.");
+              } else {
+                alert("Error updating patient data. Please try again.");
+              }
+            });
+        
+            const printButton = document.getElementById("print-button");
+            printButton.addEventListener("click", () => {
+              const urlParams = new URLSearchParams(window.location.search);
+              const username = urlParams.get("username");
+              const patientId = patientIdInput.value;
+              console.log(patientId);
+              window.location.href = `/app/operators/final-voucher?patientId=${patientId}&username=${username}`;
+            });
+        
+            const pathologyButton = document.getElementById("pathology-button");
+            pathologyButton.addEventListener("click", async () => {
+              const urlParams = new URLSearchParams(window.location.search);
+              const username = urlParams.get("username");
+              const patientId = patientIdInput.value;
+              console.log(patientId);
+              const response = await fetch(`/app/operators/getPatient/${patientId}?username=${username}`);
+              const data = await response.json();
+              
+              // Get patient details
+              const patientName = data.name;
+              const patientAge = data.age;
+              const patientContact = data.contact;
+              const patientDoctor = data.doctor;
+              const totalPaid = data.totalPaid;
+              const totalCharge = data.totalCharge;
+        
+              // Redirect to otPathology.html with parameters
+              window.location.href = `/app/operators/otPathology?id=${patientId}&name=${patientName}&age=${patientAge}&contact=${patientContact}&doctor=${patientDoctor}&totalCharge=${totalCharge}&username=${username}`;
+            });
+          });
     </script>
   </body>
 </html>

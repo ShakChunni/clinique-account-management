@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Operator Income List</title>
+  <link rel="stylesheet" href="/app/admin/styles">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker@3.1.0/daterangepicker.css">
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="search-container">
+      <input type="text" id="operatorInput" placeholder="Enter Operator Name">
+      <input type="text" id="dateRangeInput" placeholder="Select Date Range">
+      <button id="searchButton">Search</button>
+      <button id="printButton">Print</button> <!-- Added Print button -->
+    </div>
+    <table id="incomeTable">
+      <thead>
+        <tr>
+          <th>Patient Name</th>
+          <th>Total Charge</th>
+          <th>Total Earned</th>
+          <th>Due Amount</th>
+          <th>Date</th>
+          <th>Operator</th>
+          <!-- Add other column headers here based on your data -->
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/daterangepicker@3.1.0/moment.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/daterangepicker@3.1.0/daterangepicker.js"></script>
+<!-- ... (your existing HTML code) ... -->
+<script>
+  $(document).ready(function () {
+    $('#dateRangeInput').daterangepicker({
+      autoUpdateInput: false,
+      locale: {
+        cancelLabel: 'Clear'
+      }
+    });
+
+    $('#dateRangeInput').on('apply.daterangepicker', function(ev, picker) {
+      $(this).val(picker.startDate.format('YYYY-MM-DD') + ' to ' + picker.endDate.format('YYYY-MM-DD'));
+    });
+
+    $('#dateRangeInput').on('cancel.daterangepicker', function(ev, picker) {
+      $(this).val('');
+    });
+
+    $("#searchButton").click(function () {
+      const operatorName = $("#operatorInput").val();
+      const dateRange = $("#dateRangeInput").val();
+
+      $.get(`/app/getOperatorIncome?operator=${operatorName}&dateRange=${dateRange}`, function (data) {
+        renderTable(data);
+      });
+    });
+
+    $("#printButton").click(function () {
+      window.print();
+    });
+
+    function renderTable(data) {
+      const tableBody = $('#incomeTable tbody');
+      tableBody.empty();
+
+      let totalCharge = 0;
+      let totalPaid = 0;
+      let dueAmount = 0;
+
+      data.forEach(entry => {
+        // Format time in 12-hour format
+        const formattedTime = moment(entry.date).format('YYYY-MM-DD hh:mm A');
+
+        const row = `<tr>
+          <td>${entry.name}</td>
+          <td>${entry.totalCharge}</td>
+          <td>${entry.totalPaid}</td>
+          <td>${entry.dueAmount}</td>
+          <td>${formattedTime}</td>
+          <td>${entry.operator}</td>
+        </tr>`;
+        tableBody.append(row);
+
+        // Update summary
+        totalCharge += entry.totalCharge;
+        totalPaid += entry.totalPaid;
+        dueAmount += entry.dueAmount;
+      });
+
+      // Add summary row
+      const summaryRow = `<tr style="font-weight: bold;">
+        <td>Total</td>
+        <td>${totalCharge}</td>
+        <td>${totalPaid}</td>
+        <td>${dueAmount}</td>
+        <td></td>
+        <td></td>
+      </tr>`;
+      tableBody.append(summaryRow);
+    }
+  });
+</script>
+
+<!-- ... (your existing script tags) ... -->
+
+</body>
+</html>

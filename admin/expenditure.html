@@ -4,12 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Expenditure List</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="/app/admin/styles" />
   </head>
   <body>
     <div class="container">
-      <a href="/admin/dashboard.html" class="logo">
-        <img src="../logo.png" alt="Logo" />
+      <a href="/app/admin/dashboard" class="logo">
+        <img src="/app/logo" alt="Logo" />
       </a>
       <h1>Expenditure List</h1>
       <table>
@@ -32,7 +32,7 @@
     <script>
       $(document).ready(function () {
         // Fetch expenditure data from the server
-        $.get("/getExpenditure", function (data) {
+        $.get("/app/admin/getExpenditure", function (data) {
           const expenditureTable = $("#expenditureTable");
 
           if (data.length === 0) {

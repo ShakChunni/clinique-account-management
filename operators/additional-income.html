@@ -15,13 +15,13 @@
     />
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-    <link rel="stylesheet" href="genStyles.css" />
+    <link rel="stylesheet" href="genStyles" />
   </head>
   <body>
     <div class="container">
       <h1 style="margin-bottom: 20px">Additional Income</h1>
       <div class="add-patient-form">
-        <form id="patient-form" method="POST" action="/additional-income">
+        <form id="patient-form" method="POST" action="/app/additional-income">
           <div class="form-group">
             <label for="incomeType">Income Type</label>
             <div class="incomeType-dropdown">
@@ -33,8 +33,9 @@
                 <li data-incomeType="incomeType 1">Pethidine Sale</li>
                 <li data-incomeType="incomeType 2">Pharmacy Rent</li>
                 <li data-incomeType="incomeType 3">Chamber Rent</li>
-                <li data-incomeType="incomeType 4">I Department Rent</li>
+                <li data-incomeType="incomeType 4">Eye Department Rent</li>
                 <li data-incomeType="incomeType 5">BSF Income</li>
+                <li data-incomeType="incomeType 5">Local Surgery</li>
               </ul>
             </div>
           </div>
@@ -84,6 +85,8 @@
           ".incomeType-selector"
         );
         const incomeTypeOptions = document.querySelector(".incomeType-options");
+        const urlParams = new URLSearchParams(window.location.search);
+        const username = urlParams.get('username');
 
         incomeTypeSelector.addEventListener("click", function (event) {
           incomeTypeOptions.style.display =
@@ -124,10 +127,11 @@
               .textContent,
             incomeAmount: document.getElementById("income-fee").value,
             date: document.getElementById("admission-date").value,
+            username: username,
           };
 
           try {
-            const response = await fetch("/additional-income", {
+            const response = await fetch("/app/additional-income", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",

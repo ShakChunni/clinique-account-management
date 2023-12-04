@@ -1,7 +1,7 @@
 const mysql = require("mysql");
 const express = require("express");
 const app = express();
-const port = 5000;
+const port = 3306;
 const multer = require("multer");
 const PDFKit = require("pdfkit");
 const fs = require("fs");
@@ -10,14 +10,14 @@ const moment = require("moment");
 const bcrypt = require("bcrypt");
 const session = require("express-session");
 const uuid = require("uuid"); // Import the uuid package
-
 const pdf = require("html-pdf");
+const jwt = require("jsonwebtoken");
 
 const db = mysql.createConnection({
   host: "localhost",
-  user: "root",
-  password: "",
-  database: "clinique-management",
+  user: "****",
+  password: "*****",
+  database: "******",
 });
 
 db.connect((err) => {
@@ -34,24 +34,17 @@ function getBase64Image(file) {
   return Buffer.from(data).toString("base64");
 }
 
-// Use uuid to generate unique session IDs
-app.use(
-  session({
-    genid: (req) => {
-      return uuid.v4(); // use UUID v4 for session IDs
-    },
-    secret: "your-secret-key",
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false },
-  })
-);
+//pore
+const crypto = require("crypto");
 
-// Middleware to check if the user is authenticated
+const allowedUsernames = ["ash", "amina", "zayed", "maruf"];
+
 const isAuthenticated = (req, res, next) => {
-  if (req.session.username) {
-    // User is authenticated
-    req.user = { username: req.session.username };
+  const { username } = req.query;
+
+  if (username && allowedUsernames.includes(username.toLowerCase())) {
+    // User is authenticated using username from URL parameters
+    req.user = { username };
     next();
   } else {
     // User is not authenticated
@@ -59,14 +52,38 @@ const isAuthenticated = (req, res, next) => {
   }
 };
 
+// Apply the isAuthenticated middleware to all admin routes
+const adminRoutes = [
+  "dashboard",
+  "edit-data",
+  "expenditure",
+  "income",
+  "other-income",
+  "types-of-income",
+  "operator-income",
+  "doctor-income", // Add the new route
+];
+//admin side files serve
+adminRoutes.forEach((route) => {
+  app.get(`/app/admin/${route}`, isAuthenticated, (req, res) => {
+    res.sendFile(__dirname + `/admin/${route}.html`);
+  });
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.get("/", (req, res) => {
+app.get("/app", (req, res) => {
   res.sendFile(__dirname + "/index.html");
 });
-app.use("/operators", express.static(__dirname + "/operators"));
-app.use("/admin", express.static(__dirname + "/admin"));
+app.use("/operators", express.static(__dirname + "/app/operators"));
+app.use("/admin", express.static(__dirname + "/app/admin"));
 
+app.get("/app/admin/styles", (req, res) => {
+  res.sendFile(__dirname + "/admin/styles.css");
+});
+
+//images
+app.use("/app/images", express.static(__dirname + "/images"));
 // multer for handling file uploads
 const storage = multer.diskStorage({
   destination: (req, file, callback) => {
@@ -77,37 +94,70 @@ const storage = multer.diskStorage({
   },
 });
 
-app.use("/images", express.static(__dirname + "/images"));
-app.use("/logo.png", express.static(path.join(__dirname, "/logo.png")));
-app.use("/index.html", express.static(__dirname + "/index.html"));
-app.use(
-  "/operators/dashboard.html",
-  express.static(__dirname + "/operators/dashboard.html")
-);
 const upload = multer({ storage });
 app.use(upload.single("image"));
 
-//auth operator
-//auth operator
-app.get("/dashboard.html", (req, res) => {
-  // Check if the user is logged in by verifying the session
-  if (req.session.username) {
-    // Output the username to the server's console
-    console.log("Username:", req.session.username);
+//static files
 
-    res.sendFile(__dirname + "/operators/dashboard.html");
+app.use("/app/logo", express.static(path.join(__dirname, "/logo.png")));
+app.use("/app/index.html", express.static(__dirname + "/index.html"));
+
+const allowedOpUsernames = ["arshadullah", "koli", "rakib", "maruf"];
+
+const isOpAuthenticated = (req, res, next) => {
+  const { username } = req.query;
+
+  if (username && allowedOpUsernames.includes(username.toLowerCase())) {
+    // User is authenticated using username from URL parameters
+    req.user = { username };
+    next();
   } else {
-    // Redirect to the login page if the user is not logged in
-    res.redirect(__dirname + "/index.html");
+    // User is not authenticated
+    res.status(401).send("Unauthorized");
   }
+};
+
+//operators serving
+const opRoutes = [
+  "dashboard",
+  "add-patient",
+  "pathology",
+  "additional-income",
+  "add-expenditure",
+  "existing-patient",
+  "otPathology",
+  "voucher",
+  "final-voucher",
+  "pathology-voucher",
+];
+
+// Operator side files serve
+opRoutes.forEach((route) => {
+  app.get(`/app/operators/${route}`, isOpAuthenticated, (req, res) => {
+    res.sendFile(__dirname + `/operators/${route}.html`);
+  });
+});
+
+// Endpoint to serve static files for /app/operators
+app.use(
+  "/app/operators",
+  express.static(path.join(__dirname, "/app/operators"))
+);
+
+app.get("/app/operators/mainStyles", (req, res) => {
+  res.sendFile(__dirname + "/operators/mainStyles.css");
+});
+
+app.get("/app/operators/genStyles", (req, res) => {
+  res.sendFile(__dirname + "/operators/genStyles.css");
 });
 
 // Operator signup
-app.get("/clinique-accounts/operator/signup", (req, res) => {
+app.get("/app/operators/signup", (req, res) => {
   res.sendFile(__dirname + "/operators/signup.html");
 });
 
-app.post("/signupOperator", async (req, res) => {
+app.post("/app/signupOperator", async (req, res) => {
   const { name, username, password } = req.body;
 
   // Check if the username is already taken
@@ -149,14 +199,13 @@ app.post("/signupOperator", async (req, res) => {
 });
 
 // Operator login
-app.get("/clinique-accounts/operator/login", (req, res) => {
+app.get("/app/operators/login", (req, res) => {
   res.sendFile(__dirname + "/operators/login.html");
 });
 
-app.post("/loginOperator", async (req, res) => {
+app.post("/app/loginOperator", async (req, res) => {
   const { username, password } = req.body;
-
-  // Fetch the user from the database
+  // Fetch the 
   const query = "SELECT * FROM operator WHERE username = ?";
   db.query(query, [username], async (err, results) => {
     if (err) {
@@ -187,11 +236,11 @@ app.post("/loginOperator", async (req, res) => {
 // Admin side auth
 
 // Admin signup
-app.get("/clinique-accounts/admin/signup", (req, res) => {
+app.get("/app/admin/signup", (req, res) => {
   res.sendFile(__dirname + "/admin/signup.html");
 });
 
-app.post("/signupAdmin", async (req, res) => {
+app.post("/app/admin/signupAdmin", async (req, res) => {
   const { name, username, password } = req.body;
 
   // Check if the username is already taken
@@ -233,11 +282,11 @@ app.post("/signupAdmin", async (req, res) => {
 });
 
 // Admin login
-app.get("/clinique-accounts/admin/login", (req, res) => {
+app.get("/app/admin/login", (req, res) => {
   res.sendFile(__dirname + "/admin/login.html");
 });
 
-app.post("/loginAdmin", async (req, res) => {
+app.post("/app/admin/loginAdmin", async (req, res) => {
   const { username, password } = req.body;
 
   // Fetch the user from the database
@@ -269,51 +318,49 @@ app.post("/loginAdmin", async (req, res) => {
   });
 });
 
-// Fetch username route
-app.get("/get-username", (req, res) => {
-  if (req.session.username) {
-    // Assuming req.session.username is set securely during the user authentication process
-    const username = req.session.username;
-
-    // Send the username as JSON
-    res.json({ username });
-  } else {
-    // Handle the case where the username is not available
-    res.json({ username: null });
-  }
-});
-
-// Logout route
-app.get("/logout", (req, res) => {
+// Add this route to handle logout
+app.get("/app/admin/logout", (req, res) => {
+  // Destroy the session
   req.session.destroy((err) => {
     if (err) {
       console.error("Error destroying session:", err);
-      res.json({ success: false });
+      res.status(500).send("Internal Server Error");
     } else {
-      res.json({ success: true });
+      // Redirect to the login page after logout
+      res.redirect("/app/admin/login");
     }
   });
 });
 
-// Endpoint to add a new patient to the database
-app.get("/clinique-accounts", (req, res) => {
-  res.sendFile(__dirname + "/operators/add-patient.html");
-});
-
-//addmitting new patient
-app.post("/formPost", isAuthenticated, (req, res) => {
+// Assuming isOpAuthenticated middleware is used before this route
+app.post("/app/add-patient", (req, res) => {
   console.log("Received a POST request to /formPost");
-  const { name, age, contact, doctor, admissionFee, date } = req.body;
-  const username = req.user.username; // Now req.user should be defined
+  // Retrieve user information from the request object
+  const {
+    name,
+    fname,
+    age,
+    address,
+    contact,
+    cabin,
+    doctor,
+    department,
+    admissionFee,
+    date,
+    username,
+  } = req.body;
+
   const sql =
-    "INSERT INTO patient (name, age, contact, doctor, admissionFee, totalCharge, totalPaid, date, operator) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    "INSERT INTO patient (name, fname, age, address, contact, seatNumber, doctor, department, admissionFee, date, operator) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
   const values = [
     name,
+    fname,
     age,
+    address,
     contact,
+    cabin,
     doctor,
-    admissionFee,
-    admissionFee,
+    department,
     admissionFee,
     date,
     username,
@@ -334,11 +381,7 @@ app.post("/formPost", isAuthenticated, (req, res) => {
 
 // Pathology
 
-app.get("/clinique-accounts", (req, res) => {
-  res.sendFile(__dirname + "/operators/pathology.html");
-});
-
-app.post("/addPathology", isAuthenticated, (req, res) => {
+app.post("/app/addPathology", (req, res) => {
   console.log("Received a POST request to /addPathology");
   const {
     name,
@@ -351,9 +394,9 @@ app.post("/addPathology", isAuthenticated, (req, res) => {
     dueAmount,
     totalCharge,
     date,
+    username,
   } = req.body;
-  const username = req.user.username; // Now req.user should be defined
-  // Format the date
+
   const formattedDate = moment(date, "YYYY-MM-DD HH:mm").format(
     "YYYY-MM-DD HH:mm"
   );
@@ -388,7 +431,7 @@ app.post("/addPathology", isAuthenticated, (req, res) => {
 });
 
 // Endpoint to retrieve patient information by ID
-app.get("/getPatient/:id", (req, res) => {
+app.get("/app/operators/getPatient/:id", (req, res) => {
   const patientId = req.params.id;
   const sql = "SELECT * FROM patient WHERE id = ?";
 
@@ -408,12 +451,16 @@ app.get("/getPatient/:id", (req, res) => {
     }
   });
 });
+
 // Endpoint to update patient data in the database
-app.post("/update-patient/:id", isAuthenticated, (req, res) => {
+app.post("/app/update-patient/:id", (req, res) => {
   const patientId = req.params.id;
+  const username = req.query.username;
   const {
+    otType,
     doctorCharge,
     otCharge,
+    seatNumber,
     seatRent,
     serviceCharge,
     totalPaid,
@@ -422,13 +469,13 @@ app.post("/update-patient/:id", isAuthenticated, (req, res) => {
     dueAmount,
   } = req.body;
 
-  const username = req.user.username; // Now req.user should be defined
-
   const sql =
-    "UPDATE patient SET doctorCharge = ?, otCharge = ?, seatRent = ?, serviceCharge = ?, totalPaid = ?, totalCharge = ?, discount = ?, dueAmount = ?, operator = ? WHERE id = ?";
+    "UPDATE patient SET doctorCharge = ?, otType = ?, otCharge = ?, seatNumber = ?, seatRent = ?, serviceCharge = ?, totalPaid = ?, totalCharge = ?, discount = ?, dueAmount = ?, operator = ? WHERE id = ?";
   const values = [
     doctorCharge,
+    otType,
     otCharge,
+    seatNumber,
     seatRent,
     serviceCharge,
     totalPaid,
@@ -453,18 +500,7 @@ app.post("/update-patient/:id", isAuthenticated, (req, res) => {
   });
 });
 
-// Endpoint to otPathology
-app.use(express.static(path.join(__dirname, "operators")));
-
-app.get("/otPathology.html", (req, res) => {
-  // Use path.join to create the correct path to the HTML file
-  const filePath = path.join(__dirname, "operators", "otPathology.html");
-
-  // Send the file to the client
-  res.sendFile(filePath);
-});
-
-app.post("/addOtPathology/:id", (req, res) => {
+app.post("/app/addOtPathology/:id", (req, res) => {
   console.log("Received a POST request to /addOtPathology");
   const patientId = req.params.id;
   const {
@@ -509,19 +545,12 @@ app.post("/addOtPathology/:id", (req, res) => {
   });
 });
 
-//additional-income
-
-// Endpoint to render the HTML form
-app.get("/additional-income", (req, res) => {
-  res.sendFile(__dirname + "/path_to_your_html_file.html");
-});
-
 // Update the endpoint to handle the form submission and insert data into the database
-app.post("/additional-income", isAuthenticated, (req, res) => {
+app.post("/app/additional-income", (req, res) => {
   console.log("Received a POST request to /additional-income");
 
-  const { incomeType, incomeAmount, date } = req.body;
-  const username = req.user.username; // Now req.user should be defined
+  const { incomeType, incomeAmount, date, username } = req.body;
+  // Now req.user should be defined
 
   const sql =
     "INSERT INTO otherincome (incomeType, income, date, operator) VALUES (?, ?, ?, ?)";
@@ -540,20 +569,17 @@ app.post("/additional-income", isAuthenticated, (req, res) => {
   });
 });
 // Endpoint to add a new expenditure to the database
-app.get("/add-expenditure", (req, res) => {
-  res.sendFile(__dirname + "/operators/expenditure.html");
-});
-app.post("/add-expenditure", isAuthenticated, (req, res) => {
+
+app.post("/app/add-expenditure", (req, res) => {
   console.log("Received a POST request to /add-expenditure");
 
-  const { description, cost, date } = req.body; // Updated to include admissionDate
-  const username = req.user.username; // Now req.user should be defined
+  const { description, cost, username, date } = req.body;
   const imageName = req.file.filename;
 
   // Modify the SQL query to include admission date
   const sql =
     "INSERT INTO expenditure (description, cost, image_name, operator, date) VALUES (?, ?, ?, ?, ?)";
-  const values = [description, cost, imageName, date, username, date];
+  const values = [description, cost, imageName, username, date];
 
   db.query(sql, values, (err, result) => {
     if (err) {
@@ -570,7 +596,8 @@ app.post("/add-expenditure", isAuthenticated, (req, res) => {
 
 //addmission voucher
 
-app.get("/generate-pdf", (req, res) => {
+app.get("/app/generate-pdf", (req, res) => {
+  const username = req.query.username;
   // Fetch the latest patient data from the database
   const sql = "SELECT * FROM patient ORDER BY id DESC LIMIT 1";
   db.query(sql, (err, result) => {
@@ -581,6 +608,12 @@ app.get("/generate-pdf", (req, res) => {
       });
     } else {
       const patientData = result[0];
+      // Get current date and time
+      const currentDate = new Date().toLocaleString("en-US", {
+        timeZone: "Asia/Dhaka", // Adjust the time zone as needed
+        hour12: true, // Use 12-hour format
+      });
+
       const html = `
         <html>
         <head>
@@ -598,42 +631,28 @@ app.get("/generate-pdf", (req, res) => {
           }
     
           .header {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            background-color: #f0f0f0;
-            text align: center;
+            display: flex; /* Use inline-block to keep elements on the same line */
+            background-color: #f0f0f0; /* Background color of the header */
+            padding: 10px; /* Adjust padding as needed */
           }
-      
+        
           #logo {
-            max-width: 80px;
-            max-height: 400px;
-            margin-right: 40px;
-             /* Adjust the margin as needed */
+            max-width: 30px; /* Adjust the max-width as needed */
+            vertical-align: middle;/* Adjust the margin as needed */
           }
-      
-          .clinic-name {
-            margin-left: 10px; /* Adjust the margin as needed */
-            margin-bottom: 250px;
-            font-size: 32px;
-            font-weight: bold;
-            color: #189ab4;
+        
+
+          .small-text {
+            font-size: 80%;
+            color: #0e6880;/* Adjust the font size as needed */
           }
-    
-          h1 {
-            font-size: 26px;
-            margin-bottom: 2px;
-            font-weight: bold;
-            color: #189ab4;
-            text-align: center;
-          }
-    
+            
           h2 {
-            font-size: 24px;
-            margin-bottom: 35px;
+            flex-grow: 1;
+            font-size: 12px;
+            font-weight: bold;
             color: #189ab4;
-            background-color: #f0f0f0;
+            margin: 0; /* Remove default margin */
             text-align: center;
           }
     
@@ -647,28 +666,29 @@ app.get("/generate-pdf", (req, res) => {
             border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
+            font-size: 8px;
           }
     
           th {
             background-color: #f2f2f2;
+            font-size: 8px;
           }
     
           .info-data {
             font-weight: italic;
             text-align: right;
-            font-size: 14px;
+            font-size: 10px;
           }
         </style>
 
         </head>
         <body>
-          <div class="header">
-            <img src="data:image/png;base64,${getBase64Image(
-              "logo.png"
-            )}" alt="Logo" id="logo" />
-            <span class="clinic-name">FEROZA NURSING HOME</span>
-          </div>
-          <h2>Kharampatty, Kishoreganj</h2>
+            <div class="header">
+              <img src="data:image/png;base64,${getBase64Image(
+                "logo.png"
+              )}" alt="Logo" id="logo" />
+              <h2>FEROZA NURSING HOME<br><span class="small-text">Kharampatty, Kishoreganj</span></h2>
+            </div>
           <table>
             <tr>
               <th>Patient ID</th>
@@ -679,8 +699,16 @@ app.get("/generate-pdf", (req, res) => {
               <td>${patientData.name}</td>
             </tr>
             <tr>
+              <th>Patient Father/Husband's Name</th>
+              <td>${patientData.fname}</td>
+            </tr> 
+            <tr>
               <th>Patient Age</th>
               <td>${patientData.age}</td>
+            </tr>
+            <tr>
+              <th>Patient Address</th>
+              <td>${patientData.address}</td>
             </tr>
             <tr>
               <th>Contact Number</th>
@@ -691,12 +719,20 @@ app.get("/generate-pdf", (req, res) => {
               <td>${patientData.doctor}</td>
             </tr>
             <tr>
+              <th>Admitted Under</th>
+              <td>${patientData.department}</td>
+            </tr>            
+            <tr>
               <th>Admission Fee</th>
-              <td>${String.fromCharCode(0x09f3)}${patientData.admissionFee}</td>
+              <td>${patientData.admissionFee}</td>
             </tr>
             <tr>
               <th>Admission Date</th>
               <td>${patientData.date}</td>
+            </tr>
+            <tr>
+              <th>Printed By</th>
+              <td>${username} on ${currentDate}</td>
             </tr>
           </table>
         </body>
@@ -728,16 +764,11 @@ app.get("/generate-pdf", (req, res) => {
   });
 });
 
-// Use path.join to create the correct path to the HTML file
-app.get("/voucher.html", (req, res) => {
-  const filePath = path.join(__dirname, "operators", "voucher.html");
-  res.sendFile(filePath);
-});
-
 //final pdf
 
-app.get("/generate-patient-pdf", (req, res) => {
+app.get("/app/generate-patient-pdf", (req, res) => {
   const patientId = req.query.patientId;
+  const username = req.query.username;
 
   const sql = "SELECT * FROM patient WHERE id = ?";
   db.query(sql, [patientId], (err, result) => {
@@ -753,94 +784,87 @@ app.get("/generate-patient-pdf", (req, res) => {
     }
 
     const patientData = result[0];
+    const currentDate = new Date().toLocaleString("en-US", {
+      timeZone: "Asia/Dhaka", // Adjust the time zone as needed
+      hour12: true, // Use 12-hour format
+    });
 
     const html = `
       <html>
       <head>
-      <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
+        <style>
+          * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+          }
+    
+          body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #fff;
+          }
+    
+          .header {
+            display: flex; /* Use inline-block to keep elements on the same line */
+            background-color: #f0f0f0; /* Background color of the header */
+            padding: 10px; /* Adjust padding as needed */
+          }
+        
+          #logo {
+            max-width: 30px; /* Adjust the max-width as needed */
+            vertical-align: middle;/* Adjust the margin as needed */
+          }
+        
 
-      body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-        background: #fff;
-      }
-
-      .header {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
-        background-color: #f0f0f0;
-        text align: center;
-      }
-  
-      #logo {
-        max-width: 80px;
-        max-height: 400px;
-        margin-right: 40px;
-         /* Adjust the margin as needed */
-      }
-  
-      .clinic-name {
-        margin-left: 10px; /* Adjust the margin as needed */
-        margin-bottom: 250px;
-        font-size: 32px;
-        font-weight: bold;
-        color: #189ab4;
-      }
-
-      h1 {
-        font-size: 26px;
-        margin-bottom: 2px;
-        font-weight: bold;
-        color: #189ab4;
-        text-align: center;
-      }
-
-      h2 {
-        font-size: 24px;
-        margin-bottom: 35px;
-        color: #189ab4;
-        background-color: #f0f0f0;
-        text-align: center;
-      }
-
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 20px;
-      }
-
-      th, td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: left;
-      }
-
-      th {
-        background-color: #f2f2f2;
-      }
-
-      .info-data {
-        font-weight: italic;
-        text-align: right;
-        font-size: 14px;
-      }
-    </style>
+          .small-text {
+            font-size: 80%;
+            color: #0e6880;/* Adjust the font size as needed */
+          }
+            
+          h2 {
+            flex-grow: 1;
+            font-size: 12px;
+            font-weight: bold;
+            color: #189ab4;
+            margin: 0; /* Remove default margin */
+            text-align: center;
+          }
+    
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            margin-top: 20px;
+          }
+    
+          th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            font-size: 8px;
+          }
+    
+          th {
+            background-color: #f2f2f2;
+            font-size: 8px;
+          }
+    
+          .info-data {
+            font-weight: italic;
+            text-align: right;
+            font-size: 10px;
+          }
+        </style>
       </head>
       <body>
-        <div class="header">
-          <img src="data:image/png;base64,${getBase64Image(
-            "logo.png"
-          )}" alt="Logo" id="logo" />
-          <span class="clinic-name">FEROZA NURSING HOME</span>
-        </div>
-        <h2>Kharampatty, Kishoreganj</h2>
+      <div class="header-content">
+            <div class="header">
+              <img src="data:image/png;base64,${getBase64Image(
+                "logo.png"
+              )}" alt="Logo" id="logo" />
+              <h2>FEROZA NURSING HOME<br><span class="small-text">Kharampatty, Kishoreganj</span></h2>
+            </div>
         <table>
           <tr>
             <th>Patient ID</th>
@@ -860,24 +884,68 @@ app.get("/generate-patient-pdf", (req, res) => {
           </tr>
           <tr>
             <th>Admission Fee</th>
-            <td>${String.fromCharCode(0x09f3)}${patientData.admissionFee}</td>
+            <td>${patientData.admissionFee}</td>
           </tr>
           <tr>
             <th>Admission Date</th>
             <td>${patientData.date}</td>
           </tr>
           <tr>
+            <th>Department</th>
+            <td>${patientData.department}</td>
+          </tr>          
+          <tr>
+            <th>Doctor</th>
+            <td>${patientData.doctor}</td>
+          </tr>
+           <tr>
+            <th>Doctor Charge</th>
+            <td>${patientData.doctorCharge}</td>
+          </tr>
+            <tr>
+            <th>Seat Numbert</th>
+            <td>${patientData.seatNumber}</td>
+          </tr>
+           <tr>
+            <th>Seat Rent</th>
+            <td>${patientData.seatRent}</td>
+          </tr>
+          <tr>
+          <th>OT Type</th>
+          <td>${patientData.otType}</td>
+          </tr>
+          <tr>
             <th>OT Charge</th>
-            <td>${String.fromCharCode(0x09f3)}${patientData.otCharge}</td>
+            <td>${patientData.otCharge}</td>
           </tr>
           <tr>
             <th>Service Charge</th>
-            <td>${String.fromCharCode(0x09f3)}${patientData.serviceCharge}</td>
+            <td>${patientData.serviceCharge}</td>
           </tr>
           <tr>
-            <th>Pathology Charge</th>
-            <td>${String.fromCharCode(0x09f3)}${patientData.pathologyCost}</td>
+            <th>Pathology Cost</th>
+            <td>${patientData.pathologyCost}</td>
           </tr>
+          <tr>
+            <th>Discount Amount</th>
+            <td>${patientData.discount}</td>
+          </tr>
+           <tr>
+            <th>Total Charge</th>
+            <td>${patientData.totalCharge}</td>
+          </tr>
+          <tr>
+            <th>Total Paid</th>
+            <td>${patientData.totalPaid}</td>
+          </tr>
+          <tr>
+            <th>Due Amount</th>
+            <td>${patientData.dueAmount}</td>
+          </tr>
+            <tr>
+              <th>Printed By</th>
+              <td>${username} on ${currentDate}</td>
+            </tr>
         </table>
       </body>
       </html>
@@ -908,13 +976,11 @@ app.get("/generate-patient-pdf", (req, res) => {
 });
 
 // Use path.join to create the correct path to the HTML file
-app.get("/final-voucher.html", (req, res) => {
-  const filePath = path.join(__dirname, "operators", "final-voucher.html");
-  res.sendFile(filePath);
-});
+
 //pathology information pdf
 
-app.get("/generate-patient-pathology-pdf", (req, res) => {
+app.get("/app/generate-patient-pathology-pdf", (req, res) => {
+  const username = req.query.username;
   const sql = "SELECT * FROM patient ORDER BY id DESC LIMIT 1";
   db.query(sql, (err, result) => {
     if (err) {
@@ -924,6 +990,10 @@ app.get("/generate-patient-pathology-pdf", (req, res) => {
       });
     } else {
       const patientData = result[0];
+      const currentDate = new Date().toLocaleString("en-US", {
+        timeZone: "Asia/Dhaka", // Adjust the time zone as needed
+        hour12: true, // Use 12-hour format
+      });
       const html = `
       <html>
       <head>
@@ -941,42 +1011,28 @@ app.get("/generate-patient-pathology-pdf", (req, res) => {
           }
     
           .header {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            background-color: #f0f0f0;
-            text align: center;
+            display: flex; /* Use inline-block to keep elements on the same line */
+            background-color: #f0f0f0; /* Background color of the header */
+            padding: 10px; /* Adjust padding as needed */
           }
-      
+        
           #logo {
-            max-width: 80px;
-            max-height: 400px;
-            margin-right: 40px;
-             /* Adjust the margin as needed */
+            max-width: 30px; /* Adjust the max-width as needed */
+            vertical-align: middle;/* Adjust the margin as needed */
           }
-      
-          .clinic-name {
-            margin-left: 10px; /* Adjust the margin as needed */
-            margin-bottom: 250px;
-            font-size: 32px;
-            font-weight: bold;
-            color: #189ab4;
+        
+
+          .small-text {
+            font-size: 80%;
+            color: #0e6880;/* Adjust the font size as needed */
           }
-    
-          h1 {
-            font-size: 26px;
-            margin-bottom: 2px;
-            font-weight: bold;
-            color: #189ab4;
-            text-align: center;
-          }
-    
+            
           h2 {
-            font-size: 24px;
-            margin-bottom: 35px;
+            flex-grow: 1;
+            font-size: 12px;
+            font-weight: bold;
             color: #189ab4;
-            background-color: #f0f0f0;
+            margin: 0; /* Remove default margin */
             text-align: center;
           }
     
@@ -984,38 +1040,38 @@ app.get("/generate-patient-pathology-pdf", (req, res) => {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
+            margin-top: 20px;
           }
     
           th, td {
             border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
+            font-size: 8px;
           }
     
           th {
             background-color: #f2f2f2;
+            font-size: 8px;
           }
     
           .info-data {
             font-weight: italic;
             text-align: right;
-            font-size: 14px;
+            font-size: 10px;
           }
         </style>
       </head>
       <body>
-      
-      <div class="header">
-      <img
-        src="data:image/png;base64,${getBase64Image("logo.png")}"
-        alt="Logo"
-        id="logo"
-      />
-      <span class="clinic-name">
-        FEROZA NURSING HOME
-      </span>
+        <div class="header">
+      <div class="header-content">
+        <img src="data:image/png;base64,${getBase64Image(
+          "logo.png"
+        )}" alt="Logo" id="logo" />
+        <h2>FEROZA NURSING HOME<br><span class="small-text">Kharampatty, Kishoreganj</span></h2>
+      </div>
     </div>
-        <h2>Kharampatty, Kishoreganj</h2>  
+
         <table>
           <tr>
             <th>ID</th>
@@ -1038,20 +1094,24 @@ app.get("/generate-patient-pathology-pdf", (req, res) => {
             <td>${patientData.doctor}</td>
           </tr>
           <tr>
-            <th>Total Cost</th>
-            <td>${String.fromCharCode(0x09f3)}${patientData.pathologyCost}</td>
-          </tr>
-          <tr>
-            <th>Total Paid</th>
-            <td>${String.fromCharCode(0x09f3)}${patientData.totalPaid}</td>
+            <th>Pathology Cost</th>
+            <td>${patientData.pathologyCost}</td>
           </tr>
           <tr>
             <th>Discount Amount</th>
-            <td>${String.fromCharCode(0x09f3)}${patientData.discount}</td>
+            <td>${patientData.discount}</td>
+          </tr>
+          <tr>
+            <th>Total Paid</th>
+            <td>${patientData.totalPaid}</td>
           </tr>
           <tr>
             <th>Due Amount</th>
-            <td>${String.fromCharCode(0x09f3)}${patientData.dueAmount}</td>
+            <td>${patientData.dueAmount}</td>
+          </tr>
+          <tr>
+            <th>Printed By</th>
+             <td>${username} on ${currentDate}</td>
           </tr>
         </table>
       </body>
@@ -1086,7 +1146,7 @@ app.get("/generate-patient-pathology-pdf", (req, res) => {
 
 //admin part
 // Create a new endpoint to calculate and retrieve income and expenditure
-app.get("/getIncomeExpenditure", (req, res) => {
+app.get("/app/getIncomeExpenditure", (req, res) => {
   const sqlIncome = `
     SELECT SUM(otCharge + serviceCharge + admissionFee) AS totalIncome FROM patient
     UNION
@@ -1127,7 +1187,7 @@ app.get("/getIncomeExpenditure", (req, res) => {
 
 // ...
 // Endpoint to retrieve all income data
-app.get("/getIncome", (req, res) => {
+app.get("/app/getIncome", (req, res) => {
   const sql = "SELECT * FROM patient ORDER BY id";
   db.query(sql, (err, result) => {
     if (err) {
@@ -1142,7 +1202,7 @@ app.get("/getIncome", (req, res) => {
 });
 
 // Endpoint to retrieve all expenditure data
-app.get("/getExpenditure", (req, res) => {
+app.get("/app/admin/getExpenditure", (req, res) => {
   const sql = "SELECT * FROM expenditure";
   db.query(sql, (err, result) => {
     if (err) {
@@ -1157,7 +1217,7 @@ app.get("/getExpenditure", (req, res) => {
 });
 
 // Route to get patient data for editing
-app.get("/getPatientAdmin", (req, res) => {
+app.get("/app/admin/getPatientAdmin", (req, res) => {
   const patientId = req.query.id;
   const query = "SELECT * FROM patient WHERE id = ?";
 
@@ -1176,7 +1236,7 @@ app.get("/getPatientAdmin", (req, res) => {
 });
 
 // Route to update patient data
-app.post("/updatePatientAdmin", (req, res) => {
+app.post("/app/admin/updatePatientAdmin", (req, res) => {
   const patientId = req.body.id;
   const updatedData = {
     name: req.body.name,
@@ -1207,13 +1267,76 @@ app.post("/updatePatientAdmin", (req, res) => {
 });
 
 // Endpoint to get other income data
-app.get("/getOtherIncome", (req, res) => {
+app.get("/app/getOtherIncome", (req, res) => {
   const sql = "SELECT * FROM otherincome";
 
   db.query(sql, (err, result) => {
     if (err) {
       console.error("Error fetching other income data:", err);
       res.status(500).json({ error: "Internal Server Error" });
+    } else {
+      res.status(200).json(result);
+    }
+  });
+});
+
+// Endpoint to retrieve filtered income data
+// ...
+app.get("/app/getOperatorIncome", (req, res) => {
+  const operatorName = req.query.operator || "";
+  const dateRange = req.query.dateRange || "";
+
+  // Modify the SQL query to filter by operator and date range
+  let sql = "SELECT * FROM patient WHERE operator = ?";
+  const queryParams = [operatorName];
+
+  if (dateRange) {
+    sql += " AND date BETWEEN ? AND ?";
+    const dateRangeArray = dateRange.split(" to ");
+    queryParams.push(dateRangeArray[0], dateRangeArray[1]);
+  }
+
+  sql += " ORDER BY id";
+
+  db.query(sql, queryParams, (err, result) => {
+    if (err) {
+      console.error("Error fetching income data from the database:", err);
+      res
+        .status(500)
+        .json({ error: "An error occurred while fetching income data." });
+    } else {
+      res.status(200).json(result);
+    }
+  });
+});
+// ...
+app.get("/app/getDoctorIncome", (req, res) => {
+  const doctorName = req.query.doctor || "";
+  const dateRange = req.query.dateRange || "";
+
+  // Modify the SQL query to filter by doctor and date range
+  let sql = "SELECT * FROM patient WHERE doctor = ?";
+  const queryParams = [doctorName];
+
+  if (dateRange) {
+    sql += " AND date BETWEEN ? AND ?";
+    const dateRangeArray = dateRange.split(" to ");
+    queryParams.push(dateRangeArray[0], dateRangeArray[1]);
+  }
+
+  sql += " ORDER BY id";
+
+  db.query(sql, queryParams, (err, result) => {
+    if (err) {
+      console.error(
+        "Error fetching doctor income data from the database:",
+        err
+      );
+      res
+        .status(500)
+        .json({
+          error: "An error occurred while fetching doctor income data.",
+        });
     } else {
       res.status(200).json(result);
     }

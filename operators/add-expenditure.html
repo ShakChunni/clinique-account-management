@@ -13,7 +13,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     />
 
-    <link rel="stylesheet" href="genStyles.css" />
+    <link rel="stylesheet" href="genStyles" />
   </head>
   <body>
     <div class="container">
@@ -23,7 +23,7 @@
         <form
           id="expenditure-form"
           method="POST"
-          action="/add-expenditure"
+          action="/app/add-expenditure"
           enctype="multipart/form-data"
         >
           <div class="form-group">
@@ -92,6 +92,9 @@
         const operatorInput = document.createElement("input");
         operatorInput.type = "hidden";
         operatorInput.name = "operator";
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const username = urlParams.get('username');
 
         const expenditureForm = document.getElementById("expenditure-form");
         expenditureForm.appendChild(operatorInput);
@@ -172,10 +175,11 @@
             const date = document.getElementById("admission-date").value;
 
             // Append the admission date to the FormData
+            formData.set("username", username);
             formData.set("date", date);
 
             try {
-              const response = await fetch("/add-expenditure", {
+              const response = await fetch("/app/add-expenditure", {
                 method: "POST",
                 body: formData,
               });

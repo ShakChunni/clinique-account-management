@@ -62,23 +62,39 @@
         text-decoration: none; /* Removed underline */
       }
 
-      @media (max-width: 600px) {
-        .login-options {
-          flex-direction: column;
-        }
 
-        .option {
-          margin: 10px 0;
+        /* Media queries for responsiveness */
+        @media screen and (min-width: 600px) {
+          .stat-link {
+            flex: 0 0 48%; /* Two columns on screens wider than 600px */
+          }
         }
-      }
+        
+        @media screen and (min-width: 768px) {
+          .stat-link {
+            flex: 0 0 32%; /* Three columns on screens wider than 768px */
+          }
+        }
+        
+        @media screen and (min-width: 992px) {
+          .stat-link {
+            flex: 0 0 24%; /* Four columns on screens wider than 992px */
+          }
+        }
+        
+        @media screen and (min-width: 1200px) {
+          .stat-link {
+            flex: 0 0 22%; /* Five columns on screens wider than 1200px */
+          }
+        }
     </style>
   </head>
   <body>
     <div class="container">
       <h1>Feroza Nursing Home (accounts)</h1>
       <div class="login-options">
-        <a class="option admin" href="admin/login.html">Admin Login</a>
-        <a class="option operator" href="operators/login.html"
+        <a class="option admin" href="admin/login">Admin Login</a>
+        <a class="option operator" href="operators/login"
           >Operator Login</a
         >
       </div>

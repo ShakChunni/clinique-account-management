@@ -4,13 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Other Income List</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="/app/admin/styles" />
   </head>
   <body>
     <div class="container">
-      <a href="/admin/dashboard.html" class="logo">
-        <img src="../logo.png" alt="Logo" />
-      </a>
+        <a href="/app/admin/dashboard" class="logo" onclick="redirectToPage('/app/admin/dashboard'); return false;">
+          <img src="/app/logo" alt="Logo" />
+        </a>
       <h1>Other Income List</h1>
       <div class="search-container">
         <input type="text" id="searchIdInput" placeholder="Search by ID" />
@@ -39,7 +39,17 @@
       </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+    <script>
+        function redirectToPage(page) {
+          // Retrieve the username from the current URL
+          const urlParams = new URLSearchParams(window.location.search);
+          const usernameValue = urlParams.get('username');
+          console.log('Username:', usernameValue);
+        
+          // Redirect to the next page with the username as a query parameter
+          window.location.href = `${page}?username=${encodeURIComponent(usernameValue)}`;
+        }
+    </script>
     <script>
       $(document).ready(function () {
         let allData = [];
@@ -99,7 +109,7 @@
         }
 
         // Fetch other income data from the server
-        $.get("/getOtherIncome", function (data) {
+        $.get("/app/getOtherIncome", function (data) {
           // Store the data in the 'allData' array
           allData = data;
 

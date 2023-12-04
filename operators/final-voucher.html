@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PDF Voucher</title>
+    <title>Final Patient Fess</title>
     <style>
       body {
         font-family: "Arial", sans-serif;
@@ -58,11 +58,12 @@
     </div>
     <script>
       // JavaScript to populate the patient ID from the query parameter
-      const urlParams = new URLSearchParams(window.location.search);
-      const patientId = urlParams.get("patientId");
-      document.getElementById(
-        "downloadLink"
-      ).href = `/generate-patient-pdf?patientId=${patientId}`;
+    const urlParams = new URLSearchParams(window.location.search);
+    const patientId = urlParams.get("patientId");
+    const username = urlParams.get("username");
+    
+    document.getElementById("downloadLink").href = `/app/generate-patient-pdf?patientId=${patientId}&username=${username}`;
+
     </script>
   </body>
 </html>

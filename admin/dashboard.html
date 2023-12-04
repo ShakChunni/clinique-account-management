@@ -76,13 +76,28 @@
         font-size: 24px;
         color: #27ae60;
       }
+      .logout-button {
+      display: inline-block;
+      padding: 10px 15px;
+      background-color: #f00; /* Change this to your desired background color */
+      color: #fff; /* Change this to your desired text color */
+      text-decoration: none;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+    
+    .logout-button:hover {
+      background-color: #d00; /* Change this to your desired background color on hover */
+    }
     </style>
   </head>
-  <body>
+    <body>
+    <a href="/app/admin/logout" class="logout-button">Logout</a>
     <h1>Admin Dashboard</h1>
+    <h1>Welcome, <span id="usernamePlaceholder">Loading...</span></h1>
     <div class="dashboard">
       <div class="stats-container">
-        <a href="types-of-income.html" class="stat-link">
+        <a href="#" id="incomeLink" class="stat-link">
           <div class="stat">
             <i class="fas fa-money-bill-wave icon"></i>
             <div class="info">
@@ -93,7 +108,7 @@
             </div>
           </div>
         </a>
-        <a href="expenditure.html" class="stat-link">
+        <a href="#" id="expenditureLink" class="stat-link">
           <div class="stat">
             <i class="fas fa-shopping-cart icon"></i>
             <div class="info">
@@ -105,7 +120,7 @@
           </div>
         </a>
 
-        <a href="#" class="stat-link">
+        <a href="#" id="dashboardLink" class="stat-link">
           <div class="stat">
             <i class="fas fa-chart-line icon"></i>
             <div class="info">
@@ -118,10 +133,24 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jwt-decode/3.1.2/jwt-decode.min.js"></script>
 
     <script>
       $(document).ready(function () {
-        $.get("/getIncomeExpenditure", function (data) {
+        // Extract username from URL parameters using pure JavaScript
+        const params = new URLSearchParams(window.location.search);
+        const username = params.get('username');
+
+        // Display the username in the welcome message
+        $("#usernamePlaceholder").text(username);
+
+        // Update URLs with the username dynamically
+        $("#incomeLink").attr("href", "/app/admin/types-of-income?username=" + encodeURIComponent(username));
+        $("#expenditureLink").attr("href", "/app/admin/expenditure?username=" + encodeURIComponent(username));
+        $("#dashboardLink").attr("href", "/app/admin/dashboard?username=" + encodeURIComponent(username));
+
+        // Your existing code for fetching other data...
+        $.get("/app/getIncomeExpenditure", function (data) {
           $("#totalIncome").text(
             "৳ " + data.totalIncome.toFixed(2).toLocaleString()
           );

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pathology Voucher</title>
+    <title>Pathology Fess</title>
     <style>
       body {
         font-family: "Arial", sans-serif;
@@ -50,7 +50,7 @@
   </head>
   <body>
     <div class="voucher-container">
-      <h1>Pathology PDF</h1>
+      <h1>Pathology Fees</h1>
       <a id="downloadLink" class="download-button" href="">
         <span>Download PDF</span>
         <i class="fas fa-download"></i>
@@ -58,11 +58,10 @@
     </div>
     <script>
       // JavaScript to populate the patient ID from the query parameter
-      const urlParams = new URLSearchParams(window.location.search);
-      const patientId = urlParams.get("patientId");
-      document.getElementById(
-        "downloadLink"
-      ).href = `/generate-patient-pathology-pdf?patientId=${patientId}`;
+        const urlParams = new URLSearchParams(window.location.search);
+        const username = urlParams.get('username');
+        document.getElementById("downloadLink").href = `/app/generate-patient-pathology-pdf?username=${encodeURIComponent(username)}`;
+
     </script>
   </body>
 </html>

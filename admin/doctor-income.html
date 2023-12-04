@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doctor Income List</title>
+  <link rel="stylesheet" href="/app/admin/styles">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker@3.1.0/daterangepicker.css">
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+    .doctor-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .doctor-selector {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .selected-doctor {
+      margin-right: 10px;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+
+    .fas {
+      margin-left: 5px;
+    }
+
+    .doctor-options {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .doctor-options li {
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .doctor-options li:hover {
+      background-color: #ddd;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="search-container">
+      <div class="doctor-dropdown">
+        <div class="doctor-selector" id="doctorSelector">
+          <div class="selected-doctor">Select a doctor</div>
+          <i class="fas fa-caret-down"></i>
+        </div>
+        <ul class="doctor-options">
+          <li data-doctor="Doctor 1">Prof. Dr. Sufia Khatun</li>
+          <li data-doctor="Doctor 2">Prof. Dr.A.N.M. Naushad Khan</li>
+          <li data-doctor="Doctor 3">Asst Prof. Dr. Sultana Rajia</li>
+          <li data-doctor="Doctor 4">Asst Director Dr. Hosna Begum</li>
+          <li data-doctor="Doctor 5">Prof. Dr. Molla Nazrul Islam</li>
+          <li data-doctor="Doctor 6">Asst Prof. Dr. Aminur Rahman</li>
+          <li data-doctor="Doctor 7">Dr. Md. Mahabubur Rahman Shahin</li>
+          <li data-doctor="Doctor 8">Dr. Tahsin Firoza Khan (Amina)</li>
+          <li data-doctor="Doctor 9">Asst Prof. Dr. Sujit Das</li>
+          <li data-doctor="Doctor 10">Dr. Ananna Debnath</li>
+          <li data-doctor="Doctor 11">
+                  Asst Prof. Dr. Gulam Mustafa Manik
+                </li>
+          <li data-doctor="Doctor 12">
+                  Associate Prof. Dr. Kazi Shah Alam
+                </li>
+          <li data-doctor="Doctor 13">
+                  Asst Prof. Dr. Muhammad Rafiqul Islam
+                </li>
+          <li data-doctor="Doctor 14">Prof. Dr. Muhammad Mohsin</li>
+          <li data-doctor="Doctor 15">Dr. Morium Akter</li>     
+        </ul>
+      </div>
+      <input type="text" id="dateRangeInput" placeholder="Select Date Range">
+      <button id="searchButton">Search</button>
+      <button id="printButton">Print</button> <!-- Added Print button -->
+    </div>
+    <table id="incomeTable">
+      <thead>
+        <tr>
+          <th>Patient Name</th>
+          <th>Doctor's Fee</th>
+          <th>Date</th>
+          <th>Doctor</th>
+          <th>Operator</th>
+          <!-- Add other column headers here based on your data -->
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/daterangepicker@3.1.0/moment.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/daterangepicker@3.1.0/daterangepicker.js"></script>
+  <script>
+    $(document).ready(function () {
+      $('#dateRangeInput').daterangepicker({
+        autoUpdateInput: false,
+        locale: {
+          cancelLabel: 'Clear'
+        }
+      });
+
+      $('#dateRangeInput').on('apply.daterangepicker', function(ev, picker) {
+        $(this).val(picker.startDate.format('YYYY-MM-DD') + ' to ' + picker.endDate.format('YYYY-MM-DD'));
+      });
+
+      $('#dateRangeInput').on('cancel.daterangepicker', function(ev, picker) {
+        $(this).val('');
+      });
+
+      $("#searchButton").click(function () {
+        const doctorName = $(".selected-doctor").text();
+        const dateRange = $("#dateRangeInput").val();
+
+        $.get(`/app/getDoctorIncome?doctor=${doctorName}&dateRange=${dateRange}`, function (data) {
+          renderTable(data);
+        });
+      });
+
+      $("#printButton").click(function () {
+        window.print();
+      });
+
+      function renderTable(data) {
+        const tableBody = $('#incomeTable tbody');
+        tableBody.empty();
+
+        let totalCharge = 0;  // Initialize totalCharge
+
+        data.forEach(entry => {
+          // Format time in 12-hour format
+          const formattedTime = moment(entry.date).format('YYYY-MM-DD hh:mm A');
+
+          const row = `<tr>
+            <td>${entry.name}</td>
+            <td>${entry.doctorCharge}</td>
+            <td>${formattedTime}</td>
+            <td>${entry.doctor}</td>
+            <td>${entry.operator}</td>
+          </tr>`;
+          tableBody.append(row);
+
+          // Update summary
+          totalCharge += entry.doctorCharge;
+        });
+
+        // Add summary row
+        const summaryRow = `<tr style="font-weight: bold;">
+          <td>Total</td>
+          <td>${totalCharge}</td>
+          <td></td>
+          <td></td>
+        </tr>`;
+        tableBody.append(summaryRow);
+      }
+
+      // Dropdown functionality
+      const selector = $("#doctorSelector");
+      const options = $(".doctor-options");
+
+      selector.click(function () {
+        options.toggle();
+      });
+
+      options.on("click", "li", function (e) {
+        const selectedDoctor = $(this).text();
+        $(".selected-doctor").text(selectedDoctor);
+        options.hide();
+      });
+    });
+  </script>
+</body>
+</html>

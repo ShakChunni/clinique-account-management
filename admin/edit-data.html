@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Edit Patient Data</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles" />
     <style>
       * {
         margin: 0;
@@ -155,7 +155,7 @@
 
         if (patientId) {
           // Fetch patient data from the server based on patientId
-          $.get(`/getPatientAdmin?id=${patientId}`, function (data) {
+          $.get(`/app/getPatientAdmin?id=${patientId}`, function (data) {
             if (data) {
               $("#patientId").val(data.id);
               $("#name").val(data.name);
@@ -217,7 +217,7 @@
           $.post("/updatePatientAdmin", updatedData, function (response) {
             if (response.success) {
               // Redirect to the income list page or handle success as needed
-              window.location.href = "income.html";
+              window.location.href = "income";
             } else {
               alert("Failed to update patient data.");
               // Handle the error as needed

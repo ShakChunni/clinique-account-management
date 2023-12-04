@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PDF Voucher</title>
+    <title>Voucher of admitted patient</title>
     <!-- Add Font Awesome for the download icon -->
     <link
       rel="stylesheet"
@@ -56,7 +56,18 @@
   <body>
     <div class="voucher-container">
       <h1>VOUCHER</h1>
-      <a href="/generate-pdf" download="voucher.pdf" class="download-button">
+      <script>
+        document.addEventListener("DOMContentLoaded", () => {
+          // Extract username from the current URL
+          const urlParams = new URLSearchParams(window.location.search);
+          const username = urlParams.get('username');
+
+          // Append the username to the download link
+          const downloadLink = document.querySelector(".download-button");
+          downloadLink.href = `/app/generate-pdf?username=${encodeURIComponent(username)}`;
+        });
+      </script>
+      <a href="/app/generate-pdf" download="admitted_voucher.pdf" class="download-button">
         <span>Download PDF Voucher</span>
         <i class="fas fa-download"></i>
       </a>

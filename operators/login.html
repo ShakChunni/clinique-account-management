@@ -74,7 +74,7 @@
   <body>
     <div class="container">
       <h1>LOGIN PAGE</h1>
-      <form id="login-form" method="POST" action="/loginOperator">
+      <form id="login-form" method="POST" action="/app/loginOperator">
         <div class="form-group">
           <label for="username">Username</label>
           <input type="text" id="username" name="username" required />
@@ -99,7 +99,7 @@
           const password = document.getElementById("password").value;
 
           try {
-            const response = await fetch("/loginOperator", {
+            const response = await fetch("/app/loginOperator", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -109,9 +109,7 @@
 
             if (response.ok) {
               console.log("Login successful");
-              window.location.href = "/operators/dashboard.html";
-              document.getElementById("username").value = "";
-
+              window.location.href = "/app/operators/dashboard?username=" + encodeURIComponent(username);
               // You can redirect the user to another page or perform other actions here
             } else {
               console.error("Login failed");

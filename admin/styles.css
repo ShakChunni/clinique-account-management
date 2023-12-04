@@ -1,9 +1,4 @@
 /* Reset some default styles */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
 
 /* Set background color and text color for the page */
 body {
@@ -128,11 +123,7 @@ body {
   border-radius: 5px; /* Add border-radius for a rounded look */
 }
 
-h1 {
-  font-size: 32px;
-  color: #3498db;
-  margin: 0;
-}
+
 
 table {
   width: 100%;
@@ -213,11 +204,7 @@ tr:nth-child(even) {
 }
 
 /* Reset some default styles */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+
 
 /* Set background color and text color for the page */
 
@@ -364,8 +351,51 @@ button[type="submit"]:hover {
 }
 
 /* Style for the search button */
-#searchButton {
-  background-color: #3498db;
+    #searchButton {
+      background-color: #3498db;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+/* Hover effect for the search button */
+    #searchButton:hover {
+      background-color: #297dbb;
+    }
+
+.search-container {
+     margin: 10px 0;
+    }
+    
+input[type="text"] {
+     padding: 10px;
+     margin-right: 10px;
+     font-size: 14px; /* Adjust the font size */
+    }
+    
+    /* Style for the placeholder text */
+input[type="text"]::placeholder {
+     color: #888; /* Adjust the color of the placeholder text */
+     font-style: italic; /* Optionally, make it italic */
+    }
+    
+    /* Style for the buttons */
+button {
+      padding: 10px;
+      background-color: #4CAF50; /* Green background color */
+      color: white; /* White text color */
+      border: none; /* Remove border */
+      cursor: pointer; /* Add a pointer cursor on hover */
+    }
+    
+    /* Adjust the style for the Print button */
+#printButton {
+  background-color: #6f27cc; /* Dark purple color */
   color: #fff;
   border: none;
   padding: 10px 20px;
@@ -373,10 +403,34 @@ button[type="submit"]:hover {
   cursor: pointer;
   transition: background-color 0.2s;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 16px; /* Adjust font size for the Print button */
 }
 
-/* Hover effect for the search button */
-#searchButton:hover {
-  background-color: #297dbb;
+/* Adjust the style for the Print button on hover */
+#printButton:hover {
+  background-color: #4a148c; /* Darker purple color on hover */
+}
+
+@media screen and (min-width: 600px) {
+  .stat-link {
+    flex: 0 0 48%; /* Two columns on screens wider than 600px */
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .stat-link {
+    flex: 0 0 32%; /* Three columns on screens wider than 768px */
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .stat-link {
+    flex: 0 0 24%; /* Four columns on screens wider than 992px */
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .stat-link {
+    flex: 0 0 22%; /* Five columns on screens wider than 1200px */
+  }
 }
